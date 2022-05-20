@@ -28,5 +28,7 @@ namespace I4_QM_app
         protected override void OnResume()
         {
         }
+
+        public static int UserId { get; set; }
     }
 }

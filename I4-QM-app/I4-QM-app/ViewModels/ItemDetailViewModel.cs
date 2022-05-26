@@ -45,8 +45,8 @@ namespace I4_QM_app.ViewModels
             {
                 var item = await DataStore.GetItemAsync(itemId);
                 Id = item.Id;
-                Text = item.Text;
-                Description = item.Description;
+                Text = item.Id;
+                Description = item.UserId;
             }
             catch (Exception)
             {

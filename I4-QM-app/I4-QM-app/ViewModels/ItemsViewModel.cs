@@ -10,20 +10,20 @@ namespace I4_QM_app.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        private Item _selectedItem;
+        private Order _selectedItem;
 
-        public ObservableCollection<Item> Items { get; }
+        public ObservableCollection<Order> Items { get; }
         public Command LoadItemsCommand { get; }
         //public Command AddItemCommand { get; }
-        public Command<Item> ItemTapped { get; }
+        public Command<Order> ItemTapped { get; }
 
         public ItemsViewModel()
         {
             Title = "Orders";
-            Items = new ObservableCollection<Item>();
+            Items = new ObservableCollection<Order>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 
-            ItemTapped = new Command<Item>(OnItemSelected);
+            ItemTapped = new Command<Order>(OnItemSelected);
 
             //AddItemCommand = new Command(OnAddItem);
         }
@@ -57,7 +57,7 @@ namespace I4_QM_app.ViewModels
             SelectedItem = null;
         }
 
-        public Item SelectedItem
+        public Order SelectedItem
         {
             get => _selectedItem;
             set
@@ -72,7 +72,7 @@ namespace I4_QM_app.ViewModels
         //    await Shell.Current.GoToAsync(nameof(NewItemPage));
         //}
 
-        async void OnItemSelected(Item item)
+        async void OnItemSelected(Order item)
         {
             if (item == null)
                 return;

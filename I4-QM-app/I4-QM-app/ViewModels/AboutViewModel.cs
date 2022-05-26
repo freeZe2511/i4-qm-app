@@ -1,9 +1,4 @@
-﻿using System;
-using System.Windows.Input;
-using Xamarin.Essentials;
-using Xamarin.Forms;
-
-namespace I4_QM_app.ViewModels
+﻿namespace I4_QM_app.ViewModels
 {
     public class AboutViewModel : BaseViewModel
     {

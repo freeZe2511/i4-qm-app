@@ -1,13 +1,11 @@
-﻿using I4_QM_app.Models;
-using System;
+﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
 {
     [QueryProperty(nameof(ItemId), nameof(ItemId))]
-    public class ItemDetailViewModel : BaseViewModel
+    public class OrderDetailViewModel : BaseViewModel
     {
         private string itemId;
         private string text;
@@ -43,7 +41,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var item = await DataStore.GetItemAsync(itemId);
+                var item = await DataStore.GetOrderAsync(itemId);
                 Id = item.Id;
                 Text = item.Id;
                 Description = item.UserId;

@@ -1,8 +1,5 @@
 ﻿using I4_QM_app.Services;
-using I4_QM_app.Views;
-using System;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace I4_QM_app
 {

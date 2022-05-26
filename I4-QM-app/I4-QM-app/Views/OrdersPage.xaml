@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="I4_QM_app.Views.ItemsPage"
+             x:Class="I4_QM_app.Views.OrdersPage"
              Title="{Binding Title}"
              xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
              xmlns:model="clr-namespace:I4_QM_app.Models"  
-             x:Name="BrowseItemsPage">
+             x:Name="BrowseOrdersPage">
 
     <!--<ContentPage.ToolbarItems>
         <ToolbarItem Text="Add" Command="{Binding AddItemCommand}" />
@@ -14,9 +14,9 @@
       x:DataType enables compiled bindings for better performance and compile time validation of binding expressions.
       https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/data-binding/compiled-bindings
     -->
-    <RefreshView x:DataType="local:ItemsViewModel" Command="{Binding LoadItemsCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
-        <CollectionView x:Name="ItemsListView"
-                ItemsSource="{Binding Items}"
+    <RefreshView x:DataType="local:OrdersViewModel" Command="{Binding LoadOrdersCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <CollectionView x:Name="OrdersListView"
+                ItemsSource="{Binding Orders}"
                 SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
@@ -36,7 +36,7 @@
                         <StackLayout.GestureRecognizers>
                             <TapGestureRecognizer 
                                 NumberOfTapsRequired="1"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:ItemsViewModel}}, Path=ItemTapped}"		
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:OrdersViewModel}}, Path=OrderTapped}"		
                                 CommandParameter="{Binding .}">
                             </TapGestureRecognizer>
                         </StackLayout.GestureRecognizers>

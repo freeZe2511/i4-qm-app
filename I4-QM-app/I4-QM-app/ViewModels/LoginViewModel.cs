@@ -1,7 +1,4 @@
 ﻿using I4_QM_app.Views;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels

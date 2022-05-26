@@ -1,8 +1,4 @@
-﻿using I4_QM_app.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
+﻿using System;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels

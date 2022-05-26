@@ -10,7 +10,7 @@
         <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
             <Label Text="Login" FontSize="Title" HorizontalOptions="Center"/>
             <Entry x:Name="entry" Text="" ClearButtonVisibility="WhileEditing" />
-            <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}"/>
+            <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}" BackgroundColor="#80ba24"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -33,11 +33,11 @@ namespace I4_QM_app.ViewModels
             set
             {
                 itemId = value;
-                LoadItemId(value);
+                LoadOrderId(value);
             }
         }
 
-        public async void LoadItemId(string itemId)
+        public async void LoadOrderId(string itemId)
         {
             try
             {
@@ -51,5 +51,6 @@ namespace I4_QM_app.ViewModels
                 Debug.WriteLine("Failed to Load Item");
             }
         }
+
     }
 }

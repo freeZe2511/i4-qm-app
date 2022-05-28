@@ -38,6 +38,8 @@ namespace I4_QM_app.ViewModels
                 {
                     Orders.Add(order);
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -48,6 +50,8 @@ namespace I4_QM_app.ViewModels
                 IsBusy = false;
             }
         }
+
+
 
         public void OnAppearing()
         {

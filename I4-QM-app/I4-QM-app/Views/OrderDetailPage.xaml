@@ -6,9 +6,11 @@
 
     <StackLayout Spacing="20" Padding="15">
         <Label Text="Text:" FontSize="Medium" />
-        <Label Text="{Binding Id}" FontSize="Small"/>
+        <Label Text="{Binding Text}" FontSize="Small"/>
         <Label Text="Description:" FontSize="Medium" />
-        <Label Text="{Binding UserId}" FontSize="Small"/>
+        <Label Text="{Binding Description}" FontSize="Small"/>
+
+              
     </StackLayout>
     
 </ContentPage>

@@ -26,6 +26,6 @@ namespace I4_QM_app
         {
         }
 
-        public static int UserId { get; set; }
+        //public static int UserId { get; set; }
     }
 }

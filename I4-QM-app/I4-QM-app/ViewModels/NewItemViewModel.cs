@@ -1,8 +1,4 @@
-﻿using I4_QM_app.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
+﻿using System;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -49,17 +45,17 @@ namespace I4_QM_app.ViewModels
 
         private async void OnSave()
         {
-            Item newItem = new Item()
-            {
-                Id = Guid.NewGuid().ToString(),
-                Text = Text,
-                Description = Description
-            };
+            //Order newItem = new Order()
+            //{
+            //    Id = Guid.NewGuid().ToString(),
+            //    Text = Text,
+            //    Description = Description
+            //};
 
-            await DataStore.AddItemAsync(newItem);
+            //await DataStore.AddItemAsync(newItem);
 
-            // This will pop the current page off the navigation stack
-            await Shell.Current.GoToAsync("..");
+            //// This will pop the current page off the navigation stack
+            //await Shell.Current.GoToAsync("..");
         }
     }
 }

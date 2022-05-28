@@ -1,7 +1,5 @@
-﻿using I4_QM_app.ViewModels;
-using I4_QM_app.Views;
+﻿using I4_QM_app.Views;
 using System;
-using System.Collections.Generic;
 using Xamarin.Forms;
 
 namespace I4_QM_app
@@ -11,7 +9,7 @@ namespace I4_QM_app
         public AppShell()
         {
             InitializeComponent();
-            Routing.RegisterRoute(nameof(ItemDetailPage), typeof(ItemDetailPage));
+            Routing.RegisterRoute(nameof(OrderDetailPage), typeof(OrderDetailPage));
             Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
         }
 
@@ -20,4 +18,31 @@ namespace I4_QM_app
             await Shell.Current.GoToAsync("//LoginPage");
         }
     }
+
+    // TODO better place
+    namespace Controls
+    {
+        public class FlyoutItemIconFont : FlyoutItem
+        {
+            public static readonly BindableProperty IconGlyphProperty = BindableProperty.Create(nameof(IconGlyphProperty), typeof(string), typeof(FlyoutItemIconFont), string.Empty);
+            public string IconGlyph
+            {
+                get { return (string)GetValue(IconGlyphProperty); }
+                set { SetValue(IconGlyphProperty, value); }
+            }
+        }
+
+        public class MenuItemIconFont : MenuItem
+        {
+            public static readonly BindableProperty IconGlyphProperty = BindableProperty.Create(nameof(IconGlyphProperty), typeof(string), typeof(FlyoutItemIconFont), string.Empty);
+            public string IconGlyph
+            {
+                get { return (string)GetValue(IconGlyphProperty); }
+                set { SetValue(IconGlyphProperty, value); }
+            }
+        }
+    }
+
 }
+
+

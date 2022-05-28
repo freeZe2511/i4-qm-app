@@ -8,7 +8,9 @@
              Shell.NavBarIsVisible="False">
     <ContentPage.Content>
         <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
-            <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}"/>
+            <Label Text="Login" FontSize="Title" HorizontalOptions="Center"/>
+            <Entry x:Name="entry" Text="" ClearButtonVisibility="WhileEditing" />
+            <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}" BackgroundColor="{StaticResource Primary}"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

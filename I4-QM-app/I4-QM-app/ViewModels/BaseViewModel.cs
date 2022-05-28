@@ -10,7 +10,7 @@ namespace I4_QM_app.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+        public IDataStore<Order> DataStore => DependencyService.Get<IDataStore<Order>>();
 
         bool isBusy = false;
         public bool IsBusy

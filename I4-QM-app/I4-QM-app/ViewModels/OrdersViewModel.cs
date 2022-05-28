@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Collections.ObjectModel;
@@ -76,6 +77,8 @@ namespace I4_QM_app.ViewModels
 
             // TODO abstract dialog_service
             bool answer = await Shell.Current.DisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
+
+            await Connection.Send_Message();
 
             // This will push the ItemDetailPage onto the navigation stack
             if (answer) await Shell.Current.GoToAsync($"{nameof(OrderDetailPage)}?{nameof(OrderDetailViewModel.ItemId)}={item.Id}");

@@ -106,7 +106,7 @@
     </FlyoutItem>-->
 
     <controls:FlyoutItemIconFont Title="Home" IconGlyph="{StaticResource IconHome}">
-        <ShellContent Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}" />
+        <ShellContent Route="HomePage" ContentTemplate="{DataTemplate local:HomePage}" />
     </controls:FlyoutItemIconFont>
 
     <controls:FlyoutItemIconFont Title="Orders" IconGlyph="{StaticResource IconOrders}">
@@ -114,17 +114,18 @@
     </controls:FlyoutItemIconFont>
 
     <controls:FlyoutItemIconFont Title="Recipes" IconGlyph="{StaticResource IconRecipes}">
-        <ShellContent Route="RecipesPage" ContentTemplate="{DataTemplate local:AboutPage}" />
+        <ShellContent Route="RecipesPage" ContentTemplate="{DataTemplate local:RecipesPage}" />
     </controls:FlyoutItemIconFont>
 
     <controls:FlyoutItemIconFont Title="History" IconGlyph="{StaticResource IconHistory}">
-        <ShellContent Route="HistoryPage" ContentTemplate="{DataTemplate local:AboutPage}" />
+        <ShellContent Route="HistoryPage" ContentTemplate="{DataTemplate local:HistoryPage}" />
     </controls:FlyoutItemIconFont>
 
     <controls:FlyoutItemIconFont Title="Settings" IconGlyph="{StaticResource IconSettings}">
-        <ShellContent Route="SettingsPage" ContentTemplate="{DataTemplate local:AboutPage}" />
+        <ShellContent Route="SettingsPage" ContentTemplate="{DataTemplate local:SettingsPage}" />
     </controls:FlyoutItemIconFont>
 
+    <!-- TODO-->
     <controls:MenuItemIconFont Text="Logout" IconGlyph="{StaticResource IconHome}" Clicked="OnMenuItemClicked">
     </controls:MenuItemIconFont>
 

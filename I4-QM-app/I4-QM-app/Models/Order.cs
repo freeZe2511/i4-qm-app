@@ -20,15 +20,6 @@ namespace I4_QM_app.Models
         public DateTime Due { get; set; }
     }
 
-    public class Additive
-    {
-        public string Id { get; set; }
-
-        public string Name { get; set; }
-
-        public int Amount { get; set; }
-    }
-
     public enum Status
     {
         test,

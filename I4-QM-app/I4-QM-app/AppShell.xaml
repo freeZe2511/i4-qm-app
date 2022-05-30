@@ -84,27 +84,7 @@
         </ResourceDictionary>
     </Shell.Resources>
 
-    <!-- 
-        When the Flyout is visible this defines the content to display in the flyout.
-        FlyoutDisplayOptions="AsMultipleItems" will create a separate flyout item for each child element    
-        https://docs.microsoft.com/dotnet/api/xamarin.forms.shellgroupitem.flyoutdisplayoptions?view=xamarin-forms
-    -->
-    <!--<FlyoutItem Title="Home" Icon="icon_about.png">
-        <ShellContent Route="AboutPage" ContentTemplate="{DataTemplate local:AboutPage}" />
-    </FlyoutItem>
-    <FlyoutItem Title="Orders" Icon="icon_feed.png">
-        <ShellContent Route="OrdersPage" ContentTemplate="{DataTemplate local:OrdersPage}" />
-    </FlyoutItem>
-    <FlyoutItem Title="Recipes" Icon="icon_feed.png">
-        <ShellContent Route="ItemsPage" ContentTemplate="{DataTemplate local:AboutPage}" />
-    </FlyoutItem>
-    <FlyoutItem Title="History">
-        <ShellContent Route="ItemsPage" ContentTemplate="{DataTemplate local:AboutPage}" />
-    </FlyoutItem>
-    <FlyoutItem Title="Settings" Icon="icon_feed.png">
-        <ShellContent Route="ItemsPage" ContentTemplate="{DataTemplate local:AboutPage}" />
-    </FlyoutItem>-->
-
+    <!-- Flyout -->
     <controls:FlyoutItemIconFont Title="Home" IconGlyph="{StaticResource IconHome}">
         <ShellContent Route="HomePage" ContentTemplate="{DataTemplate local:HomePage}" />
     </controls:FlyoutItemIconFont>

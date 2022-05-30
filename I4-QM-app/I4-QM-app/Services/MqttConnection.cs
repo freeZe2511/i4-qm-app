@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace I4_QM_app.Services
 {
-    public class Connection
+    public class MqttConnection
     {
 
         public static async Task Send_Message(Order item)
@@ -31,6 +31,8 @@ namespace I4_QM_app.Services
 
             }
         }
+
+        // TODO subscribe to messages -> use content to ... ?
 
 
     }

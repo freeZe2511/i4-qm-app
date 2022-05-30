@@ -88,10 +88,12 @@ namespace I4_QM_app.ViewModels
         private async void OnDoneClicked(object obj)
         {
             // TODO send mqtt
-            await Connection.Send_Message(Order);
+            await MqttConnection.Send_Message(Order);
 
             // test
-            Amount = 88;
+            var order = await OrdersDataStore.GetItemAsync(Order.Id);
+            order.Amount = 100;
+            await OrdersDataStore.UpdateItemAsync(order);
 
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
@@ -101,7 +103,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var order = await DataStore.GetOrderAsync(orderId);
+                var order = await OrdersDataStore.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
                 UserId = order.UserId;

@@ -20,10 +20,10 @@ namespace I4_QM_app.ViewModels
         {
             Title = "Orders";
             Orders = new ObservableCollection<Order>();
+            // TODO maybe overloading main thread
             LoadOrdersCommand = new Command(async () => await ExecuteLoadOrdersCommand());
 
             OrderTapped = new Command<Order>(OnOrderSelected);
-
         }
 
         async Task ExecuteLoadOrdersCommand()
@@ -33,7 +33,8 @@ namespace I4_QM_app.ViewModels
             try
             {
                 Orders.Clear();
-                var orders = await DataStore.GetOrdersAsync(true);
+                var orders = await OrdersDataStore.GetItemsAsync(true);
+
                 foreach (var order in orders)
                 {
                     Orders.Add(order);

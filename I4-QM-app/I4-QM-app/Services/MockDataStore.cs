@@ -43,14 +43,14 @@ namespace I4_QM_app.Services
             };
         }
 
-        public async Task<bool> AddOrderAsync(Order order)
+        public async Task<bool> AddItemAsync(Order order)
         {
             orders.Add(order);
 
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> UpdateOrderAsync(Order order)
+        public async Task<bool> UpdateItemAsync(Order order)
         {
             var oldOrder = orders.Where((Order arg) => arg.Id == order.Id).FirstOrDefault();
             orders.Remove(oldOrder);
@@ -59,7 +59,7 @@ namespace I4_QM_app.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> DeleteOrderAsync(string id)
+        public async Task<bool> DeleteItemAsync(string id)
         {
             var oldOrder = orders.Where((Order arg) => arg.Id == id).FirstOrDefault();
             orders.Remove(oldOrder);
@@ -67,12 +67,12 @@ namespace I4_QM_app.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<Order> GetOrderAsync(string id)
+        public async Task<Order> GetItemAsync(string id)
         {
             return await Task.FromResult(orders.FirstOrDefault(s => s.Id == id));
         }
 
-        public async Task<IEnumerable<Order>> GetOrdersAsync(bool forceRefresh = false)
+        public async Task<IEnumerable<Order>> GetItemsAsync(bool forceRefresh = false)
         {
             return await Task.FromResult(orders);
         }

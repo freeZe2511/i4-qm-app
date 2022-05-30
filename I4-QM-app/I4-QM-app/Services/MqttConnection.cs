@@ -9,6 +9,10 @@ namespace I4_QM_app.Services
     public class MqttConnection
     {
 
+        // reconnect auto?
+        // https://github.com/dotnet/MQTTnet/blob/master/Samples/ManagedClient/Managed_Client_Simple_Samples.cs
+
+
         public static async Task Send_Message(Order item)
         {
             var mqttFactory = new MqttFactory();
@@ -31,6 +35,49 @@ namespace I4_QM_app.Services
 
             }
         }
+
+        public static async Task Handle_Received_Application_Message()
+        {
+            /*
+             * This sample subscribes to a topic and processes the received message.
+             */
+
+            var mqttFactory = new MqttFactory();
+
+            using (var mqttClient = mqttFactory.CreateMqttClient())
+            {
+                var mqttClientOptions = new MqttClientOptionsBuilder()
+                    .WithTcpServer("broker.hivemq.com")
+                    .Build();
+
+                // Setup message handling before connecting so that queued messages
+                // are also handled properly.When there is no event handler attached all
+                //received messages get lost.
+                //mqttClient.ApplicationMessageReceivedHandler += e =>
+                // {
+                //     Console.WriteLine("Received application message.");
+                //     e.DumpToConsole();
+
+                //     return Task.CompletedTask;
+                // };
+
+                //mqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(obj =>
+                //            {
+                //                Console.WriteLine(obj);
+                //            });
+
+                await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+
+                var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
+                    .WithTopicFilter(f => { f.WithTopic("sfm/sg/order"); })
+                    .Build();
+
+                await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
+
+            }
+        }
+
+
 
         // TODO subscribe to messages -> use content to ... ?
 

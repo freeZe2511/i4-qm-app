@@ -91,8 +91,11 @@ namespace I4_QM_app.ViewModels
             await MqttConnection.Send_Message(Order);
 
             // test
+            await MqttConnection.Handle_Received_Application_Message();
+
+            // test
             var order = await OrdersDataStore.GetItemAsync(Order.Id);
-            order.Amount = 100;
+            order.Status = Status.waiting;
             await OrdersDataStore.UpdateItemAsync(order);
 
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one

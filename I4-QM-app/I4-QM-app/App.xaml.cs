@@ -18,6 +18,7 @@ namespace I4_QM_app
             //DependencyService.Register<MockDataStore>();
             DependencyService.Register<OrderService>();
             MainPage = new AppShell();
+
         }
 
         protected override void OnStart()

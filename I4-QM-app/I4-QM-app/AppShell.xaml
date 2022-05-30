@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Shell xmlns="http://xamarin.com/schemas/2014/forms" 
+       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+       xmlns:local="clr-namespace:I4_QM_app.Views" 
+       xmlns:controls="clr-namespace:I4_QM_app.Controls"
+       Title="I4_QM_app"
+       x:Class="I4_QM_app.AppShell">
+
+    <!--
+        The overall app visual hierarchy is defined here, along with navigation.
+    
+        https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/shell/
+    -->
+
+    <Shell.Resources>
+        <ResourceDictionary>
+            <Style x:Key="BaseStyle" TargetType="Element">
+                <Setter Property="Shell.BackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="Shell.ForegroundColor" Value="White" />
+                <Setter Property="Shell.TitleColor" Value="White" />
+                <Setter Property="Shell.DisabledColor" Value="#B4FFFFFF" />
+                <Setter Property="Shell.UnselectedColor" Value="#95FFFFFF" />
+                <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource Primary}" />
+                <Setter Property="Shell.TabBarForegroundColor" Value="White"/>
+                <Setter Property="Shell.TabBarUnselectedColor" Value="#95FFFFFF"/>
+                <Setter Property="Shell.TabBarTitleColor" Value="White"/>
+            </Style>
+            <Style TargetType="TabBar" BasedOn="{StaticResource BaseStyle}" />
+            <Style TargetType="FlyoutItem" BasedOn="{StaticResource BaseStyle}" />
+
+            <x:String x:Key="IconHome">&#xe88a;</x:String>
+            <x:String x:Key="IconOrders">&#xe0ee;</x:String>
+            <x:String x:Key="IconRecipes">&#xe866;</x:String>
+            <x:String x:Key="IconHistory">&#xe889;</x:String>
+            <x:String x:Key="IconSettings">&#xe8b8;</x:String>
+            
+            <Style TargetType="controls:FlyoutItemIconFont" BasedOn="{StaticResource BaseStyle}"/>
+
+
+
+            <!--
+            Default Styles for all Flyout Items
+            https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/shell/flyout#flyoutitem-and-menuitem-style-classes
+            -->
+            <!--<Style Class="FlyoutItemLabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="White"></Setter>
+            </Style>
+            <Style Class="FlyoutItemLayoutStyle" TargetType="Layout" ApplyToDerivedTypes="True">
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="{x:OnPlatform UWP=Transparent, iOS=White}" />
+                                    <Setter TargetName="FlyoutItemLabel" Property="Label.TextColor" Value="{StaticResource Secondary}" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Selected">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>-->
+          
+            <!--
+            Custom Style you can apply to any Flyout Item
+            -->
+            <Style Class="MenuItemLayoutStyle" TargetType="Layout" ApplyToDerivedTypes="True">
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter TargetName="FlyoutItemLabel" Property="Label.TextColor" Value="{StaticResource Secondary}" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Shell.Resources>
+
+    <!-- Flyout -->
+    <controls:FlyoutItemIconFont Title="Home" IconGlyph="{StaticResource IconHome}">
+        <ShellContent Route="HomePage" ContentTemplate="{DataTemplate local:HomePage}" />
+    </controls:FlyoutItemIconFont>
+
+    <controls:FlyoutItemIconFont Title="Orders" IconGlyph="{StaticResource IconOrders}">
+        <ShellContent Route="OrdersPage" ContentTemplate="{DataTemplate local:OrdersPage}" />
+    </controls:FlyoutItemIconFont>
+
+    <controls:FlyoutItemIconFont Title="Recipes" IconGlyph="{StaticResource IconRecipes}">
+        <ShellContent Route="RecipesPage" ContentTemplate="{DataTemplate local:RecipesPage}" />
+    </controls:FlyoutItemIconFont>
+
+    <controls:FlyoutItemIconFont Title="History" IconGlyph="{StaticResource IconHistory}">
+        <ShellContent Route="HistoryPage" ContentTemplate="{DataTemplate local:HistoryPage}" />
+    </controls:FlyoutItemIconFont>
+
+    <controls:FlyoutItemIconFont Title="Settings" IconGlyph="{StaticResource IconSettings}">
+        <ShellContent Route="SettingsPage" ContentTemplate="{DataTemplate local:SettingsPage}" />
+    </controls:FlyoutItemIconFont>
+
+    <!-- TODO-->
+    <controls:MenuItemIconFont Text="Logout" IconGlyph="{StaticResource IconHome}" Clicked="OnMenuItemClicked">
+    </controls:MenuItemIconFont>
+
+
+    <!-- When the Flyout is visible this will be a menu item you can tie a click behavior to  -->
+    <!--<MenuItem Text="Logout" IconImageSource="icon_feed.png" StyleClass="MenuItemLayoutStyle" Clicked="OnMenuItemClicked">
+    </MenuItem>-->
+
+    <!--
+        TabBar lets you define content that won't show up in a flyout menu. When this content is active
+        the flyout menu won't be available. This is useful for creating areas of the application where 
+        you don't want users to be able to navigate away from. If you would like to navigate to this 
+        content you can do so by calling 
+        await Shell.Current.GoToAsync("//LoginPage");
+    -->
+    <TabBar>
+        <ShellContent Route="LoginPage" ContentTemplate="{DataTemplate local:LoginPage}" />
+    </TabBar>
+    
+
+    <!--https://stackoverflow.com/questions/65400688/xamarin-forms-how-can-i-change-the-flyoutitem-icons-color-when-it-is-selected-->
+    <Shell.ItemTemplate>
+        <DataTemplate>
+            <Grid>
+                <VisualStateManager.VisualStateGroups>
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="White" />
+                                    <Setter TargetName="FlyoutItemLabel" Property="Label.TextColor" Value="{StaticResource Secondary}" />
+                                </VisualState.Setters>
+                            </VisualState>
+                            <VisualState x:Name="Selected">
+                                <VisualState.Setters>
+                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                    <Setter TargetName="FlyoutItemLabel" Property="Label.TextColor" Value="White" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </VisualStateManager.VisualStateGroups>
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="0.2*" />
+                    <ColumnDefinition Width="0.8*" />
+                </Grid.ColumnDefinitions>
+                <Label x:Name="FlyoutItemIcon"
+                 FontFamily="MaterialDesignFont"       
+                 Text="{Binding IconGlyph}"
+                 TextColor="{Binding Source={x:Reference FlyoutItemLabel} ,Path=TextColor}"
+                 FontSize="30"
+                 Margin="5"/>
+                <Label x:Name="FlyoutItemLabel"
+                 Grid.Column="1"        
+                 Text="{Binding Title}"
+                 VerticalTextAlignment="Center" 
+                 FontFamily="sans-serif-medium"
+                 />
+            </Grid>
+        </DataTemplate>
+    </Shell.ItemTemplate>
+
+</Shell>
+    
+
+

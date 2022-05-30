@@ -5,12 +5,21 @@
              Title="{Binding Title}">
 
     <StackLayout Spacing="20" Padding="15">
-        <Label Text="Text:" FontSize="Medium" />
-        <Label Text="{Binding Text}" FontSize="Small"/>
-        <Label Text="Description:" FontSize="Medium" />
-        <Label Text="{Binding Description}" FontSize="Small"/>
+        <Label Text="Id:" FontSize="Medium" />
+        <Label Text="{Binding Id}" FontSize="Small"/>
+        <Label Text="UserId:" FontSize="Medium" />
+        <Label Text="{Binding UserId}" FontSize="Small"/>
+        <Label Text="{Binding Amount}" FontSize="Small"/>
+        <Label Text="{Binding Status}" FontSize="Small"/>
+        <Label Text="{Binding Created}" FontSize="Small"/>
+        <Label Text="{Binding Due}" FontSize="Small"/>
+        
+        <!--ListView Additives-->
 
-              
+        <!--Submit-->
+        <Button VerticalOptions="Center" Text="Done!" Command="{Binding DoneCommand}" BackgroundColor="{StaticResource Primary}"/>
+
+
     </StackLayout>
     
 </ContentPage>

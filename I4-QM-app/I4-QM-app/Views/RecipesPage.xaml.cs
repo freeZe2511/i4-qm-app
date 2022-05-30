@@ -2,9 +2,10 @@
 
 namespace I4_QM_app.Views
 {
-    public partial class AboutPage : ContentPage
+
+    public partial class RecipesPage : ContentPage
     {
-        public AboutPage()
+        public RecipesPage()
         {
             InitializeComponent();
         }

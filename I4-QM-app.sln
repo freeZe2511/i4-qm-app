@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "I4-QM-app.Android", "I4-QM-
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "I4-QM-app.iOS", "I4-QM-app\I4-QM-app.iOS\I4-QM-app.iOS.csproj", "{9D4069F3-1843-4467-AF4E-D9BF1B8FA164}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "I4-QM-app", "I4-QM-app\I4-QM-app\I4-QM-app.csproj", "{6B8D56E0-4AED-4CAB-A55D-E29F8BF9BE87}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "I4_QM_app", "I4-QM-app\I4-QM-app\I4_QM_app.csproj", "{6B8D56E0-4AED-4CAB-A55D-E29F8BF9BE87}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,5 +1,4 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Collections.ObjectModel;
@@ -21,10 +20,10 @@ namespace I4_QM_app.ViewModels
         {
             Title = "Orders";
             Orders = new ObservableCollection<Order>();
+            // TODO maybe overloading main thread
             LoadOrdersCommand = new Command(async () => await ExecuteLoadOrdersCommand());
 
             OrderTapped = new Command<Order>(OnOrderSelected);
-
         }
 
         async Task ExecuteLoadOrdersCommand()
@@ -34,7 +33,8 @@ namespace I4_QM_app.ViewModels
             try
             {
                 Orders.Clear();
-                var orders = await DataStore.GetOrdersAsync(true);
+                var orders = await OrdersDataStore.GetItemsAsync(true);
+
                 foreach (var order in orders)
                 {
                     Orders.Add(order);
@@ -78,10 +78,9 @@ namespace I4_QM_app.ViewModels
             // TODO abstract dialog_service
             bool answer = await Shell.Current.DisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
 
-            await Connection.Send_Message();
-
             // This will push the ItemDetailPage onto the navigation stack
-            if (answer) await Shell.Current.GoToAsync($"{nameof(OrderDetailPage)}?{nameof(OrderDetailViewModel.ItemId)}={item.Id}");
+            if (answer) await Shell.Current.GoToAsync($"{nameof(OrderDetailPage)}?{nameof(OrderDetailViewModel.OrderId)}={item.Id}");
+
         }
 
     }

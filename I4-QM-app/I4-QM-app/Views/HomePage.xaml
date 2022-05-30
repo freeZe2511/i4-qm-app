@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="I4_QM_app.Views.AboutPage"
+             x:Class="I4_QM_app.Views.HomePage"
              xmlns:vm="clr-namespace:I4_QM_app.ViewModels"
              Title="{Binding Title}">
     
     <ContentPage.BindingContext>
-        <vm:AboutViewModel />
+        <vm:HomeViewModel />
     </ContentPage.BindingContext>
     
     <ContentPage.Resources>

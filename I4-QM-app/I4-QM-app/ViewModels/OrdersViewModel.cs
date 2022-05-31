@@ -33,7 +33,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 Orders.Clear();
-                var orders = await OrdersDataStore.GetItemsAsync(true);
+                var orders = await App.orderService.GetItemsAsync(true);
 
                 foreach (var order in orders)
                 {

@@ -1,8 +1,11 @@
 ﻿using I4_QM_app.Models;
 using MQTTnet;
+using MQTTnet.Client;
 using MQTTnet.Client.Options;
-using MQTTnet.Client.Receiving;
+using MQTTnet.Client.Subscribing;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +14,7 @@ namespace I4_QM_app.Services
 {
     public class MqttConnection
     {
+        private static IMqttClient _mqttClient;
 
         // reconnect auto?
         // https://github.com/dotnet/MQTTnet/blob/master/Samples/ManagedClient/Managed_Client_Simple_Samples.cs
@@ -28,84 +32,87 @@ namespace I4_QM_app.Services
 
                 await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
 
-                var applicationMessage = new MqttApplicationMessageBuilder()
-                    // TODO mqtt topic+message concept
-                    .WithTopic("sfm/sg/ready")
-                    .WithPayload(item.Id)
-                    .Build();
-
-                await mqttClient.PublishAsync(applicationMessage, CancellationToken.None);
+                PublishMessage("sfm/sg/ready", item.Id);
 
             }
         }
 
         public static async Task Handle_Received_Application_Message()
         {
-            /*
-             * This sample subscribes to a topic and processes the received message.
-             */
+            // Create client
+            if (_mqttClient == null) _mqttClient = new MqttFactory().CreateMqttClient();
 
-            var mqttFactory = new MqttFactory();
-
-            using (var mqttClient = mqttFactory.CreateMqttClient())
+            var options = new MqttClientOptionsBuilder().WithClientId("QM-App")
+                                                        .WithTcpServer("broker.hivemq.com")
+                                                        .Build();
+            // When client connected to the server
+            _mqttClient.UseConnectedHandler(async e =>
             {
-                var mqttClientOptions = new MqttClientOptionsBuilder()
-                    .WithTcpServer("broker.hivemq.com")
-                    .Build();
+                // Subscribe to a topic TODO topic filter
+                MqttClientSubscribeResult subResult = await _mqttClient.SubscribeAsync(new MqttClientSubscribeOptionsBuilder()
+                                                                   .WithTopicFilter("sfm/sg/#")
+                                                                   .Build());
+                // Sen a test message to the server
+                PublishMessage("sfm/sg/connected", "QM App connected");
+            });
 
-                // Setup message handling before connecting so that queued messages
-                // are also handled properly.When there is no event handler attached all
-                //received messages get lost.
-                //mqttClient.ApplicationMessageReceivedHandler += e =>
-                // {
-                //     Console.WriteLine("Received application message.");
-                //     e.DumpToConsole();
-
-                //     return Task.CompletedTask;
-                // };
-
-                //mqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(obj =>
-                //            {
-                //                Console.WriteLine(obj);
-                //            });
-
-                Console.WriteLine("test");
-
-                mqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(e =>
+            // When client received a message from server
+            _mqttClient.UseApplicationMessageReceivedHandler(async e =>
+            {
+                switch (e.ApplicationMessage.Topic)
                 {
-                    Console.WriteLine("Received application message.");
-                    Console.WriteLine(e);
-                });
+                    case "sfm/sg/order/add":
+                        var message = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+
+                        Console.WriteLine($"+ Add");
+
+                        //serialize order and add to db
+                        List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(message);
+
+                        foreach (var order in orders)
+                        {
+                            await App.orderService.AddItemAsync(order);
+                        }
+                        break;
+
+                    case "sfm/sg/order/delete":
+                        var id = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                        Console.WriteLine($"+ Delete = {id}");
+                        //todo delete order if orderId
+                        //await OrdersDataStore.DeleteItemAsync(id);
+                        break;
+
+                    default:
+                        Console.WriteLine($"+ Rest = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
+                        break;
+                }
 
 
 
+            });
 
-                await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+            // Connect ot server
+            await _mqttClient.ConnectAsync(options, CancellationToken.None);
 
-                var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
-                    .WithTopicFilter(f => { f.WithTopic("sfm/sg/order"); })
-                    .Build();
-
-                await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
-
-            }
         }
 
-        private void HandleMessageReceived(MqttApplicationMessage applicationMessage)
+        private static async void PublishMessage(string topic, string message)
         {
-            Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
-            Console.WriteLine($"+ Topic = {applicationMessage.Topic}");
+            // Create mqttMessage
+            var mqttMessage = new MqttApplicationMessageBuilder()
+                                .WithTopic("sfm/sg/connected")
+                                .WithPayload(message)
+                                .WithExactlyOnceQoS()
+                                .Build();
 
-            Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(applicationMessage.Payload)}");
-            Console.WriteLine($"+ QoS = {applicationMessage.QualityOfServiceLevel}");
-            Console.WriteLine($"+ Retain = {applicationMessage.Retain}");
-            Console.WriteLine();
+            // Publish the message asynchronously
+            await _mqttClient.PublishAsync(mqttMessage, CancellationToken.None);
         }
-
-
-
-        // TODO subscribe to messages -> use content to ... ?
-
 
     }
+
+
+
+
 }
+

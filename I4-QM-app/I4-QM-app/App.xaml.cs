@@ -4,6 +4,7 @@ using LiteDB;
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app
@@ -16,13 +17,13 @@ namespace I4_QM_app
             InitializeComponent();
 
             //DependencyService.Register<MockDataStore>();
-            DependencyService.Register<OrderService>();
+            //DependencyService.Register<OrderService>();
             MainPage = new AppShell();
-
         }
 
         protected override void OnStart()
         {
+            Task.Run(async () => { await MqttConnection.Handle_Received_Application_Message(); });
         }
 
         protected override void OnSleep()
@@ -56,6 +57,8 @@ namespace I4_QM_app
         // Eigenschaft für den Zugriff
         public static ILiteDatabase DB => _db.Value;
 
+        // todo dependency injection? => alle OrderDataStore zu App.orderService
+        public static OrderService orderService = new OrderService();
 
 
         //public static int UserId { get; set; }

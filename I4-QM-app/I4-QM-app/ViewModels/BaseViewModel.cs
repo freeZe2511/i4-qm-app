@@ -1,16 +1,13 @@
-﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
+        //public IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
 
         bool isBusy = false;
         public bool IsBusy

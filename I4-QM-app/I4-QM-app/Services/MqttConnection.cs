@@ -113,7 +113,7 @@ namespace I4_QM_app.Services
         {
             // Create mqttMessage
             var mqttMessage = new MqttApplicationMessageBuilder()
-                                .WithTopic("sfm/sg/connected")
+                                .WithTopic(topic)
                                 .WithPayload(message)
                                 .WithExactlyOnceQoS()
                                 .Build();

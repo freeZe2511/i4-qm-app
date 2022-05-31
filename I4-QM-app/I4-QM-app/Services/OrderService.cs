@@ -13,11 +13,14 @@ namespace I4_QM_app.Services
         public OrderService()
         {
             orderCollection = App.DB.GetCollection<Order>();
+            //orderCollection.EnsureIndex(x => x.Id);
         }
 
         public async Task<bool> AddItemAsync(Order order)
         {
+            //if (orderCollection.Exists(order.Id)) 
             orderCollection.Insert(order);
+
             return await Task.FromResult(true);
         }
 
@@ -29,7 +32,7 @@ namespace I4_QM_app.Services
 
         public async Task<bool> DeleteItemAsync(string id)
         {
-            //orderCollection.Delete(a => a.Id == id);
+            orderCollection.Delete(id);
             //return await Task.FromResult(true);
             return await Task.FromResult(true);
         }

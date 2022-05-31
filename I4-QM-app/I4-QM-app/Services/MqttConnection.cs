@@ -78,9 +78,21 @@ namespace I4_QM_app.Services
 
                     case "sfm/sg/order/delete":
                         var id = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+
                         Console.WriteLine($"+ Delete = {id}");
-                        //todo delete order if orderId
-                        //await OrdersDataStore.DeleteItemAsync(id);
+
+                        //delete order with orderId
+                        await App.OrdersDataStore.DeleteItemAsync(id);
+                        break;
+
+                    case "sfm/sg/order/all":
+                        //delete order with orderId
+                        var orders1 = await App.OrdersDataStore.GetItemsAsync();
+
+                        foreach (var order in orders1)
+                        {
+                            PublishMessage("sfm/sg/xxx", order.Id);
+                        }
                         break;
 
                     default:

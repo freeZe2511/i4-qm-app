@@ -1,6 +1,9 @@
 ﻿using I4_QM_app.Models;
 using MQTTnet;
 using MQTTnet.Client.Options;
+using MQTTnet.Client.Receiving;
+using System;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,7 +15,7 @@ namespace I4_QM_app.Services
         // reconnect auto?
         // https://github.com/dotnet/MQTTnet/blob/master/Samples/ManagedClient/Managed_Client_Simple_Samples.cs
 
-
+        // refactor 1 connection
         public static async Task Send_Message(Order item)
         {
             var mqttFactory = new MqttFactory();
@@ -66,6 +69,17 @@ namespace I4_QM_app.Services
                 //                Console.WriteLine(obj);
                 //            });
 
+                Console.WriteLine("test");
+
+                mqttClient.ApplicationMessageReceivedHandler = new MqttApplicationMessageReceivedHandlerDelegate(e =>
+                {
+                    Console.WriteLine("Received application message.");
+                    Console.WriteLine(e);
+                });
+
+
+
+
                 await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
 
                 var mqttSubscribeOptions = mqttFactory.CreateSubscribeOptionsBuilder()
@@ -75,6 +89,17 @@ namespace I4_QM_app.Services
                 await mqttClient.SubscribeAsync(mqttSubscribeOptions, CancellationToken.None);
 
             }
+        }
+
+        private void HandleMessageReceived(MqttApplicationMessage applicationMessage)
+        {
+            Console.WriteLine("### RECEIVED APPLICATION MESSAGE ###");
+            Console.WriteLine($"+ Topic = {applicationMessage.Topic}");
+
+            Console.WriteLine($"+ Payload = {Encoding.UTF8.GetString(applicationMessage.Payload)}");
+            Console.WriteLine($"+ QoS = {applicationMessage.QualityOfServiceLevel}");
+            Console.WriteLine($"+ Retain = {applicationMessage.Retain}");
+            Console.WriteLine();
         }
 
 

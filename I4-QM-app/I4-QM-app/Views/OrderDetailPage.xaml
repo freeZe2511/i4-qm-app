@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.OrderDetailPage"
              xmlns:model="clr-namespace:I4_QM_app.Models"
+             xmlns:input="clr-namespace:Plugin.InputKit.Shared.Controls;assembly=Plugin.InputKit"
              Title="{Binding Title}">
 
     <StackLayout Spacing="20" Padding="15">
@@ -21,29 +22,13 @@
                 SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <!--<Grid RowSpacing="100">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        --><!-- This column will be as wide as the third column --><!--
-                        <Button Grid.Column="0" Text=""/>
-                        --><!-- This column will be twice as wide as the rest --><!--
-                        <Button Grid.Column="1" Text=""/>
-                        --><!-- This column will be as wide as the first column --><!--
-                        <Button Grid.Column="2" Text=""/>
-                        <Button Grid.Column="3" Text=""/>
-                    </Grid>-->
-                    <!--<BoxView HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>-->
                     <StackLayout Padding="10" x:DataType="model:Additive">
                         <Label Text="{Binding Name}" 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16"
                             FontAttributes="Bold"/>
-                       
+
                         <BoxView HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
                         <StackLayout.GestureRecognizers>
                             <!--<TapGestureRecognizer 
@@ -51,7 +36,8 @@
                             </TapGestureRecognizer>-->
                         </StackLayout.GestureRecognizers>
                     </StackLayout>
-                </DataTemplate>
+<!--TODO checkboxes-->
+                </DataTemplate>                
             </CollectionView.ItemTemplate>
         </CollectionView>
 

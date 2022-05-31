@@ -10,5 +10,6 @@ namespace I4_QM_app.Views
             InitializeComponent();
             BindingContext = new OrderDetailViewModel();
         }
+
     }
 }

@@ -91,6 +91,7 @@ namespace I4_QM_app.ViewModels
             await MqttConnection.Send_Message(Order);
 
             // test
+            Console.WriteLine("test");
             await MqttConnection.Handle_Received_Application_Message();
 
             // test
@@ -123,4 +124,6 @@ namespace I4_QM_app.ViewModels
         }
 
     }
+
 }
+

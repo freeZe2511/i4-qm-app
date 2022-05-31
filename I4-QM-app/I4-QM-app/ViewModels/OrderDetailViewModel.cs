@@ -92,9 +92,9 @@ namespace I4_QM_app.ViewModels
 
 
             // test
-            var order = await App.orderService.GetItemAsync(Order.Id);
+            var order = await App.OrdersDataStore.GetItemAsync(Order.Id);
             order.Status = Status.waiting;
-            await App.orderService.UpdateItemAsync(order);
+            await App.OrdersDataStore.UpdateItemAsync(order);
 
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
@@ -104,7 +104,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var order = await App.orderService.GetItemAsync(orderId);
+                var order = await App.OrdersDataStore.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
                 UserId = order.UserId;

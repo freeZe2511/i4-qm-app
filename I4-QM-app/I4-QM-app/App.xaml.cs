@@ -17,7 +17,8 @@ namespace I4_QM_app
             InitializeComponent();
 
             //DependencyService.Register<MockDataStore>();
-            //DependencyService.Register<OrderService>();
+            DependencyService.Register<OrderService>();
+
             MainPage = new AppShell();
         }
 
@@ -57,8 +58,8 @@ namespace I4_QM_app
         // Eigenschaft für den Zugriff
         public static ILiteDatabase DB => _db.Value;
 
-        // todo dependency injection? => alle OrderDataStore zu App.orderService
-        public static OrderService orderService = new OrderService();
+
+        public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
 
 
         //public static int UserId { get; set; }

@@ -59,6 +59,7 @@ namespace I4_QM_app.Services
             // When client received a message from server
             _mqttClient.UseApplicationMessageReceivedHandler(async e =>
             {
+                // refactor 
                 switch (e.ApplicationMessage.Topic)
                 {
                     case "sfm/sg/order/add":
@@ -71,7 +72,7 @@ namespace I4_QM_app.Services
 
                         foreach (var order in orders)
                         {
-                            await App.orderService.AddItemAsync(order);
+                            await App.OrdersDataStore.AddItemAsync(order);
                         }
                         break;
 

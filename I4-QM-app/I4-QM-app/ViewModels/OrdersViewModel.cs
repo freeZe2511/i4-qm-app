@@ -33,11 +33,14 @@ namespace I4_QM_app.ViewModels
             try
             {
                 Orders.Clear();
-                var orders = await OrdersDataStore.GetItemsAsync(true);
+                var orders = await App.OrdersDataStore.GetItemsAsync(true);
 
                 foreach (var order in orders)
                 {
+                    //test filter
+                    //if (order.Status != Status.ready) 
                     Orders.Add(order);
+                    // TODO sort
                 }
 
 

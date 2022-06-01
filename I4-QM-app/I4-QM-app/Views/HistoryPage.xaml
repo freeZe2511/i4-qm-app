@@ -1,12 +1,43 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="I4_QM_app.Views.HistoryPage">
-    <ContentPage.Content>
-        <StackLayout>
-            <Label Text="History!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
-        </StackLayout>
-    </ContentPage.Content>
+             x:Class="I4_QM_app.Views.HistoryPage"
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
+             xmlns:model="clr-namespace:I4_QM_app.Models"
+             x:Name="BrowseHistoryPage"
+             Title="{Binding Title}">
+
+    <RefreshView x:DataType="local:HistoryViewModel" Command="{Binding LoadHistoryCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <CollectionView x:Name="HistoryListView"
+                ItemsSource="{Binding History}"
+                SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Padding="10" x:DataType="model:Order">
+                        <Label Text="{Binding Id}" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16"
+                            FontAttributes="Bold"/>
+                        <Label Text="{Binding Amount}" 
+                            LineBreakMode="NoWrap"
+                            Style="{DynamicResource ListItemDetailTextStyle}"
+                            FontSize="13" />
+                        <Label Text="{Binding Status}" 
+                            LineBreakMode="NoWrap"
+                            Style="{DynamicResource ListItemDetailTextStyle}"
+                            FontSize="13" />
+                        <BoxView HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                NumberOfTapsRequired="1"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:HistoryViewModel}}, Path=OrderTapped}"		
+                                CommandParameter="{Binding .}">
+                            </TapGestureRecognizer>
+                        </StackLayout.GestureRecognizers>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
 </ContentPage>

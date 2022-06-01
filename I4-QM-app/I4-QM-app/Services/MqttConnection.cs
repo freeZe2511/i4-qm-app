@@ -91,10 +91,11 @@ namespace I4_QM_app.Services
                         await App.OrdersDataStore.DeleteItemAsync(id);
                         break;
 
-                    case "sfm/sg/order/get-all":
+                    case "sfm/sg/order/get":
                         //delete order with orderId
                         var orders1 = await App.OrdersDataStore.GetItemsAsync();
 
+                        // todo send list, not single
                         foreach (var order in orders1)
                         {
                             PublishMessage("sfm/sg/order/all", order.Id);

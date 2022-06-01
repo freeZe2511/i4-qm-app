@@ -97,9 +97,11 @@ namespace I4_QM_app.ViewModels
             // check if all additives are done (mock for enabled/disabled done btn)
             if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
 
-            // done           
+            // set done and save in history         
             Order.Status = Status.done;
+            // needed?! or just delete entry in orders db
             await App.OrdersDataStore.UpdateItemAsync(Order);
+            await App.HistoryDataStore.AddItemAsync(Order);
 
             // send mqtt
             await MqttConnection.HandleFinishedOrder(Order);

@@ -16,6 +16,8 @@ namespace I4_QM_app.ViewModels
         public Command LoadOrdersCommand { get; }
         public Command<Order> OrderTapped { get; }
 
+        public string OrdersCount { get => Orders.Count.ToString(); }
+
         public OrdersViewModel()
         {
             Title = "Orders";

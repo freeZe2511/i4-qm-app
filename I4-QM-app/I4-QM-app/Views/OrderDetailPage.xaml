@@ -2,8 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.OrderDetailPage"
-             xmlns:model="clr-namespace:I4_QM_app.Models"
-             xmlns:input="clr-namespace:Plugin.InputKit.Shared.Controls;assembly=Plugin.InputKit"
+             xmlns:model="clr-namespace:I4_QM_app.Models"             
              Title="{Binding Title}">
 
     <StackLayout Spacing="20" Padding="15">
@@ -22,27 +21,46 @@
                 SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <StackLayout Padding="10" x:DataType="model:Additive">
-                        <Label Text="{Binding Name}" 
-                            LineBreakMode="NoWrap" 
+                    <StackLayout Padding="10" x:DataType="model:Additive" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <Label Text="{Binding Name}"
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16"
                             FontAttributes="Bold"/>
+                        <CheckBox IsChecked="{Binding Done}"></CheckBox>
 
                         <BoxView HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
                         <StackLayout.GestureRecognizers>
-                            <!--<TapGestureRecognizer 
+                            <!--<TapGestureRecognizer> 
                                 
                             </TapGestureRecognizer>-->
                         </StackLayout.GestureRecognizers>
-                    </StackLayout>
-<!--TODO checkboxes-->
+                    </StackLayout>                    
+                        <!--<Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="3*"/>
+
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="1*"/>
+                                --><!--<RowDefinition Height="3*"/>
+                                <RowDefinition Height="3*"/>--><!--
+                            </Grid.RowDefinitions>
+                            <BoxView Grid.Row="0" Grid.ColumnSpan="2" Color="Red"/>
+                            --><!--<BoxView Grid.Row="1" Grid.Column="0" Color="Blue"/>
+                            <BoxView Grid.Row="1" Grid.Column="1" Color="Yellow"/>
+                            <BoxView Grid.Row="2" Grid.Column="0" Color="Green"/>
+                            <BoxView Grid.Row="2" Grid.Column="1" Color="Orange"/>--><!--
+
+                        </Grid>-->              
+                                   
+                    <!--TODO checkboxes-->
                 </DataTemplate>                
             </CollectionView.ItemTemplate>
         </CollectionView>
 
         <!--Submit-->
-        <Button VerticalOptions="Center" Text="Done!" Command="{Binding DoneCommand}" BackgroundColor="{StaticResource Primary}"/>
+        <Button VerticalOptions="Center" Text="Done" Command="{Binding DoneCommand}" BackgroundColor="{StaticResource Primary}" IsEnabled="{Binding DoneEnabled}"/>
 
 
     </StackLayout>

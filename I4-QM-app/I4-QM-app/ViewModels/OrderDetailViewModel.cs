@@ -21,20 +21,27 @@ namespace I4_QM_app.ViewModels
         private DateTime created;
         private DateTime due;
 
+        private bool doneEnabled;
+
         public Command DoneCommand { get; }
+
+        public bool DoneEnabled
+        {
+            get => doneEnabled;
+            set { doneEnabled = value; }
+        }
 
         public OrderDetailViewModel()
         {
             // execute/ canexecute? => canexecute if all additives are checked?
             DoneCommand = new Command(OnDoneClicked);
+            // TODO done btn enable/disable
+            doneEnabled = true;
         }
 
         public string OrderId
         {
-            get
-            {
-                return orderId;
-            }
+            get => orderId;
             set
             {
                 orderId = value;
@@ -85,16 +92,22 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref due, value);
         }
 
-        private async void OnDoneClicked(object obj)
+        private void CheckChange()
         {
+            if (!Order.Additives.TrueForAll(a => a.Done == true)) doneEnabled = false;
+        }
+
+        private async void OnDoneClicked()
+        {
+            // check if all additives are done (mock for enabled/disabled done btn)
+            if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
+
+            // test            
+            Order.Status = Status.ready;
+            await App.OrdersDataStore.UpdateItemAsync(Order);
+
             // TODO send mqtt
-            await MqttConnection.Send_Message(Order);
-
-
-            // test
-            var order = await App.OrdersDataStore.GetItemAsync(Order.Id);
-            order.Status = Status.waiting;
-            await App.OrdersDataStore.UpdateItemAsync(order);
+            await MqttConnection.HandleFinishedOrder(Order);
 
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");

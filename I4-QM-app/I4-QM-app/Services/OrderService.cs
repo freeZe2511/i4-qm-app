@@ -32,8 +32,8 @@ namespace I4_QM_app.Services
 
         public async Task<bool> DeleteItemAsync(string id)
         {
+            // index?
             orderCollection.Delete(id);
-            //return await Task.FromResult(true);
             return await Task.FromResult(true);
         }
 

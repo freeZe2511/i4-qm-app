@@ -19,8 +19,8 @@ namespace I4_QM_app.Services
         // reconnect auto?
         // https://github.com/dotnet/MQTTnet/blob/master/Samples/ManagedClient/Managed_Client_Simple_Samples.cs
 
-        // refactor 1 connection
-        public static async Task Send_Message(Order item)
+        // refactor 1 connection -> connectionHandler
+        public static async Task HandleFinishedOrder(Order item)
         {
             var mqttFactory = new MqttFactory();
 
@@ -32,7 +32,10 @@ namespace I4_QM_app.Services
 
                 await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
 
-                PublishMessage("sfm/sg/ready", item.Id);
+                // serialize order to string
+                var message = JsonConvert.SerializeObject(item);
+
+                PublishMessage("sfm/sg/order/ready", message);
 
             }
         }
@@ -85,13 +88,13 @@ namespace I4_QM_app.Services
                         await App.OrdersDataStore.DeleteItemAsync(id);
                         break;
 
-                    case "sfm/sg/order/all":
+                    case "sfm/sg/order/get-all":
                         //delete order with orderId
                         var orders1 = await App.OrdersDataStore.GetItemsAsync();
 
                         foreach (var order in orders1)
                         {
-                            PublishMessage("sfm/sg/xxx", order.Id);
+                            PublishMessage("sfm/sg/order/all", order.Id);
                         }
                         break;
 
@@ -104,7 +107,7 @@ namespace I4_QM_app.Services
 
             });
 
-            // Connect ot server
+            // Connect to server
             await _mqttClient.ConnectAsync(options, CancellationToken.None);
 
         }

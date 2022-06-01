@@ -26,6 +26,7 @@
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16"
                             FontAttributes="Bold"/>
+                        <Entry Keyboard="Numeric" Text="{Binding Amount}"></Entry>
                         <CheckBox IsChecked="{Binding Done}"></CheckBox>
 
                         <BoxView HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>

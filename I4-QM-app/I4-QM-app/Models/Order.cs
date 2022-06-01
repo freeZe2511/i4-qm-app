@@ -22,9 +22,8 @@ namespace I4_QM_app.Models
 
     public enum Status
     {
-        test,
-        waiting,
-        ready
+        open,
+        done
     }
 
 

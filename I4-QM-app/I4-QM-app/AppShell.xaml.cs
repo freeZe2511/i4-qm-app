@@ -19,7 +19,7 @@ namespace I4_QM_app
         }
     }
 
-    // TODO better place
+    // TODO better place?
     namespace Controls
     {
         public class FlyoutItemIconFont : FlyoutItem

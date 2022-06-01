@@ -92,21 +92,16 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref due, value);
         }
 
-        private void CheckChange()
-        {
-            if (!Order.Additives.TrueForAll(a => a.Done == true)) doneEnabled = false;
-        }
-
         private async void OnDoneClicked()
         {
             // check if all additives are done (mock for enabled/disabled done btn)
             if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
 
-            // test            
-            Order.Status = Status.ready;
+            // done           
+            Order.Status = Status.done;
             await App.OrdersDataStore.UpdateItemAsync(Order);
 
-            // TODO send mqtt
+            // send mqtt
             await MqttConnection.HandleFinishedOrder(Order);
 
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one

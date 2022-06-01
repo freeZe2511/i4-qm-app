@@ -14,6 +14,8 @@ namespace I4_QM_app.Services
 {
     public class MqttConnection
     {
+        private static string serverURL = "broker.hivemq.com";
+        private static string baseTopicURL = "sfm/sg/";
         private static IMqttClient _mqttClient;
 
         // reconnect auto?
@@ -27,7 +29,7 @@ namespace I4_QM_app.Services
             using (var mqttClient = mqttFactory.CreateMqttClient())
             {
                 var mqttClientOptions = new MqttClientOptionsBuilder()
-                    .WithTcpServer("broker.hivemq.com")
+                    .WithTcpServer(serverURL)
                     .Build();
 
                 await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
@@ -35,7 +37,7 @@ namespace I4_QM_app.Services
                 // serialize order to string
                 var message = JsonConvert.SerializeObject(item);
 
-                PublishMessage("sfm/sg/order/ready", message);
+                PublishMessage(baseTopicURL + "order/ready", message);
 
             }
         }
@@ -46,17 +48,17 @@ namespace I4_QM_app.Services
             if (_mqttClient == null) _mqttClient = new MqttFactory().CreateMqttClient();
 
             var options = new MqttClientOptionsBuilder().WithClientId("QM-App")
-                                                        .WithTcpServer("broker.hivemq.com")
+                                                        .WithTcpServer(serverURL)
                                                         .Build();
             // When client connected to the server
             _mqttClient.UseConnectedHandler(async e =>
             {
                 // Subscribe to a topic TODO topic filter
                 MqttClientSubscribeResult subResult = await _mqttClient.SubscribeAsync(new MqttClientSubscribeOptionsBuilder()
-                                                                   .WithTopicFilter("sfm/sg/#")
+                                                                   .WithTopicFilter(baseTopicURL + "#")
                                                                    .Build());
                 // Sen a test message to the server
-                PublishMessage("sfm/sg/connected", "QM App connected");
+                PublishMessage(baseTopicURL + "connected", "QM App connected");
             });
 
             // When client received a message from server
@@ -80,6 +82,7 @@ namespace I4_QM_app.Services
                         break;
 
                     case "sfm/sg/order/delete":
+                        // maybe refactor to be able to delete from id list
                         var id = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
                         Console.WriteLine($"+ Delete = {id}");

@@ -16,8 +16,11 @@ namespace I4_QM_app.ViewModels
         public Command LoadOrdersCommand { get; }
         public Command<Order> OrderTapped { get; }
 
+        public string OrdersCount { get => Orders.Count.ToString(); }
+
         public OrdersViewModel()
         {
+            // maybe bad binding atm
             Title = "Orders";
             Orders = new ObservableCollection<Order>();
             // TODO maybe overloading main thread
@@ -38,7 +41,7 @@ namespace I4_QM_app.ViewModels
                 foreach (var order in orders)
                 {
                     //test filter
-                    //if (order.Status != Status.ready) 
+                    //if (order.Status == Status.open)
                     Orders.Add(order);
                     // TODO sort
                 }

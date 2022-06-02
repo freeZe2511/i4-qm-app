@@ -14,49 +14,82 @@ namespace I4_QM_app.Services
 {
     public class MqttConnection
     {
+        private static string serverURL = "broker.hivemq.com";
+        private static string baseTopicURL = "sfm/sg/";
         private static IMqttClient _mqttClient;
 
         // reconnect auto?
         // https://github.com/dotnet/MQTTnet/blob/master/Samples/ManagedClient/Managed_Client_Simple_Samples.cs
 
-        // refactor 1 connection
-        public static async Task Send_Message(Order item)
+
+        // refactor 1 connection -> connectionHandler
+        public static async Task HandleFinishedOrder(Order item)
         {
             var mqttFactory = new MqttFactory();
 
             using (var mqttClient = mqttFactory.CreateMqttClient())
             {
                 var mqttClientOptions = new MqttClientOptionsBuilder()
-                    .WithTcpServer("broker.hivemq.com")
+                    .WithTcpServer(serverURL)
                     .Build();
 
                 await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
 
-                PublishMessage("sfm/sg/ready", item.Id);
+                // serialize order to string
+                var message = JsonConvert.SerializeObject(item);
+
+                PublishMessage(baseTopicURL + "order/ready", message);
 
             }
         }
 
-        public static async Task Handle_Received_Application_Message()
+        public static async Task ConnectClient()
         {
             // Create client
             if (_mqttClient == null) _mqttClient = new MqttFactory().CreateMqttClient();
 
             var options = new MqttClientOptionsBuilder().WithClientId("QM-App")
-                                                        .WithTcpServer("broker.hivemq.com")
+                                                        .WithTcpServer(serverURL)
                                                         .Build();
             // When client connected to the server
+            HandleInitialConnection();
+
+            // When client received a message from server
+            HandleReceivedMessage();
+
+            // Connect to server
+            await _mqttClient.ConnectAsync(options, CancellationToken.None);
+
+        }
+
+        private static async void PublishMessage(string topic, string message)
+        {
+            // Create mqttMessage
+            var mqttMessage = new MqttApplicationMessageBuilder()
+                                .WithTopic(topic)
+                                .WithPayload(message)
+                                .WithExactlyOnceQoS()
+                                .Build();
+
+            // Publish the message asynchronously
+            await _mqttClient.PublishAsync(mqttMessage, CancellationToken.None);
+        }
+
+        private static void HandleInitialConnection()
+        {
             _mqttClient.UseConnectedHandler(async e =>
             {
                 // Subscribe to a topic TODO topic filter
                 MqttClientSubscribeResult subResult = await _mqttClient.SubscribeAsync(new MqttClientSubscribeOptionsBuilder()
-                                                                   .WithTopicFilter("sfm/sg/#")
+                                                                   .WithTopicFilter(baseTopicURL + "#")
                                                                    .Build());
                 // Sen a test message to the server
-                PublishMessage("sfm/sg/connected", "QM App connected");
+                PublishMessage(baseTopicURL + "connected", "QM App connected");
             });
+        }
 
-            // When client received a message from server
+        private static void HandleReceivedMessage()
+        {
             _mqttClient.UseApplicationMessageReceivedHandler(async e =>
             {
                 // refactor 
@@ -77,6 +110,7 @@ namespace I4_QM_app.Services
                         break;
 
                     case "sfm/sg/order/delete":
+                        // maybe refactor to be able to delete from id list
                         var id = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
                         Console.WriteLine($"+ Delete = {id}");
@@ -85,13 +119,14 @@ namespace I4_QM_app.Services
                         await App.OrdersDataStore.DeleteItemAsync(id);
                         break;
 
-                    case "sfm/sg/order/all":
+                    case "sfm/sg/order/get":
                         //delete order with orderId
                         var orders1 = await App.OrdersDataStore.GetItemsAsync();
 
+                        // todo send list, not single
                         foreach (var order in orders1)
                         {
-                            PublishMessage("sfm/sg/xxx", order.Id);
+                            PublishMessage("sfm/sg/order/all", order.Id);
                         }
                         break;
 
@@ -103,23 +138,6 @@ namespace I4_QM_app.Services
 
 
             });
-
-            // Connect ot server
-            await _mqttClient.ConnectAsync(options, CancellationToken.None);
-
-        }
-
-        private static async void PublishMessage(string topic, string message)
-        {
-            // Create mqttMessage
-            var mqttMessage = new MqttApplicationMessageBuilder()
-                                .WithTopic(topic)
-                                .WithPayload(message)
-                                .WithExactlyOnceQoS()
-                                .Build();
-
-            // Publish the message asynchronously
-            await _mqttClient.PublishAsync(mqttMessage, CancellationToken.None);
         }
 
     }

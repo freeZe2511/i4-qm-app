@@ -21,6 +21,7 @@ namespace I4_QM_app.Services
         // reconnect auto?
         // https://github.com/dotnet/MQTTnet/blob/master/Samples/ManagedClient/Managed_Client_Simple_Samples.cs
 
+
         // refactor 1 connection -> connectionHandler
         public static async Task HandleFinishedOrder(Order item)
         {
@@ -42,7 +43,7 @@ namespace I4_QM_app.Services
             }
         }
 
-        public static async Task Handle_Received_Application_Message()
+        public static async Task ConnectClient()
         {
             // Create client
             if (_mqttClient == null) _mqttClient = new MqttFactory().CreateMqttClient();
@@ -51,6 +52,31 @@ namespace I4_QM_app.Services
                                                         .WithTcpServer(serverURL)
                                                         .Build();
             // When client connected to the server
+            HandleInitialConnection();
+
+            // When client received a message from server
+            HandleReceivedMessage();
+
+            // Connect to server
+            await _mqttClient.ConnectAsync(options, CancellationToken.None);
+
+        }
+
+        private static async void PublishMessage(string topic, string message)
+        {
+            // Create mqttMessage
+            var mqttMessage = new MqttApplicationMessageBuilder()
+                                .WithTopic(topic)
+                                .WithPayload(message)
+                                .WithExactlyOnceQoS()
+                                .Build();
+
+            // Publish the message asynchronously
+            await _mqttClient.PublishAsync(mqttMessage, CancellationToken.None);
+        }
+
+        private static void HandleInitialConnection()
+        {
             _mqttClient.UseConnectedHandler(async e =>
             {
                 // Subscribe to a topic TODO topic filter
@@ -60,8 +86,10 @@ namespace I4_QM_app.Services
                 // Sen a test message to the server
                 PublishMessage(baseTopicURL + "connected", "QM App connected");
             });
+        }
 
-            // When client received a message from server
+        private static void HandleReceivedMessage()
+        {
             _mqttClient.UseApplicationMessageReceivedHandler(async e =>
             {
                 // refactor 
@@ -110,23 +138,6 @@ namespace I4_QM_app.Services
 
 
             });
-
-            // Connect to server
-            await _mqttClient.ConnectAsync(options, CancellationToken.None);
-
-        }
-
-        private static async void PublishMessage(string topic, string message)
-        {
-            // Create mqttMessage
-            var mqttMessage = new MqttApplicationMessageBuilder()
-                                .WithTopic(topic)
-                                .WithPayload(message)
-                                .WithExactlyOnceQoS()
-                                .Build();
-
-            // Publish the message asynchronously
-            await _mqttClient.PublishAsync(mqttMessage, CancellationToken.None);
         }
 
     }

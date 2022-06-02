@@ -1,6 +1,5 @@
 ﻿using I4_QM_app.Models;
 using LiteDB;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,8 +13,6 @@ namespace I4_QM_app.Services
         public OrderService()
         {
             orderCollection = App.DB.GetCollection<Order>("orders");
-            Console.WriteLine("oooooooooooooooooooooooooooooooooooooooooooooooooooo");
-            Console.WriteLine(orderCollection);
             //orderCollection.EnsureIndex(x => x.Id);
         }
 

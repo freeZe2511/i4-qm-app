@@ -25,7 +25,7 @@ namespace I4_QM_app
 
         protected override void OnStart()
         {
-            Task.Run(async () => { await MqttConnection.Handle_Received_Application_Message(); });
+            Task.Run(async () => { await MqttConnection.ConnectClient(); });
         }
 
         protected override void OnSleep()

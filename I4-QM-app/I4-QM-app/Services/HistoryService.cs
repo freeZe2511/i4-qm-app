@@ -1,6 +1,5 @@
 ﻿using I4_QM_app.Models;
 using LiteDB;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,8 +13,6 @@ namespace I4_QM_app.Services
         public HistoryService()
         {
             historyCollection = App.DB.GetCollection<Order>("history");
-            Console.WriteLine("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-            Console.WriteLine(historyCollection);
             //orderCollection.EnsureIndex(x => x.Id);
         }
 

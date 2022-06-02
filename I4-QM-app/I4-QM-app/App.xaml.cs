@@ -17,14 +17,15 @@ namespace I4_QM_app
             InitializeComponent();
 
             //DependencyService.Register<MockDataStore>();
-            DependencyService.Register<OrderService>();
+            //DependencyService.Register<OrderService>();
+            //DependencyService.Register<HistoryService>();
 
             MainPage = new AppShell();
         }
 
         protected override void OnStart()
         {
-            Task.Run(async () => { await MqttConnection.Handle_Received_Application_Message(); });
+            Task.Run(async () => { await MqttConnection.ConnectClient(); });
         }
 
         protected override void OnSleep()
@@ -50,7 +51,8 @@ namespace I4_QM_app
             };
 
             var db = new LiteDatabase(connection);
-            var orders = db.GetCollection<Order>();
+            var orders = db.GetCollection<Order>("orders");
+            var history = db.GetCollection<Order>("history");
 
             return db;
         }
@@ -59,7 +61,10 @@ namespace I4_QM_app
         public static ILiteDatabase DB => _db.Value;
 
 
-        public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
+        //public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
+        public static IDataStore<Order> OrdersDataStore => new OrderService();
+        //public static IDataStore<Order> HistoryDataStore => DependencyService.Get<IDataStore<Order>>();
+        public static IDataStore<Order> HistoryDataStore => new HistoryService();
 
 
         //public static int UserId { get; set; }

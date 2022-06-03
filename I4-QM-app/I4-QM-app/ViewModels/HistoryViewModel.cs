@@ -46,7 +46,8 @@ namespace I4_QM_app.ViewModels
             try
             {
                 History.Clear();
-                var history = await App.HistoryDataStore.GetItemsAsync(true);
+                //var orders = await App.OrdersDataStore.GetItemsAsync(true);
+                var history = await App.OrdersDataStore.GetItemsFilteredAsync(a => a.Status != Status.open);
 
                 foreach (var order in history)
                 {

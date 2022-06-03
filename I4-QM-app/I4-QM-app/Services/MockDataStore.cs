@@ -75,5 +75,10 @@ namespace I4_QM_app.Services
         {
             return await Task.FromResult(orders);
         }
+
+        public async Task<IEnumerable<Order>> GetItemsFilteredAsync(System.Func<Order, bool> predicate)
+        {
+            return await Task.FromResult(orders.Where(predicate).ToList());
+        }
     }
 }

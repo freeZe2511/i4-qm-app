@@ -24,6 +24,7 @@ namespace I4_QM_app.Models
     {
         open,
         done
+        //maybe ready for qm review?
     }
 
 

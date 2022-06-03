@@ -101,7 +101,6 @@ namespace I4_QM_app.ViewModels
             Order.Status = Status.done;
             // needed?! or just delete entry in orders db
             await App.OrdersDataStore.UpdateItemAsync(Order);
-            await App.HistoryDataStore.AddItemAsync(Order);
 
             // send mqtt
             await MqttConnection.HandleFinishedOrder(Order);

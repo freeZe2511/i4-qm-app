@@ -36,7 +36,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 Orders.Clear();
-                var orders = await App.OrdersDataStore.GetItemsAsync(true);
+                var orders = await App.OrdersDataStore.GetItemsFilteredAsync(a => a.Status == Status.open);
 
                 foreach (var order in orders)
                 {

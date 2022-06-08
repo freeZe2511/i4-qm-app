@@ -21,6 +21,7 @@ namespace I4_QM_app.ViewModels
         private Status status;
         private DateTime created;
         private DateTime due;
+        private DateTime done;
 
         private bool doneEnabled;
 
@@ -99,6 +100,12 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref due, value);
         }
 
+        public DateTime Done
+        {
+            get => done;
+            set => SetProperty(ref done, value);
+        }
+
         private async void OnDoneClicked()
         {
             // check if all additives are done (mock for enabled/disabled done btn)
@@ -112,6 +119,8 @@ namespace I4_QM_app.ViewModels
 
             // set done and update         
             Order.Status = Status.done;
+            Order.Done = DateTime.Now;
+
             await App.OrdersDataStore.UpdateItemAsync(Order);
 
             // send mqtt
@@ -129,7 +138,8 @@ namespace I4_QM_app.ViewModels
                 Order = order;
                 Id = order.Id;
                 //UserId = (string)Application.Current.Properties["UserID"];
-                UserId = order.UserId;
+                UserId = null;
+
                 Amount = order.Amount;
                 Weight = order.Weight;
                 Additives = order.Additives;

@@ -20,6 +20,8 @@ namespace I4_QM_app.Models
         public DateTime Created { get; set; }
 
         public DateTime Due { get; set; }
+
+        public DateTime Done { get; set; }
     }
 
     public enum Status

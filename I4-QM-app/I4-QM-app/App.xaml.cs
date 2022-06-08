@@ -20,6 +20,7 @@ namespace I4_QM_app
             DependencyService.Register<OrderService>();
 
             MainPage = new AppShell();
+            //MainPage = new LoginPage();
         }
 
         protected override void OnStart()
@@ -58,12 +59,8 @@ namespace I4_QM_app
         // Eigenschaft für den Zugriff
         public static ILiteDatabase DB => _db.Value;
 
-
         public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
 
-
-
-        //public static int UserId { get; set; }
 
 
     }

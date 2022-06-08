@@ -105,11 +105,12 @@ namespace I4_QM_app.Services
 
                         foreach (var order in orders)
                         {
+                            order.Status = Status.open;
                             await App.OrdersDataStore.AddItemAsync(order);
                         }
                         break;
 
-                    case "sfm/sg/order/delete":
+                    case "sfm/sg/order/del":
                         // maybe refactor to be able to delete from id list
                         var id = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 

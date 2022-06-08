@@ -11,6 +11,8 @@ namespace I4_QM_app.Models
 
         public int Amount { get; set; }
 
+        public int Weight { get; set; }
+
         public List<Additive> Additives { get; set; }
 
         public Status Status { get; set; }
@@ -18,14 +20,10 @@ namespace I4_QM_app.Models
         public DateTime Created { get; set; }
 
         public DateTime Due { get; set; }
-    }
 
-    public enum Status
-    {
-        open,
-        done
-        //maybe ready for qm review?
-    }
+        public DateTime Done { get; set; }
 
+        public string Rating { get; set; }
+    }
 
 }

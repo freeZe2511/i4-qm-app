@@ -10,10 +10,11 @@ namespace I4_QM_app
         {
             InitializeComponent();
             Routing.RegisterRoute(nameof(OrderDetailPage), typeof(OrderDetailPage));
+            Routing.RegisterRoute(nameof(HistoryDetailPage), typeof(HistoryDetailPage));
             //Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
         }
 
-        private async void OnMenuItemClicked(object sender, EventArgs e)
+        private async void OnLogoutItemClicked(object sender, EventArgs e)
         {
             await Shell.Current.GoToAsync("//LoginPage");
         }

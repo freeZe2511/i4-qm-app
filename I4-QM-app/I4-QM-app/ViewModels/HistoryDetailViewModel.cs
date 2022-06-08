@@ -1,6 +1,4 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
-using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,7 +7,7 @@ using Xamarin.Forms;
 namespace I4_QM_app.ViewModels
 {
     [QueryProperty(nameof(OrderId), nameof(OrderId))]
-    public class OrderDetailViewModel : BaseViewModel
+    public class HistoryDetailViewModel : BaseViewModel
     {
         private Order order;
         private string orderId;
@@ -33,12 +31,9 @@ namespace I4_QM_app.ViewModels
             set { doneEnabled = value; }
         }
 
-        public OrderDetailViewModel()
+        public HistoryDetailViewModel()
         {
-            // execute/ canexecute? => canexecute if all additives are checked?
-            DoneCommand = new Command(OnDoneClicked);
-            // TODO done btn enable/disable
-            doneEnabled = true;
+
         }
 
         public string OrderId
@@ -108,26 +103,7 @@ namespace I4_QM_app.ViewModels
 
         private async void OnDoneClicked()
         {
-            // check if all additives are done (mock for enabled/disabled done btn)
-            if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
 
-            //calc new portions (percentages) -> should be dynamic with behavoir maybe
-            foreach (var additive in Additives)
-            {
-                additive.Portion = (float)additive.Amount / (Weight * Amount / 100);
-            }
-
-            // update         
-            Order.Status = Status.mixed;
-            Order.Done = DateTime.Now;
-
-            await App.OrdersDataStore.UpdateItemAsync(Order);
-
-            // send mqtt
-            await MqttConnection.HandleFinishedOrder(Order);
-
-            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-            await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
         }
 
         public async void LoadOrderId(string orderId)
@@ -137,24 +113,14 @@ namespace I4_QM_app.ViewModels
                 var order = await App.OrdersDataStore.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
-
-                //UserId = (string)Application.Current.Properties["UserID"];
-                UserId = null;
-
+                UserId = order.UserId;
                 Amount = order.Amount;
                 Weight = order.Weight;
                 Additives = order.Additives;
                 Status = order.Status;
                 Created = order.Created;
                 Due = order.Due;
-
-                // calc
-                foreach (var additive in Additives)
-                {
-                    additive.Amount = (int)(additive.Portion * Weight * Amount / 100);
-                    //additive.Image = App.AdditiveDataSource. ...
-                }
-
+                Done = order.Done;
 
             }
             catch (Exception)
@@ -162,42 +128,5 @@ namespace I4_QM_app.ViewModels
                 Debug.WriteLine("Failed to Load Item");
             }
         }
-
     }
-
-    // maybe todo in later iteration (fynamic change of percentage = portion)
-    // https://docs.microsoft.com/en-us/xamarin/xamarin-forms/app-fundamentals/behaviors/creating
-
-    //public class NumericValidationBehavior : Behavior<Entry>
-    //{
-    //    public static readonly BindableProperty Portion = BindableProperty.Create("Portion", typeof(int),
-    //                                    typeof(NumericValidationBehavior), null);
-
-    //    protected override void OnAttachedTo(Entry entry)
-    //    {
-    //        entry.TextChanged += OnEntryTextChanged;
-    //        base.OnAttachedTo(entry);
-    //    }
-
-    //    protected override void OnDetachingFrom(Entry entry)
-    //    {
-    //        entry.TextChanged -= OnEntryTextChanged;
-    //        base.OnDetachingFrom(entry);
-    //    }
-
-    //    void OnEntryTextChanged(object sender, TextChangedEventArgs args)
-    //    {
-    //        double result;
-    //        //bool isValid = double.TryParse(args.NewTextValue, out result);
-    //        //((Entry)sender).TextColor = isValid ? Color.Default : Color.Red;
-    //        //Console.WriteLine(result);
-
-    //        //calc new percentage
-    //        Console.WriteLine(Portion.ReturnType);
-
-
-    //    }
-    //}
-
 }
-

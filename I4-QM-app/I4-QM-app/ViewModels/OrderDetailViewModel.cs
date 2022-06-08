@@ -104,6 +104,12 @@ namespace I4_QM_app.ViewModels
             // check if all additives are done (mock for enabled/disabled done btn)
             if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
 
+            //calc new portions (percentages) -> should be dynamic with behavoir maybe
+            foreach (var additive in Additives)
+            {
+                additive.Portion = (float)additive.Amount / (Weight * Amount / 100);
+            }
+
             // set done and update         
             Order.Status = Status.done;
             await App.OrdersDataStore.UpdateItemAsync(Order);
@@ -133,7 +139,7 @@ namespace I4_QM_app.ViewModels
                 // calc
                 foreach (var additive in Additives)
                 {
-                    additive.Amount = additive.Portion * Weight * Amount / 100;
+                    additive.Amount = (int)(additive.Portion * Weight * Amount / 100);
                     //additive.Image = App.AdditiveDataSource. ...
                 }
 

@@ -104,9 +104,8 @@ namespace I4_QM_app.ViewModels
             // check if all additives are done (mock for enabled/disabled done btn)
             if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
 
-            // set done and save in history         
+            // set done and update         
             Order.Status = Status.done;
-            // needed?! or just delete entry in orders db
             await App.OrdersDataStore.UpdateItemAsync(Order);
 
             // send mqtt
@@ -135,6 +134,7 @@ namespace I4_QM_app.ViewModels
                 foreach (var additive in Additives)
                 {
                     additive.Amount = additive.Portion * Weight * Amount / 100;
+                    //additive.Image = App.AdditiveDataSource. ...
                 }
 
 

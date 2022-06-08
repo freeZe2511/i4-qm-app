@@ -11,5 +11,6 @@
         public int Amount { get; set; }
 
         public bool Done { get; set; }
+
     }
 }

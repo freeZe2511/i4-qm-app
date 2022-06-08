@@ -2,19 +2,18 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.OrderDetailPage"
-             xmlns:model="clr-namespace:I4_QM_app.Models"             
-             Title="{Binding Title}">
+             xmlns:model="clr-namespace:I4_QM_app.Models" 
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels"
+             Title="{Binding Id}">
 
     <StackLayout Spacing="20" Padding="15">
-        <Label Text="Id:" FontSize="Medium" />
-        <Label Text="{Binding Id}" FontSize="Small"/>
-        <Label Text="UserId:" FontSize="Medium" />
-        <Label Text="{Binding UserId}" FontSize="Small"/>
-        <Label Text="{Binding Amount}" FontSize="Small"/>
-        <Label Text="{Binding Status}" FontSize="Small"/>
-        <Label Text="{Binding Created}" FontSize="Small"/>
-        <Label Text="{Binding Due}" FontSize="Small"/>
-        
+        <Label Text="{Binding Status, StringFormat='Status: {0}'}" FontSize="Small" BackgroundColor="#dfffad" HorizontalOptions="End"/>
+        <Label Text="{Binding Id, StringFormat='OrderId: {0}'}" FontSize="Medium"/>
+        <Label Text="{Binding Weight, StringFormat='Weight: {0} g'}" FontSize="Small"/>
+        <Label Text="{Binding Amount, StringFormat='Amount: {0}'}" FontSize="Small"/>        
+        <Label Text="{Binding Created, StringFormat='Created: {0}'}" FontSize="Small"/>
+        <Label Text="{Binding Due, StringFormat='Due: {0}'}" FontSize="Small"/>        
+                
         <!--ListView Additives-->
         <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
@@ -26,7 +25,12 @@
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16"
                             FontAttributes="Bold"/>
-                        <Entry Keyboard="Numeric" Text="{Binding Amount}"></Entry>
+                        <Label Text="{Binding Portion, StringFormat='{0} %'}"/>
+                        <Entry x:Name="Entry" Keyboard="Numeric" Text="{Binding Amount}">
+                            <!--<Entry.Behaviors>
+                                <local:NumericValidationBehavior Portion="{Binding Portion}" BindingContext="{Binding BindingContext, Source={x:Reference Entry}}"/>
+                            </Entry.Behaviors>-->
+                        </Entry>
                         <CheckBox IsChecked="{Binding Done}"></CheckBox>
 
                         <BoxView HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>

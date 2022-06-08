@@ -16,6 +16,7 @@ namespace I4_QM_app.ViewModels
         private string id;
         private string userId;
         private int amount;
+        private int weight;
         private List<Additive> additives;
         private Status status;
         private DateTime created;
@@ -71,6 +72,12 @@ namespace I4_QM_app.ViewModels
             get => amount;
             set => SetProperty(ref amount, value);
         }
+
+        public int Weight
+        {
+            get => weight;
+            set => SetProperty(ref weight, value);
+        }
         public List<Additive> Additives
         {
             get => additives;
@@ -118,10 +125,19 @@ namespace I4_QM_app.ViewModels
                 Id = order.Id;
                 UserId = order.UserId;
                 Amount = order.Amount;
+                Weight = order.Weight;
                 Additives = order.Additives;
                 Status = order.Status;
                 Created = order.Created;
                 Due = order.Due;
+
+                // calc
+                foreach (var additive in Additives)
+                {
+                    additive.Amount = additive.Portion * Weight * Amount / 100;
+                }
+
+
             }
             catch (Exception)
             {
@@ -130,6 +146,39 @@ namespace I4_QM_app.ViewModels
         }
 
     }
+
+    // maybe todo in later iteration (fynamic change of percentage = portion)
+
+    //public class NumericValidationBehavior : Behavior<Entry>
+    //{
+    //    public static readonly BindableProperty Portion = BindableProperty.Create("Portion", typeof(int),
+    //                                    typeof(NumericValidationBehavior), null);
+
+    //    protected override void OnAttachedTo(Entry entry)
+    //    {
+    //        entry.TextChanged += OnEntryTextChanged;
+    //        base.OnAttachedTo(entry);
+    //    }
+
+    //    protected override void OnDetachingFrom(Entry entry)
+    //    {
+    //        entry.TextChanged -= OnEntryTextChanged;
+    //        base.OnDetachingFrom(entry);
+    //    }
+
+    //    void OnEntryTextChanged(object sender, TextChangedEventArgs args)
+    //    {
+    //        double result;
+    //        //bool isValid = double.TryParse(args.NewTextValue, out result);
+    //        //((Entry)sender).TextColor = isValid ? Color.Default : Color.Red;
+    //        //Console.WriteLine(result);
+
+    //        //calc new percentage
+    //        Console.WriteLine(Portion.ReturnType);
+
+
+    //    }
+    //}
 
 }
 

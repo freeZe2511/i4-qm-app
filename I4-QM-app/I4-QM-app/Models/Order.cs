@@ -11,6 +11,8 @@ namespace I4_QM_app.Models
 
         public int Amount { get; set; }
 
+        public int Weight { get; set; }
+
         public List<Additive> Additives { get; set; }
 
         public Status Status { get; set; }

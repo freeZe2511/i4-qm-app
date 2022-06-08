@@ -109,7 +109,7 @@ namespace I4_QM_app.Services
                         }
                         break;
 
-                    case "sfm/sg/order/delete":
+                    case "sfm/sg/order/del":
                         // maybe refactor to be able to delete from id list
                         var id = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 

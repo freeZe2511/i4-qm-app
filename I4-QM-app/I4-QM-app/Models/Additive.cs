@@ -6,6 +6,8 @@
 
         public string Name { get; set; }
 
+        public int Portion { get; set; }
+
         public int Amount { get; set; }
 
         public bool Done { get; set; }

@@ -154,6 +154,7 @@ namespace I4_QM_app.ViewModels
     }
 
     // maybe todo in later iteration (fynamic change of percentage = portion)
+    // https://docs.microsoft.com/en-us/xamarin/xamarin-forms/app-fundamentals/behaviors/creating
 
     //public class NumericValidationBehavior : Behavior<Entry>
     //{

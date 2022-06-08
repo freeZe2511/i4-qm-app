@@ -22,14 +22,8 @@ namespace I4_QM_app.Models
         public DateTime Due { get; set; }
 
         public DateTime Done { get; set; }
-    }
 
-    public enum Status
-    {
-        open,
-        done
-        //maybe ready for qm review?
+        public string Rating { get; set; }
     }
-
 
 }

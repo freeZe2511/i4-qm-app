@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Views;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -78,7 +79,7 @@ namespace I4_QM_app.ViewModels
             //bool answer = await Shell.Current.DisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
 
             // This will push the ItemDetailPage onto the navigation stack
-            //if (answer) await Shell.Current.GoToAsync($"{nameof(HistoryPage)}?{nameof(HistoryDetailViewModel.OrderId)}={item.Id}");
+            await Shell.Current.GoToAsync($"{nameof(HistoryDetailPage)}?{nameof(HistoryDetailViewModel.OrderId)}={item.Id}");
 
         }
     }

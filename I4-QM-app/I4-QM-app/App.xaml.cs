@@ -58,12 +58,8 @@ namespace I4_QM_app
         // Eigenschaft für den Zugriff
         public static ILiteDatabase DB => _db.Value;
 
-
         public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
 
-
-
-        //public static int UserId { get; set; }
 
 
     }

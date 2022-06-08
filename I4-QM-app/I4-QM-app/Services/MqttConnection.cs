@@ -105,6 +105,7 @@ namespace I4_QM_app.Services
 
                         foreach (var order in orders)
                         {
+                            order.Status = Status.open;
                             await App.OrdersDataStore.AddItemAsync(order);
                         }
                         break;

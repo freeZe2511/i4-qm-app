@@ -117,7 +117,7 @@ namespace I4_QM_app.ViewModels
                 additive.Portion = (float)additive.Amount / (Weight * Amount / 100);
             }
 
-            // set done and update         
+            // update         
             Order.Status = Status.done;
             Order.Done = DateTime.Now;
 
@@ -137,6 +137,7 @@ namespace I4_QM_app.ViewModels
                 var order = await App.OrdersDataStore.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
+
                 //UserId = (string)Application.Current.Properties["UserID"];
                 UserId = null;
 

@@ -3,7 +3,7 @@
     public enum Status
     {
         open,
-        done,
+        mixed,
         rated
         //maybe ready for qm review?
     }

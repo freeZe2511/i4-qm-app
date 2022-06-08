@@ -118,7 +118,7 @@ namespace I4_QM_app.ViewModels
             }
 
             // update         
-            Order.Status = Status.done;
+            Order.Status = Status.mixed;
             Order.Done = DateTime.Now;
 
             await App.OrdersDataStore.UpdateItemAsync(Order);

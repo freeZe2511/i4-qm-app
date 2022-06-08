@@ -128,6 +128,7 @@ namespace I4_QM_app.ViewModels
                 var order = await App.OrdersDataStore.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
+                //UserId = (string)Application.Current.Properties["UserID"];
                 UserId = order.UserId;
                 Amount = order.Amount;
                 Weight = order.Weight;

@@ -20,6 +20,7 @@ namespace I4_QM_app
             DependencyService.Register<OrderService>();
 
             MainPage = new AppShell();
+            //MainPage = new LoginPage();
         }
 
         protected override void OnStart()

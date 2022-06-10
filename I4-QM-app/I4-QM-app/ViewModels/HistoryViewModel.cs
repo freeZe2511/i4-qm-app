@@ -13,7 +13,7 @@ namespace I4_QM_app.ViewModels
         private Order _selectedOrder;
         public ObservableCollection<Order> History { get; }
         public Command LoadHistoryCommand { get; }
-        public Command<Order> HistoryTapped { get; }
+        public Command<Order> OrderTapped { get; }
         public HistoryViewModel()
         {
             Title = "History";
@@ -21,7 +21,7 @@ namespace I4_QM_app.ViewModels
             // TODO maybe overloading main thread
             LoadHistoryCommand = new Command(async () => await ExecuteLoadHistoryCommand());
 
-            HistoryTapped = new Command<Order>(OnOrderSelected);
+            OrderTapped = new Command<Order>(OnOrderSelected);
         }
 
         public Order SelectedOrder

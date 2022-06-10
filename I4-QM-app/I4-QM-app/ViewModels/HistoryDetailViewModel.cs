@@ -21,19 +21,11 @@ namespace I4_QM_app.ViewModels
         private DateTime due;
         private DateTime done;
 
-        private bool doneEnabled;
-
-        public Command DoneCommand { get; }
-
-        public bool DoneEnabled
-        {
-            get => doneEnabled;
-            set { doneEnabled = value; }
-        }
+        public Command FeedbackCommand { get; }
 
         public HistoryDetailViewModel()
         {
-
+            FeedbackCommand = new Command(OnFeedbackClicked);
         }
 
         public string OrderId
@@ -101,7 +93,7 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref done, value);
         }
 
-        private async void OnDoneClicked()
+        private async void OnFeedbackClicked()
         {
 
         }

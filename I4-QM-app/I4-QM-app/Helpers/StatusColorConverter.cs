@@ -16,7 +16,7 @@ namespace I4_QM_app.Helpers
                 case "mixed":
                     return TryGetColor("AccentYellow", Color.Yellow);
                 case "rated":
-                    return TryGetColor("AccentBlueDark", Color.DarkBlue);
+                    return TryGetColor("Primary", Color.LightGreen);
                 default: return Color.Black;
             }
 

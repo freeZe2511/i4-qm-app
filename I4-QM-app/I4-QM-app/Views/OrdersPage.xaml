@@ -33,12 +33,15 @@
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemDetailTextStyle}"
                             FontSize="14" />
-                        <Label x:Name="status" Text="{Binding Status}"
-                            Padding="5"
-                            Margin="0, -35, 20, 5"
-                            TextColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource colorConvert}}"     
-                            HorizontalOptions="End" LineBreakMode="NoWrap"
-                            Style="{DynamicResource ListItemDetailTextStyle}"/>
+                        <Label Text="{Binding Due, StringFormat='Due: {0}'}" 
+                            LineBreakMode="NoWrap"
+                            Style="{DynamicResource ListItemDetailTextStyle}"
+                            FontSize="14" />
+                        <Frame CornerRadius="10" Padding="10" Margin="0, -35, 20, 5" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource colorConvert}}"     
+                            BorderColor="{StaticResource Secondary}">
+                            <Label x:Name="status" Text="{Binding Status}"                                                
+                            TextColor="White"></Label>                                                      
+                        </Frame>                        
                         <BoxView HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
                         <StackLayout.GestureRecognizers>
                             <TapGestureRecognizer 

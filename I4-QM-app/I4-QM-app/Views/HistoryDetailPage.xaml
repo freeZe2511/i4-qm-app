@@ -6,9 +6,11 @@
    
     <StackLayout Spacing="20" Padding="15">
             <Label Text="{Binding Id, StringFormat='OrderId: {0}'}" FontSize="Medium"/>
-            <Label x:Name="status" Text="{Binding Status}" FontSize="Small" 
-                   TextColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource colorConvert}}" 
-                   HorizontalOptions="End" Margin="0, -35, 20, 0"/>
+        <Frame  CornerRadius="10" Padding="10" Margin="0, -35, 20, 0" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource colorConvert}}"     
+                            BorderColor="{StaticResource Secondary}">
+            <Label x:Name="status" Text="{Binding Status}"                                                
+                            TextColor="White"></Label>
+        </Frame>            
             <Label Text="{Binding Weight, StringFormat='Weight:    {0} g'}" FontSize="Small"/>
             <Label Text="{Binding Amount, StringFormat='Qty:           {0}'}" FontSize="Small"/>
             <Label Text="{Binding Created, StringFormat='Created:   {0}'}" FontSize="Small"/>

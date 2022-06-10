@@ -9,7 +9,9 @@
     <!--TODO nicer layout-->
     <StackLayout Spacing="20" Padding="15">        
         <Label Text="{Binding Id, StringFormat='OrderId: {0}'}" FontSize="Medium"/>
-        <Label Text="{Binding Status, StringFormat='Status: {0}'}" FontSize="Small" TextColor="{StaticResource AccentRed}" HorizontalOptions="End" Margin="0, -35, 20, 0"/>
+        <Label x:Name="status" Text="{Binding Status}" FontSize="Small" 
+                   TextColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource colorConvert}}" 
+                   HorizontalOptions="End" Margin="0, -35, 20, 0"/>
         <Label Text="{Binding Weight, StringFormat='Weight:    {0} g'}" FontSize="Small"/>
         <Label Text="{Binding Amount, StringFormat='Qty:           {0}'}" FontSize="Small"/>
         <Label Text="{Binding Created, StringFormat='Created:   {0}'}" FontSize="Small"/>

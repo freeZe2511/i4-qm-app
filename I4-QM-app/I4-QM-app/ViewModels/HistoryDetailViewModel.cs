@@ -24,10 +24,12 @@ namespace I4_QM_app.ViewModels
         private bool feedbackEnabled;
 
         public Command FeedbackCommand { get; }
+        public Command DeleteItemCommand { get; }
 
         public HistoryDetailViewModel()
         {
             FeedbackCommand = new Command(OnFeedbackClicked);
+            DeleteItemCommand = new Command(DeleteItem);
         }
 
         public string OrderId
@@ -136,6 +138,20 @@ namespace I4_QM_app.ViewModels
             {
                 Debug.WriteLine("Failed to Load Item");
             }
+        }
+
+        async void DeleteItem()
+        {
+            // TODO abstract dialog_service
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete item from history?", "Yes", "No");
+
+            // TODO parameter
+            if (answer)
+            {
+                await App.OrdersDataStore.DeleteItemAsync(Id);
+                await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
+            }
+
         }
     }
 }

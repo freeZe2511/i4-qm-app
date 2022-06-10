@@ -24,7 +24,7 @@ namespace I4_QM_app.ViewModels
             LoadHistoryCommand = new Command(async () => await ExecuteLoadHistoryCommand());
 
             OrderTapped = new Command<Order>(OnOrderSelected);
-            DeleteAllItemsCommand = new Command(DeleteAllItems);
+            DeleteAllItemsCommand = new Command(DeleteAllHistoryItems);
         }
 
         public Order SelectedOrder
@@ -81,11 +81,12 @@ namespace I4_QM_app.ViewModels
 
         }
 
-        async void DeleteAllItems()
+        async void DeleteAllHistoryItems()
         {
             // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete history?", "Yes", "No");
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
 
+            // TODO parameter
             if (answer) await App.OrdersDataStore.DeleteManyItemsAsync();
             await ExecuteLoadHistoryCommand();
 

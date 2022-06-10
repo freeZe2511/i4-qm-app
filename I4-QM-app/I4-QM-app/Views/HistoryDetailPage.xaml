@@ -3,7 +3,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"                        
              x:Class="I4_QM_app.Views.HistoryDetailPage"               
              Title="{Binding Id}">
-   
+
+    <!--del () icon-->
+    <ContentPage.ToolbarItems>
+        <!--<ToolbarItem IconImageSource="del40_400.png" Command="{Binding DeleteAllItemsCommand}" Order="Secondary"/>-->
+        <ToolbarItem IconImageSource="del48_400.png" Command="{Binding DeleteItemCommand}" Order="Primary"/>
+    </ContentPage.ToolbarItems>
+
     <StackLayout Spacing="20" Padding="15">
             <Label Text="{Binding Id, StringFormat='OrderId: {0}'}" FontSize="Medium"/>
         <Frame  CornerRadius="10" Padding="10" Margin="0, -35, 20, 0" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource colorConvert}}"     

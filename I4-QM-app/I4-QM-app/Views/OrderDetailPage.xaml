@@ -9,12 +9,16 @@
     <!--TODO nicer layout-->
     <StackLayout Spacing="20" Padding="15">        
         <Label Text="{Binding Id, StringFormat='OrderId: {0}'}" FontSize="Medium"/>
-        <Label Text="{Binding Status, StringFormat='Status: {0}'}" FontSize="Small" TextColor="{StaticResource AccentRed}" HorizontalOptions="End" Margin="0, -35, 20, 0"/>
+        <Frame CornerRadius="10" Padding="10" Margin="0, -35, 20, 5" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource colorConvert}}"     
+                            BorderColor="{StaticResource Secondary}">
+            <Label x:Name="status" Text="{Binding Status}"                                                
+                            TextColor="White"></Label>
+        </Frame>        
         <Label Text="{Binding Weight, StringFormat='Weight:    {0} g'}" FontSize="Small"/>
         <Label Text="{Binding Amount, StringFormat='Qty:           {0}'}" FontSize="Small"/>
         <Label Text="{Binding Created, StringFormat='Created:   {0}'}" FontSize="Small"/>
         <Label Text="{Binding Due, StringFormat='Due:           {0}'}" FontSize="Small"/>
-
+        
         <!--ListView Additives-->
         <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"

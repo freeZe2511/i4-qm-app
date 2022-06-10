@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,20 +21,15 @@ namespace I4_QM_app.ViewModels
         private DateTime created;
         private DateTime due;
         private DateTime done;
+        private bool feedbackEnabled;
 
-        private bool doneEnabled;
-
-        public Command DoneCommand { get; }
-
-        public bool DoneEnabled
-        {
-            get => doneEnabled;
-            set { doneEnabled = value; }
-        }
+        public Command FeedbackCommand { get; }
+        public Command DeleteItemCommand { get; }
 
         public HistoryDetailViewModel()
         {
-
+            FeedbackCommand = new Command(OnFeedbackClicked);
+            DeleteItemCommand = new Command(DeleteItem);
         }
 
         public string OrderId
@@ -101,9 +97,23 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref done, value);
         }
 
-        private async void OnDoneClicked()
+        public bool FeedbackEnabled
         {
+            get => feedbackEnabled;
+            set => SetProperty(ref feedbackEnabled, value);
+        }
 
+        private async void OnFeedbackClicked()
+        {
+            //update
+            Order.Status = Status.rated;
+            await App.OrdersDataStore.UpdateItemAsync(Order);
+
+            // send mqtt
+            //await MqttConnection.HandleFinishedOrder(Order);
+
+            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
+            await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
         }
 
         public async void LoadOrderId(string orderId)
@@ -121,12 +131,27 @@ namespace I4_QM_app.ViewModels
                 Created = order.Created;
                 Due = order.Due;
                 Done = order.Done;
+                FeedbackEnabled = order.Status == Status.mixed;
 
             }
             catch (Exception)
             {
                 Debug.WriteLine("Failed to Load Item");
             }
+        }
+
+        async void DeleteItem()
+        {
+            // TODO abstract dialog_service
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete item from history?", "Yes", "No");
+
+            // TODO parameter
+            if (answer)
+            {
+                await App.OrdersDataStore.DeleteItemAsync(Id);
+                await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
+            }
+
         }
     }
 }

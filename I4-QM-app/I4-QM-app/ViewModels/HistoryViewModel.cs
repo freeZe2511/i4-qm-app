@@ -1,7 +1,7 @@
-﻿using I4_QM_app.Models;
+﻿using I4_QM_app.Helpers;
+using I4_QM_app.Models;
 using I4_QM_app.Views;
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -11,17 +11,20 @@ namespace I4_QM_app.ViewModels
     public class HistoryViewModel : BaseViewModel
     {
         private Order _selectedOrder;
-        public ObservableCollection<Order> History { get; }
+        public SortableObservableCollection<Order> History { get; }
         public Command LoadHistoryCommand { get; }
-        public Command<Order> HistoryTapped { get; }
+        public Command DeleteAllItemsCommand { get; }
+        public Command<Order> OrderTapped { get; }
         public HistoryViewModel()
         {
             Title = "History";
-            History = new ObservableCollection<Order>();
+            History = new SortableObservableCollection<Order>() { SortingSelector = i => i.Status, Descending = true };
+
             // TODO maybe overloading main thread
             LoadHistoryCommand = new Command(async () => await ExecuteLoadHistoryCommand());
 
-            HistoryTapped = new Command<Order>(OnOrderSelected);
+            OrderTapped = new Command<Order>(OnOrderSelected);
+            DeleteAllItemsCommand = new Command(DeleteAllHistoryItems);
         }
 
         public Order SelectedOrder
@@ -47,17 +50,12 @@ namespace I4_QM_app.ViewModels
             try
             {
                 History.Clear();
-                //var orders = await App.OrdersDataStore.GetItemsAsync(true);
                 var history = await App.OrdersDataStore.GetItemsFilteredAsync(a => a.Status != Status.open);
 
                 foreach (var order in history)
                 {
-                    //test filter
-                    //if (order.Status == Status.done)
                     History.Add(order);
-                    // TODO sort
                 }
-
 
             }
             catch (Exception ex)
@@ -82,5 +80,17 @@ namespace I4_QM_app.ViewModels
             await Shell.Current.GoToAsync($"{nameof(HistoryDetailPage)}?{nameof(HistoryDetailViewModel.OrderId)}={item.Id}");
 
         }
+
+        async void DeleteAllHistoryItems()
+        {
+            // TODO abstract dialog_service
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
+
+            // TODO parameter
+            if (answer) await App.OrdersDataStore.DeleteManyItemsAsync();
+            await ExecuteLoadHistoryCommand();
+
+        }
     }
+
 }

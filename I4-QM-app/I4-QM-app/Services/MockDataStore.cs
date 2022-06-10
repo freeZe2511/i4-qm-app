@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace I4_QM_app.Services
+namespace I4_QM_app.Helpers
 {
     public class MockDataStore : IDataStore<Order>
     {
@@ -79,6 +79,17 @@ namespace I4_QM_app.Services
         public async Task<IEnumerable<Order>> GetItemsFilteredAsync(System.Func<Order, bool> predicate)
         {
             return await Task.FromResult(orders.Where(predicate).ToList());
+        }
+
+        public async Task<bool> DeleteAllItemsAsync()
+        {
+            orders.Clear();
+            return await Task.FromResult(true);
+        }
+
+        public Task<bool> DeleteManyItemsAsync()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

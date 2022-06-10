@@ -40,8 +40,6 @@ namespace I4_QM_app.ViewModels
 
                 foreach (var order in orders)
                 {
-                    //test filter
-                    //if (order.Status == Status.open)
                     Orders.Add(order);
                     // TODO sort
                 }

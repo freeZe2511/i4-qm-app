@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace I4_QM_app.Services
+namespace I4_QM_app.Helpers
 {
     public class MqttConnection
     {
@@ -93,6 +93,7 @@ namespace I4_QM_app.Services
             _mqttClient.UseApplicationMessageReceivedHandler(async e =>
             {
                 // refactor 
+                // push notification when smth happens?
                 switch (e.ApplicationMessage.Topic)
                 {
                     case "sfm/sg/order/add":

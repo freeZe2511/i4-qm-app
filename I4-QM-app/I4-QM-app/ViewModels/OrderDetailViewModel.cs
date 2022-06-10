@@ -1,5 +1,5 @@
-﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
+﻿using I4_QM_app.Helpers;
+using I4_QM_app.Models;
 using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
@@ -114,12 +114,14 @@ namespace I4_QM_app.ViewModels
             //calc new portions (percentages) -> should be dynamic with behavoir maybe
             foreach (var additive in Additives)
             {
-                additive.Portion = (float)additive.Amount / (Weight * Amount / 100);
+                additive.ActualPortion = (float)additive.Amount / (Weight * Amount / 100);
             }
 
             // update         
             Order.Status = Status.mixed;
             Order.Done = DateTime.Now;
+
+            Console.WriteLine(Order.ToString());
 
             await App.OrdersDataStore.UpdateItemAsync(Order);
 

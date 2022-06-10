@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,6 +21,7 @@ namespace I4_QM_app.ViewModels
         private DateTime created;
         private DateTime due;
         private DateTime done;
+        private bool feedbackEnabled;
 
         public Command FeedbackCommand { get; }
 
@@ -93,9 +95,23 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref done, value);
         }
 
+        public bool FeedbackEnabled
+        {
+            get => feedbackEnabled;
+            set => SetProperty(ref feedbackEnabled, value);
+        }
+
         private async void OnFeedbackClicked()
         {
+            //update
+            Order.Status = Status.rated;
+            await App.OrdersDataStore.UpdateItemAsync(Order);
 
+            // send mqtt
+            //await MqttConnection.HandleFinishedOrder(Order);
+
+            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
+            await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
         }
 
         public async void LoadOrderId(string orderId)
@@ -113,6 +129,7 @@ namespace I4_QM_app.ViewModels
                 Created = order.Created;
                 Due = order.Due;
                 Done = order.Done;
+                FeedbackEnabled = order.Status == Status.mixed;
 
             }
             catch (Exception)

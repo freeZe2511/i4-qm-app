@@ -1,12 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="I4_QM_app.Views.HistoryDetailPage"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"                        
+             x:Class="I4_QM_app.Views.HistoryDetailPage"               
              Title="{Binding Id}">
-
+   
     <StackLayout Spacing="20" Padding="15">
             <Label Text="{Binding Id, StringFormat='OrderId: {0}'}" FontSize="Medium"/>
-            <Label Text="{Binding Status, StringFormat='Status: {0}'}" FontSize="Small" TextColor="{StaticResource AccentYellow}" HorizontalOptions="End" Margin="0, -35, 20, 0"/>
+            <Label x:Name="status" Text="{Binding Status}" FontSize="Small" 
+                   TextColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource colorConvert}}" 
+                   HorizontalOptions="End" Margin="0, -35, 20, 0"/>
             <Label Text="{Binding Weight, StringFormat='Weight:    {0} g'}" FontSize="Small"/>
             <Label Text="{Binding Amount, StringFormat='Qty:           {0}'}" FontSize="Small"/>
             <Label Text="{Binding Created, StringFormat='Created:   {0}'}" FontSize="Small"/>
@@ -43,7 +45,7 @@
         </CollectionView>
 
         <!--Submit-->
-        <Button VerticalOptions="Center" Text="Feedback" Command="{Binding FeedbackCommand}" BackgroundColor="{StaticResource Primary}"/>
+        <Button VerticalOptions="Center" Text="Feedback" Command="{Binding FeedbackCommand}" BackgroundColor="{StaticResource Primary}" IsVisible="{Binding FeedbackEnabled}"/>
 
 
     </StackLayout>

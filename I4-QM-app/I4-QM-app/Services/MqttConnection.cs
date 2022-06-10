@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace I4_QM_app.Services
+namespace I4_QM_app.Helpers
 {
     public class MqttConnection
     {

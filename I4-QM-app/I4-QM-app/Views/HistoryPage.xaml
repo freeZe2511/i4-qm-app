@@ -7,6 +7,12 @@
              x:Name="BrowseHistoryPage"
              Title="{Binding Title}">
 
+    <!--del () icon-->
+    <ContentPage.ToolbarItems>
+        <!--<ToolbarItem IconImageSource="del40_400.png" Command="{Binding DeleteAllItemsCommand}" Order="Secondary"/>-->
+        <ToolbarItem IconImageSource="del40_400.png" Command="{Binding DeleteAllItemsCommand}" Order="Primary"/>
+    </ContentPage.ToolbarItems>
+
     <RefreshView x:DataType="local:HistoryViewModel" Command="{Binding LoadHistoryCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
         <CollectionView x:Name="HistoryListView"
                 ItemsSource="{Binding History}"

@@ -11,5 +11,7 @@ namespace I4_QM_app.Helpers
         Task<T> GetItemAsync(string id);
         Task<IEnumerable<T>> GetItemsAsync(bool forceRefresh = false);
         Task<IEnumerable<T>> GetItemsFilteredAsync(System.Func<T, bool> predicate);
+        Task<bool> DeleteAllItemsAsync();
+        Task<bool> DeleteManyItemsAsync();
     }
 }

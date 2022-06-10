@@ -93,6 +93,7 @@ namespace I4_QM_app.Helpers
             _mqttClient.UseApplicationMessageReceivedHandler(async e =>
             {
                 // refactor 
+                // push notification when smth happens?
                 switch (e.ApplicationMessage.Topic)
                 {
                     case "sfm/sg/order/add":

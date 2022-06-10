@@ -80,5 +80,16 @@ namespace I4_QM_app.Helpers
         {
             return await Task.FromResult(orders.Where(predicate).ToList());
         }
+
+        public async Task<bool> DeleteAllItemsAsync()
+        {
+            orders.Clear();
+            return await Task.FromResult(true);
+        }
+
+        public Task<bool> DeleteManyItemsAsync()
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

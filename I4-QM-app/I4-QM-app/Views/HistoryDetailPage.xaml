@@ -15,7 +15,7 @@
             <Label Text="{Binding Amount, StringFormat='Qty:           {0}'}" FontSize="Small"/>
             <Label Text="{Binding Created, StringFormat='Created:   {0}'}" FontSize="Small"/>
             <Label Text="{Binding Due, StringFormat='Due:           {0}'}" FontSize="Small"/>
-            <Label Text="{Binding Done, StringFormat='Done:           {0}'}" FontSize="Small"/>
+            <Label Text="{Binding Done, StringFormat='Done:         {0}'}" FontSize="Small"/>
 
         <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"

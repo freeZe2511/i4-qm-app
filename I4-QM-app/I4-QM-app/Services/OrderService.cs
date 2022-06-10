@@ -32,8 +32,20 @@ namespace I4_QM_app.Helpers
 
         public async Task<bool> DeleteItemAsync(string id)
         {
-            // index?
             orderCollection.Delete(id);
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> DeleteManyItemsAsync()
+        {
+            // TODO
+            orderCollection.DeleteMany(x => x.Status != Status.open);
+            return await Task.FromResult(true);
+        }
+
+        public async Task<bool> DeleteAllItemsAsync()
+        {
+            orderCollection.DeleteAll();
             return await Task.FromResult(true);
         }
 

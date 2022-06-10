@@ -1,10 +1,8 @@
-﻿using I4_QM_app.Models;
+﻿using I4_QM_app.Helpers;
+using I4_QM_app.Models;
 using I4_QM_app.Views;
 using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -15,15 +13,18 @@ namespace I4_QM_app.ViewModels
         private Order _selectedOrder;
         public SortableObservableCollection<Order> History { get; }
         public Command LoadHistoryCommand { get; }
+        public Command DeleteAllItemsCommand { get; }
         public Command<Order> OrderTapped { get; }
         public HistoryViewModel()
         {
             Title = "History";
             History = new SortableObservableCollection<Order>() { SortingSelector = i => i.Status, Descending = true };
+
             // TODO maybe overloading main thread
             LoadHistoryCommand = new Command(async () => await ExecuteLoadHistoryCommand());
 
             OrderTapped = new Command<Order>(OnOrderSelected);
+            DeleteAllItemsCommand = new Command(DeleteAllItems);
         }
 
         public Order SelectedOrder
@@ -49,7 +50,6 @@ namespace I4_QM_app.ViewModels
             try
             {
                 History.Clear();
-                //var orders = await App.OrdersDataStore.GetItemsAsync(true);
                 var history = await App.OrdersDataStore.GetItemsFilteredAsync(a => a.Status != Status.open);
 
                 foreach (var order in history)
@@ -80,35 +80,16 @@ namespace I4_QM_app.ViewModels
             await Shell.Current.GoToAsync($"{nameof(HistoryDetailPage)}?{nameof(HistoryDetailViewModel.OrderId)}={item.Id}");
 
         }
-    }
 
-    // https://stackoverflow.com/questions/19112922/sort-observablecollectionstring-through-c-sharp
-    public class SortableObservableCollection<T> : ObservableCollection<T>
-    {
-        public Func<T, object> SortingSelector { get; set; }
-        public bool Descending { get; set; }
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        async void DeleteAllItems()
         {
-            base.OnCollectionChanged(e);
-            if (SortingSelector == null
-                || e.Action == NotifyCollectionChangedAction.Remove
-                || e.Action == NotifyCollectionChangedAction.Reset)
-                return;
+            // TODO abstract dialog_service
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete history?", "Yes", "No");
 
-            var query = this
-              .Select((item, index) => (Item: item, Index: index));
-            query = Descending
-              ? query.OrderBy(tuple => SortingSelector(tuple.Item))
-              : query.OrderByDescending(tuple => SortingSelector(tuple.Item));
-
-            var map = query.Select((tuple, index) => (OldIndex: tuple.Index, NewIndex: index))
-             .Where(o => o.OldIndex != o.NewIndex);
-
-            using (var enumerator = map.GetEnumerator())
-                if (enumerator.MoveNext())
-                    Move(enumerator.Current.OldIndex, enumerator.Current.NewIndex);
-
+            if (answer) await App.OrdersDataStore.DeleteManyItemsAsync();
+            await ExecuteLoadHistoryCommand();
 
         }
     }
+
 }

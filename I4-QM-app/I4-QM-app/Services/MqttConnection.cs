@@ -118,7 +118,7 @@ namespace I4_QM_app.Helpers
                             BadgeNumber = 1,
                             Description = orders.Count + " new order(s)",
                             Title = "New Order",
-                            NotificationId = 1337
+                            NotificationId = 1
                         };
 
                         await NotificationCenter.Current.Show(notification);

@@ -11,6 +11,7 @@ namespace I4_QM_app
             InitializeComponent();
             Routing.RegisterRoute(nameof(OrderDetailPage), typeof(OrderDetailPage));
             Routing.RegisterRoute(nameof(HistoryDetailPage), typeof(HistoryDetailPage));
+            Routing.RegisterRoute(nameof(FeedbackPage), typeof(FeedbackPage));
             //Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
         }
 

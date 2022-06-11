@@ -15,7 +15,11 @@ namespace I4_QM_app.Droid
             base.OnCreate(savedInstanceState);
 
             // change channel to show on screen?
-            NotificationCenter.CreateNotificationChannel();
+            NotificationCenter.CreateNotificationChannel(
+                new Plugin.LocalNotification.Platform.Droid.NotificationChannelRequestBuilder()
+                .WithImportance(NotificationImportance.High)                
+                .Build()
+                );
 
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);

@@ -116,8 +116,8 @@ namespace I4_QM_app.Helpers
                         var notification = new NotificationRequest
                         {
                             BadgeNumber = 1,
-                            Description = "test",
-                            Title = "Notification",
+                            Description = orders.Count + " new order(s)",
+                            Title = "New Order",
                             NotificationId = 1337
                         };
 

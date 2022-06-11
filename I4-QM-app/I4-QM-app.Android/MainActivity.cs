@@ -1,8 +1,9 @@
-﻿
-using Android.App;
+﻿using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Runtime;
+using Plugin.LocalNotification;
 
 namespace I4_QM_app.Droid
 {
@@ -13,6 +14,9 @@ namespace I4_QM_app.Droid
         {
             base.OnCreate(savedInstanceState);
 
+            // change channel to show on screen?
+            NotificationCenter.CreateNotificationChannel();
+
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
@@ -22,6 +26,12 @@ namespace I4_QM_app.Droid
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        protected override void OnNewIntent(Intent intent)
+        {
+            NotificationCenter.NotifyNotificationTapped(intent);
+            base.OnNewIntent(intent);
         }
     }
 }

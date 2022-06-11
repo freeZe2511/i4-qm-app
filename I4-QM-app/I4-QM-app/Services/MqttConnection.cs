@@ -4,6 +4,7 @@ using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Client.Subscribing;
 using Newtonsoft.Json;
+using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -109,6 +110,20 @@ namespace I4_QM_app.Helpers
                             order.Status = Status.open;
                             await App.OrdersDataStore.AddItemAsync(order);
                         }
+
+                        //notification
+
+                        var notification = new NotificationRequest
+                        {
+                            BadgeNumber = 1,
+                            Description = "test",
+                            Title = "Notification",
+                            NotificationId = 1337
+                        };
+
+                        await NotificationCenter.Current.Show(notification);
+
+
                         break;
 
                     case "sfm/sg/order/del":

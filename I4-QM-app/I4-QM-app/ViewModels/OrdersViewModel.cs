@@ -20,13 +20,14 @@ namespace I4_QM_app.ViewModels
         public Command SortByCreated { get; }
         public Command<Order> OrderTapped { get; }
 
-        public string OrdersCount { get => Orders.Count.ToString(); }
+        public bool Descending { get; set; }
 
         public OrdersViewModel()
         {
             // maybe bad binding atm
             Title = "Orders";
-            Orders = new SortableObservableCollection<Order>() { SortingSelector = i => i.Due, Descending = true };
+            Descending = true;
+            Orders = new SortableObservableCollection<Order>() { SortingSelector = i => i.Due, Descending = Descending };
             // TODO maybe overloading main thread
             LoadOrdersCommand = new Command(async () => await ExecuteLoadOrdersCommand());
 
@@ -41,6 +42,8 @@ namespace I4_QM_app.ViewModels
         private async Task SortBy(Func<Order, object> predicate)
         {
             Orders.SortingSelector = predicate;
+            Orders.Descending = Descending;
+            Descending = !Descending;
             await ExecuteLoadOrdersCommand();
         }
 

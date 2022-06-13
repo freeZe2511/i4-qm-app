@@ -8,7 +8,13 @@
              xmlns:local1="clr-namespace:I4_QM_app.Helpers"
              x:Name="BrowseOrdersPage">
 
-    
+    <ContentPage.ToolbarItems>             
+        <ToolbarItem Text="Sort By" Order="Primary"/>
+        <ToolbarItem Text="ID" Command="{Binding SortByID}" Order="Secondary"/>
+        <ToolbarItem Text="Next Due" Command="{Binding SortByDue}" Order="Secondary"/>
+        <ToolbarItem Text="Quantity" Command="{Binding SortByQty}" Order="Secondary"/>
+        <ToolbarItem Text="Created" Command="{Binding SortByCreated}" Order="Secondary"/>
+    </ContentPage.ToolbarItems>    
 
     <!--<ContentPage.ToolbarItems>
         <ToolbarItem Text="Add" Command="{Binding AddItemCommand}" />
@@ -30,6 +36,10 @@
                             FontSize="16"
                             FontAttributes="Bold"/>
                         <Label Text="{Binding Amount, StringFormat='Qty: {0}'}" 
+                            LineBreakMode="NoWrap"
+                            Style="{DynamicResource ListItemDetailTextStyle}"
+                            FontSize="14" />
+                        <Label Text="{Binding Created, StringFormat='Created: {0}'}" 
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemDetailTextStyle}"
                             FontSize="14" />

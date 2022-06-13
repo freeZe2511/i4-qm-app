@@ -1,7 +1,7 @@
-﻿using I4_QM_app.Models;
+﻿using I4_QM_app.Helpers;
+using I4_QM_app.Models;
 using I4_QM_app.Views;
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -12,7 +12,7 @@ namespace I4_QM_app.ViewModels
     {
         private Order _selectedOrder;
 
-        public ObservableCollection<Order> Orders { get; }
+        public SortableObservableCollection<Order> Orders { get; }
         public Command LoadOrdersCommand { get; }
         public Command<Order> OrderTapped { get; }
 
@@ -22,7 +22,7 @@ namespace I4_QM_app.ViewModels
         {
             // maybe bad binding atm
             Title = "Orders";
-            Orders = new ObservableCollection<Order>();
+            Orders = new SortableObservableCollection<Order>() { SortingSelector = i => i.Due, Descending = true };
             // TODO maybe overloading main thread
             LoadOrdersCommand = new Command(async () => await ExecuteLoadOrdersCommand());
 

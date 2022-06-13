@@ -33,7 +33,7 @@
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemDetailTextStyle}"
                             FontSize="14" />
-                        <Label Text="{Binding Due, StringFormat='Due: {0}'}" 
+                        <Label x:Name="due" Text="{Binding Due}" TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeConvert}}"
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemDetailTextStyle}"
                             FontSize="14" />

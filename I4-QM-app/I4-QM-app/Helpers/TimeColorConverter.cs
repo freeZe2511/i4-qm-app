@@ -12,16 +12,25 @@ namespace I4_QM_app.Helpers
 
             if (value != null)
             {
-                Console.WriteLine(value.GetType());
+                DateTime due = DateTime.Parse(value.ToString());
+                double hoursTo = due.Subtract(DateTime.Now).TotalHours;
+
+                if (hoursTo < 24)
+                {
+                    return TryGetColor("AccentRed", Color.Red);
+                }
+                else if (hoursTo > 24 && hoursTo < 72)
+                {
+                    return TryGetColor("AccentYellow", Color.Yellow);
+                }
+                else
+                {
+                    return TryGetColor("Primary", Color.LightGreen);
+                }
+
             }
 
-            //var diff = DateTime.Now;
-
-            //if (value != null) diff = (DateTime)value - DateTime.Now;
-
-            //Console.WriteLine(diff.ToString());
-
-            return Color.Black;
+            return TryGetColor("Secondary", Color.Gray);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

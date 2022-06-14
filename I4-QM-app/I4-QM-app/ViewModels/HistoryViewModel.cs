@@ -15,11 +15,8 @@ namespace I4_QM_app.ViewModels
         public Command LoadHistoryCommand { get; }
         public Command DeleteAllItemsCommand { get; }
         public Command<Order> OrderTapped { get; }
-        public Command SortByID { get; }
-        public Command SortByDone { get; }
-        public Command SortByQty { get; }
-        public Command SortByCreated { get; }
         public Command DisableCommand { get; }
+        public Command SortByCommand { get; }
 
         public bool Descending { get; set; }
         public HistoryViewModel()
@@ -33,25 +30,42 @@ namespace I4_QM_app.ViewModels
 
             OrderTapped = new Command<Order>(OnOrderSelected);
             DeleteAllItemsCommand = new Command(DeleteAllHistoryItems);
-
-            SortByID = new Command(async () => await SortBy(i => i.Id));
-            SortByDone = new Command(async () => await SortBy(i => i.Due));
-            SortByQty = new Command(async () => await SortBy(i => i.Amount));
-            SortByCreated = new Command(async () => await SortBy(i => i.Created));
-
             DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
 
-            // TODO maybe? not working like this
-            //SortBy = new Command<Func<Order, object>>(
-            //    execute: async (Func<Order, object> arg) =>
-            //    {
-            //        Console.WriteLine(arg);
-            //        History.SortingSelector = arg;
-            //        History.Descending = Descending;
-            //        Descending = !Descending;
-            //        await ExecuteLoadHistoryCommand();
+            SortByCommand = new Command<string>(
+                execute: async (string arg) =>
+                {
+                    arg = arg.Trim();
 
-            //    });
+                    // works
+                    if (arg == "Id") await SortBy(i => i.Id);
+                    if (arg == "Done") await SortBy(i => i.Done);
+                    if (arg == "Amount") await SortBy(i => i.Amount);
+                    if (arg == "Created") await SortBy(i => i.Created);
+
+
+                    // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
+                    // only works with id?! Specified cast is not valid
+                    //if (typeof(Order).GetProperty(arg) != null)
+                    //{
+                    //    ParameterExpression parameter = Expression.Parameter(typeof(Order), "i");
+                    //    MemberExpression memberExpression = Expression.Property(parameter, typeof(Order).GetProperty(arg));
+                    //    LambdaExpression lambda = Expression.Lambda(memberExpression, parameter);
+
+                    //    Console.WriteLine(lambda.ToString());
+
+                    //    await SortBy((Func<Order, object>)lambda.Compile());
+                    //}
+
+                    // https://stackoverflow.com/questions/10655761/convert-string-into-func
+                    // compiler error
+                    //var str = "i => i." + arg;
+                    //Console.WriteLine(str);
+                    //var func = await CSharpScript.EvaluateAsync<Func<Order, object>>(str);
+                    //await SortBy(func);
+
+
+                });
         }
 
 

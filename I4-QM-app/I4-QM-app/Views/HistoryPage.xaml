@@ -6,16 +6,14 @@
              xmlns:model="clr-namespace:I4_QM_app.Models"
              x:Name="BrowseHistoryPage"
              Title="{Binding Title}">
-
-    <!--del () icon-->
-    <ContentPage.ToolbarItems>
-        <!--<ToolbarItem IconImageSource="del40_400.png" Command="{Binding DeleteAllItemsCommand}" Order="Secondary"/>-->
+   
+    <ContentPage.ToolbarItems>        
         <ToolbarItem IconImageSource="del_f48_400.png" Command="{Binding DeleteAllItemsCommand}" Order="Primary"/>
-        <ToolbarItem x:Name="sortby" Text="Sort by:" Command="{Binding DisableCommand}" Order="Secondary" />
-        <ToolbarItem Text="ID" Command="{Binding SortByID}" Order="Secondary"/>
-        <ToolbarItem Text="Done" Command="{Binding SortByDone}" Order="Secondary"/>
-        <ToolbarItem Text="Quantity" Command="{Binding SortByQty}" Order="Secondary"/>
-        <ToolbarItem Text="Created" Command="{Binding SortByCreated}" Order="Secondary"/>
+        <ToolbarItem Text="Sort by:" Command="{Binding DisableCommand}" Order="Secondary" />        
+        <ToolbarItem Text="ID" Command="{Binding SortByCommand}" CommandParameter="Id" Order="Secondary"/>
+        <ToolbarItem Text="Done" Command="{Binding SortByCommand}" CommandParameter="Done" Order="Secondary"/>
+        <ToolbarItem Text="Quantity" Command="{Binding SortByCommand}" CommandParameter="Amount" Order="Secondary"/>
+        <ToolbarItem Text="Created" Command="{Binding SortByCommand}" CommandParameter="Created" Order="Secondary"/>
     </ContentPage.ToolbarItems>
 
     <RefreshView x:DataType="local:HistoryViewModel" Command="{Binding LoadHistoryCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">

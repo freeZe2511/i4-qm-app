@@ -18,6 +18,7 @@
             <Color x:Key="AccentBlueDark">#002878</Color>
 
             <help:StatusColorConverter x:Key="colorConvert" />
+            <help:TimeColorConverter x:Key="timeConvert" />
             <xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
 
             <Style TargetType="Button">

@@ -105,15 +105,15 @@ namespace I4_QM_app.ViewModels
 
         private async void OnFeedbackClicked()
         {
-            //update
-            Order.Status = Status.rated;
-            await App.OrdersDataStore.UpdateItemAsync(Order);
+            ////update
+            //Order.Status = Status.rated;
+            //await App.OrdersDataStore.UpdateItemAsync(Order);
 
-            // send mqtt
-            //await MqttConnection.HandleFinishedOrder(Order);
+            //// send mqtt
+            ////await MqttConnection.HandleFinishedOrder(Order);
 
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-            await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
+            await Shell.Current.GoToAsync($"{nameof(FeedbackPage)}?{nameof(FeedbackViewModel.OrderId)}={order.Id}");
         }
 
         public async void LoadOrderId(string orderId)

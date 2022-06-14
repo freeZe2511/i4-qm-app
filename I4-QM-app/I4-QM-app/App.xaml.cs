@@ -1,6 +1,8 @@
-﻿using I4_QM_app.Models;
-using I4_QM_app.Helpers;
+﻿using I4_QM_app.Helpers;
+using I4_QM_app.Models;
 using LiteDB;
+using Plugin.LocalNotification;
+using Plugin.LocalNotification.EventArgs;
 using System;
 using System.IO;
 using System.Threading;
@@ -18,6 +20,8 @@ namespace I4_QM_app
 
             //DependencyService.Register<MockDataStore>();
             DependencyService.Register<OrderService>();
+
+            NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
 
             MainPage = new AppShell();
             //MainPage = new LoginPage();
@@ -61,6 +65,22 @@ namespace I4_QM_app
 
         public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
 
+        private void LoadPageFromNotification(NotificationEventArgs e)
+        {
+            var data = e.Request.ReturningData;
+
+            if (string.IsNullOrWhiteSpace(data))
+            {
+                return;
+            }
+
+            // TODO
+            Shell.Current.Navigation.PushAsync(new Views.OrdersPage());
+
+            //await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
+
+
+        }
 
 
     }

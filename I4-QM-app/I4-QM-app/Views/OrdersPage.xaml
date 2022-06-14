@@ -8,7 +8,13 @@
              xmlns:local1="clr-namespace:I4_QM_app.Helpers"
              x:Name="BrowseOrdersPage">
 
-    
+    <ContentPage.ToolbarItems>             
+        <ToolbarItem Text="Sort By" Order="Primary"/>
+        <ToolbarItem Text="ID" Command="{Binding SortByID}" Order="Secondary"/>
+        <ToolbarItem Text="Due" Command="{Binding SortByDue}" Order="Secondary"/>
+        <ToolbarItem Text="Quantity" Command="{Binding SortByQty}" Order="Secondary"/>
+        <ToolbarItem Text="Created" Command="{Binding SortByCreated}" Order="Secondary"/>
+    </ContentPage.ToolbarItems>    
 
     <!--<ContentPage.ToolbarItems>
         <ToolbarItem Text="Add" Command="{Binding AddItemCommand}" />
@@ -22,7 +28,7 @@
                 ItemsSource="{Binding Orders}"
                 SelectionMode="None">
             <CollectionView.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate>                                                                           
                     <StackLayout Padding="10" x:DataType="model:Order">
                         <Label Text="{Binding Id, StringFormat='ID: {0}'}" 
                             LineBreakMode="NoWrap" 
@@ -33,7 +39,11 @@
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemDetailTextStyle}"
                             FontSize="14" />
-                        <Label Text="{Binding Due, StringFormat='Due: {0}'}" 
+                        <Label Text="{Binding Created, StringFormat='Created: {0}'}" 
+                            LineBreakMode="NoWrap"
+                            Style="{DynamicResource ListItemDetailTextStyle}"
+                            FontSize="14" />
+                        <Label x:Name="due" Text="{Binding Due}" TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeConvert}}"
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemDetailTextStyle}"
                             FontSize="14" />

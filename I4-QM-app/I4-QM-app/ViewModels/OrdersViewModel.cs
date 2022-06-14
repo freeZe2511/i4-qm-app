@@ -1,7 +1,7 @@
-﻿using I4_QM_app.Models;
+﻿using I4_QM_app.Helpers;
+using I4_QM_app.Models;
 using I4_QM_app.Views;
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -12,21 +12,41 @@ namespace I4_QM_app.ViewModels
     {
         private Order _selectedOrder;
 
-        public ObservableCollection<Order> Orders { get; }
+        public SortableObservableCollection<Order> Orders { get; }
         public Command LoadOrdersCommand { get; }
+        public Command SortByID { get; }
+        public Command SortByDue { get; }
+        public Command SortByQty { get; }
+        public Command SortByCreated { get; }
         public Command<Order> OrderTapped { get; }
 
-        public string OrdersCount { get => Orders.Count.ToString(); }
+        public bool Descending { get; set; }
 
         public OrdersViewModel()
         {
             // maybe bad binding atm
             Title = "Orders";
-            Orders = new ObservableCollection<Order>();
+            Descending = true;
+            Orders = new SortableObservableCollection<Order>() { SortingSelector = i => i.Due, Descending = Descending };
             // TODO maybe overloading main thread
             LoadOrdersCommand = new Command(async () => await ExecuteLoadOrdersCommand());
 
             OrderTapped = new Command<Order>(OnOrderSelected);
+
+            SortByID = new Command(async () => await SortBy(i => i.Id));
+            SortByDue = new Command(async () => await SortBy(i => i.Due));
+            SortByQty = new Command(async () => await SortBy(i => i.Amount));
+            SortByCreated = new Command(async () => await SortBy(i => i.Created));
+
+
+        }
+
+        private async Task SortBy(Func<Order, object> predicate)
+        {
+            Orders.SortingSelector = predicate;
+            Orders.Descending = Descending;
+            Descending = !Descending;
+            await ExecuteLoadOrdersCommand();
         }
 
         async Task ExecuteLoadOrdersCommand()
@@ -85,6 +105,12 @@ namespace I4_QM_app.ViewModels
             // This will push the ItemDetailPage onto the navigation stack
             if (answer) await Shell.Current.GoToAsync($"{nameof(OrderDetailPage)}?{nameof(OrderDetailViewModel.OrderId)}={item.Id}");
 
+        }
+
+        public void SortOrder(object sender)
+        {
+            Console.WriteLine("EEEEEEEEEEE");
+            Console.WriteLine((ToolbarItem)sender);
         }
 
     }

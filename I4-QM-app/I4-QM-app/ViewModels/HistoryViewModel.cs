@@ -15,16 +15,52 @@ namespace I4_QM_app.ViewModels
         public Command LoadHistoryCommand { get; }
         public Command DeleteAllItemsCommand { get; }
         public Command<Order> OrderTapped { get; }
+        public Command SortByID { get; }
+        public Command SortByDone { get; }
+        public Command SortByQty { get; }
+        public Command SortByCreated { get; }
+        public Command DisableCommand { get; }
+
+        public bool Descending { get; set; }
         public HistoryViewModel()
         {
             Title = "History";
-            History = new SortableObservableCollection<Order>() { SortingSelector = i => i.Status, Descending = true };
+            Descending = true;
+            History = new SortableObservableCollection<Order>() { SortingSelector = i => i.Status, Descending = Descending };
 
             // TODO maybe overloading main thread
             LoadHistoryCommand = new Command(async () => await ExecuteLoadHistoryCommand());
 
             OrderTapped = new Command<Order>(OnOrderSelected);
             DeleteAllItemsCommand = new Command(DeleteAllHistoryItems);
+
+            SortByID = new Command(async () => await SortBy(i => i.Id));
+            SortByDone = new Command(async () => await SortBy(i => i.Due));
+            SortByQty = new Command(async () => await SortBy(i => i.Amount));
+            SortByCreated = new Command(async () => await SortBy(i => i.Created));
+
+            DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
+
+            // TODO maybe? not working like this
+            //SortBy = new Command<Func<Order, object>>(
+            //    execute: async (Func<Order, object> arg) =>
+            //    {
+            //        Console.WriteLine(arg);
+            //        History.SortingSelector = arg;
+            //        History.Descending = Descending;
+            //        Descending = !Descending;
+            //        await ExecuteLoadHistoryCommand();
+
+            //    });
+        }
+
+
+        private async Task SortBy(Func<Order, object> predicate)
+        {
+            History.SortingSelector = predicate;
+            History.Descending = Descending;
+            Descending = !Descending;
+            await ExecuteLoadHistoryCommand();
         }
 
         public Order SelectedOrder

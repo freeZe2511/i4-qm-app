@@ -11,11 +11,11 @@
     <ContentPage.ToolbarItems>
         <!--<ToolbarItem IconImageSource="del40_400.png" Command="{Binding DeleteAllItemsCommand}" Order="Secondary"/>-->
         <ToolbarItem IconImageSource="del_f48_400.png" Command="{Binding DeleteAllItemsCommand}" Order="Primary"/>
-        <!--<ToolbarItem x:Name="sortby" Text="Sort By: " Order="Secondary"/>
+        <ToolbarItem x:Name="sortby" Text="Sort by:" Command="{Binding DisableCommand}" Order="Secondary" />
         <ToolbarItem Text="ID" Command="{Binding SortByID}" Order="Secondary"/>
-        <ToolbarItem Text="Next Due" Command="{Binding SortByDue}" Order="Secondary"/>
+        <ToolbarItem Text="Done" Command="{Binding SortByDone}" Order="Secondary"/>
         <ToolbarItem Text="Quantity" Command="{Binding SortByQty}" Order="Secondary"/>
-        <ToolbarItem Text="Created" Command="{Binding SortByCreated}" Order="Secondary"/>-->
+        <ToolbarItem Text="Created" Command="{Binding SortByCreated}" Order="Secondary"/>
     </ContentPage.ToolbarItems>
 
     <RefreshView x:DataType="local:HistoryViewModel" Command="{Binding LoadHistoryCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">

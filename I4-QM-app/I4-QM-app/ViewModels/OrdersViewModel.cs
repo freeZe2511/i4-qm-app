@@ -20,6 +20,8 @@ namespace I4_QM_app.ViewModels
         public Command SortByCreated { get; }
         public Command<Order> OrderTapped { get; }
 
+        public Command DisableCommand { get; }
+
         public bool Descending { get; set; }
 
         public OrdersViewModel()
@@ -37,6 +39,8 @@ namespace I4_QM_app.ViewModels
             SortByDue = new Command(async () => await SortBy(i => i.Due));
             SortByQty = new Command(async () => await SortBy(i => i.Amount));
             SortByCreated = new Command(async () => await SortBy(i => i.Created));
+
+            DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
 
 
         }
@@ -105,12 +109,6 @@ namespace I4_QM_app.ViewModels
             // This will push the ItemDetailPage onto the navigation stack
             if (answer) await Shell.Current.GoToAsync($"{nameof(OrderDetailPage)}?{nameof(OrderDetailViewModel.OrderId)}={item.Id}");
 
-        }
-
-        public void SortOrder(object sender)
-        {
-            Console.WriteLine("EEEEEEEEEEE");
-            Console.WriteLine((ToolbarItem)sender);
         }
 
     }

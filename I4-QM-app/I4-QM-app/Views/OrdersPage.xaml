@@ -8,8 +8,8 @@
              xmlns:local1="clr-namespace:I4_QM_app.Helpers"
              x:Name="BrowseOrdersPage">
 
-    <ContentPage.ToolbarItems>             
-        <ToolbarItem Text="Sort By" Order="Primary"/>
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Sort by:" Command="{Binding DisableCommand}" Order="Secondary"/>
         <ToolbarItem Text="ID" Command="{Binding SortByID}" Order="Secondary"/>
         <ToolbarItem Text="Due" Command="{Binding SortByDue}" Order="Secondary"/>
         <ToolbarItem Text="Quantity" Command="{Binding SortByQty}" Order="Secondary"/>

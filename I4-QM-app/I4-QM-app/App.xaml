@@ -1,6 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Application xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:help="clr-namespace:I4_QM_app.Helpers"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="I4_QM_app.App">
     <!--
         Define global resources and styles here, that apply to all pages in your app.
@@ -14,7 +16,11 @@
             <Color x:Key="AccentYellow">#F4AA00</Color>
             <Color x:Key="AccentBlueLight">#00B8E4</Color>
             <Color x:Key="AccentBlueDark">#002878</Color>
-            
+
+            <help:StatusColorConverter x:Key="statusColorConverter" />
+            <help:TimeColorConverter x:Key="timeColorConverter" />
+            <xct:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+
             <Style TargetType="Button">
                 <Setter Property="TextColor" Value="White"></Setter>
                 <Setter Property="VisualStateManager.VisualStateGroups">

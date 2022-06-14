@@ -77,7 +77,7 @@
     
 
     <!-- Menu -->
-    <controls:MenuItemIconFont Text="Logout" IconGlyph="{StaticResource IconLogout}" Clicked="OnMenuItemClicked">
+    <controls:MenuItemIconFont Text="Logout" IconGlyph="{StaticResource IconLogout}" Clicked="OnLogoutItemClicked">
     </controls:MenuItemIconFont>  
     
     

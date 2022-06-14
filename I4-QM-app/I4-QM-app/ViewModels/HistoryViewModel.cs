@@ -1,6 +1,7 @@
-﻿using I4_QM_app.Models;
+﻿using I4_QM_app.Helpers;
+using I4_QM_app.Models;
+using I4_QM_app.Views;
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -10,17 +11,70 @@ namespace I4_QM_app.ViewModels
     public class HistoryViewModel : BaseViewModel
     {
         private Order _selectedOrder;
-        public ObservableCollection<Order> History { get; }
+        public SortableObservableCollection<Order> History { get; }
         public Command LoadHistoryCommand { get; }
-        public Command<Order> HistoryTapped { get; }
+        public Command DeleteAllItemsCommand { get; }
+        public Command<Order> OrderTapped { get; }
+        public Command DisableCommand { get; }
+        public Command SortByCommand { get; }
+
+        public bool Descending { get; set; }
         public HistoryViewModel()
         {
             Title = "History";
-            History = new ObservableCollection<Order>();
+            Descending = true;
+            History = new SortableObservableCollection<Order>() { SortingSelector = i => i.Status, Descending = Descending };
+
             // TODO maybe overloading main thread
             LoadHistoryCommand = new Command(async () => await ExecuteLoadHistoryCommand());
 
-            HistoryTapped = new Command<Order>(OnOrderSelected);
+            OrderTapped = new Command<Order>(OnOrderSelected);
+            DeleteAllItemsCommand = new Command(DeleteAllHistoryItems);
+            DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
+
+            SortByCommand = new Command<string>(
+                execute: async (string arg) =>
+                {
+                    arg = arg.Trim();
+
+                    // works
+                    if (arg == "Id") await SortBy(i => i.Id);
+                    if (arg == "Done") await SortBy(i => i.Done);
+                    if (arg == "Amount") await SortBy(i => i.Amount);
+                    if (arg == "Created") await SortBy(i => i.Created);
+
+
+                    // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
+                    // only works with id?! Specified cast is not valid
+                    //if (typeof(Order).GetProperty(arg) != null)
+                    //{
+                    //    ParameterExpression parameter = Expression.Parameter(typeof(Order), "i");
+                    //    MemberExpression memberExpression = Expression.Property(parameter, typeof(Order).GetProperty(arg));
+                    //    LambdaExpression lambda = Expression.Lambda(memberExpression, parameter);
+
+                    //    Console.WriteLine(lambda.ToString());
+
+                    //    await SortBy((Func<Order, object>)lambda.Compile());
+                    //}
+
+                    // https://stackoverflow.com/questions/10655761/convert-string-into-func
+                    // compiler error
+                    //var str = "i => i." + arg;
+                    //Console.WriteLine(str);
+                    //var func = await CSharpScript.EvaluateAsync<Func<Order, object>>(str);
+                    //await SortBy(func);
+
+
+                });
+        }
+
+
+        private async Task SortBy(Func<Order, object> predicate)
+        {
+            History.SortingSelector = predicate;
+            History.Descending = Descending;
+            Descending = !Descending;
+            await ExecuteLoadHistoryCommand();
         }
 
         public Order SelectedOrder
@@ -46,16 +100,12 @@ namespace I4_QM_app.ViewModels
             try
             {
                 History.Clear();
-                var history = await App.HistoryDataStore.GetItemsAsync(true);
+                var history = await App.OrdersDataStore.GetItemsFilteredAsync(a => a.Status != Status.open);
 
                 foreach (var order in history)
                 {
-                    //test filter
-                    //if (order.Status == Status.done)
                     History.Add(order);
-                    // TODO sort
                 }
-
 
             }
             catch (Exception ex)
@@ -77,8 +127,20 @@ namespace I4_QM_app.ViewModels
             //bool answer = await Shell.Current.DisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
 
             // This will push the ItemDetailPage onto the navigation stack
-            //if (answer) await Shell.Current.GoToAsync($"{nameof(HistoryPage)}?{nameof(HistoryDetailViewModel.OrderId)}={item.Id}");
+            await Shell.Current.GoToAsync($"{nameof(HistoryDetailPage)}?{nameof(HistoryDetailViewModel.OrderId)}={item.Id}");
+
+        }
+
+        async void DeleteAllHistoryItems()
+        {
+            // TODO abstract dialog_service
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
+
+            // TODO parameter
+            if (answer) await App.OrdersDataStore.DeleteManyItemsAsync();
+            await ExecuteLoadHistoryCommand();
 
         }
     }
+
 }

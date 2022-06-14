@@ -1,5 +1,5 @@
-﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
+﻿using I4_QM_app.Helpers;
+using I4_QM_app.Models;
 using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
@@ -16,10 +16,12 @@ namespace I4_QM_app.ViewModels
         private string id;
         private string userId;
         private int amount;
+        private int weight;
         private List<Additive> additives;
         private Status status;
         private DateTime created;
         private DateTime due;
+        private DateTime done;
 
         private bool doneEnabled;
 
@@ -71,6 +73,12 @@ namespace I4_QM_app.ViewModels
             get => amount;
             set => SetProperty(ref amount, value);
         }
+
+        public int Weight
+        {
+            get => weight;
+            set => SetProperty(ref weight, value);
+        }
         public List<Additive> Additives
         {
             get => additives;
@@ -92,22 +100,44 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref due, value);
         }
 
+        public DateTime Done
+        {
+            get => done;
+            set => SetProperty(ref done, value);
+        }
+
         private async void OnDoneClicked()
         {
             // check if all additives are done (mock for enabled/disabled done btn)
             if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
 
-            // set done and save in history         
-            Order.Status = Status.done;
-            // needed?! or just delete entry in orders db
-            await App.OrdersDataStore.UpdateItemAsync(Order);
-            await App.HistoryDataStore.AddItemAsync(Order);
+            // TODO display alert
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Done?", "Yes", "No");
 
-            // send mqtt
-            await MqttConnection.HandleFinishedOrder(Order);
+            if (answer)
+            {
+                //calc new portions (percentages) -> should be dynamic with behavoir maybe
+                foreach (var additive in Additives)
+                {
+                    additive.ActualPortion = (float)additive.Amount / (Weight * Amount / 100);
+                }
 
-            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-            await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
+                // update         
+                Order.Status = Status.mixed;
+                Order.Done = DateTime.Now;
+
+                Console.WriteLine(Order.ToString());
+
+                await App.OrdersDataStore.UpdateItemAsync(Order);
+
+                // send mqtt
+                await MqttConnectionService.HandleOrder(Order, "order/mixed");
+
+                // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
+                await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
+            }
+
+
         }
 
         public async void LoadOrderId(string orderId)
@@ -117,12 +147,25 @@ namespace I4_QM_app.ViewModels
                 var order = await App.OrdersDataStore.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
-                UserId = order.UserId;
+
+                //UserId = (string)Application.Current.Properties["UserID"];
+                UserId = null;
+
                 Amount = order.Amount;
+                Weight = order.Weight;
                 Additives = order.Additives;
                 Status = order.Status;
                 Created = order.Created;
                 Due = order.Due;
+
+                // calc
+                foreach (var additive in Additives)
+                {
+                    additive.Amount = (int)(additive.Portion * Weight * Amount / 100);
+                    //additive.Image = App.AdditiveDataSource. ...
+                }
+
+
             }
             catch (Exception)
             {
@@ -131,6 +174,40 @@ namespace I4_QM_app.ViewModels
         }
 
     }
+
+    // maybe todo in later iteration (fynamic change of percentage = portion)
+    // https://docs.microsoft.com/en-us/xamarin/xamarin-forms/app-fundamentals/behaviors/creating
+
+    //public class NumericValidationBehavior : Behavior<Entry>
+    //{
+    //    public static readonly BindableProperty Portion = BindableProperty.Create("Portion", typeof(int),
+    //                                    typeof(NumericValidationBehavior), null);
+
+    //    protected override void OnAttachedTo(Entry entry)
+    //    {
+    //        entry.TextChanged += OnEntryTextChanged;
+    //        base.OnAttachedTo(entry);
+    //    }
+
+    //    protected override void OnDetachingFrom(Entry entry)
+    //    {
+    //        entry.TextChanged -= OnEntryTextChanged;
+    //        base.OnDetachingFrom(entry);
+    //    }
+
+    //    void OnEntryTextChanged(object sender, TextChangedEventArgs args)
+    //    {
+    //        double result;
+    //        //bool isValid = double.TryParse(args.NewTextValue, out result);
+    //        //((Entry)sender).TextColor = isValid ? Color.Default : Color.Red;
+    //        //Console.WriteLine(result);
+
+    //        //calc new percentage
+    //        Console.WriteLine(Portion.ReturnType);
+
+
+    //    }
+    //}
 
 }
 

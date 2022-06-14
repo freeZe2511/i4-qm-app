@@ -1,6 +1,8 @@
-﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
+﻿using I4_QM_app.Helpers;
+using I4_QM_app.Models;
 using LiteDB;
+using Plugin.LocalNotification;
+using Plugin.LocalNotification.EventArgs;
 using System;
 using System.IO;
 using System.Threading;
@@ -17,15 +19,17 @@ namespace I4_QM_app
             InitializeComponent();
 
             //DependencyService.Register<MockDataStore>();
-            //DependencyService.Register<OrderService>();
-            //DependencyService.Register<HistoryService>();
+            DependencyService.Register<OrderService>();
+
+            NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
 
             MainPage = new AppShell();
+            //MainPage = new LoginPage();
         }
 
         protected override void OnStart()
         {
-            Task.Run(async () => { await MqttConnection.ConnectClient(); });
+            Task.Run(async () => { await MqttConnectionService.ConnectClient(); });
         }
 
         protected override void OnSleep()
@@ -52,7 +56,6 @@ namespace I4_QM_app
 
             var db = new LiteDatabase(connection);
             var orders = db.GetCollection<Order>("orders");
-            var history = db.GetCollection<Order>("history");
 
             return db;
         }
@@ -60,14 +63,27 @@ namespace I4_QM_app
         // Eigenschaft für den Zugriff
         public static ILiteDatabase DB => _db.Value;
 
+        public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
 
-        //public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
-        public static IDataStore<Order> OrdersDataStore => new OrderService();
-        //public static IDataStore<Order> HistoryDataStore => DependencyService.Get<IDataStore<Order>>();
-        public static IDataStore<Order> HistoryDataStore => new HistoryService();
+        private void LoadPageFromNotification(NotificationEventArgs e)
+        {
+            var data = e.Request.ReturningData;
+
+            if (string.IsNullOrWhiteSpace(data))
+            {
+                return;
+            }
+
+            // TODO
+            Page page = null;
+            if (data == "OrdersPage") page = new Views.OrdersPage();
+
+            Shell.Current.Navigation.PushAsync(page);
+
+            //await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
 
 
-        //public static int UserId { get; set; }
+        }
 
 
     }

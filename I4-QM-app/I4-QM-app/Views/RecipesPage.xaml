@@ -9,7 +9,7 @@
 
     <!--add (+) icon-->
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Add" Command="{Binding AddItemCommand}" />
+        <ToolbarItem IconImageSource="add40_400.png" Command="{Binding AddItemCommand}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

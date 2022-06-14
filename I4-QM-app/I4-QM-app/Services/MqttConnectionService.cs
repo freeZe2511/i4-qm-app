@@ -4,18 +4,19 @@ using MQTTnet.Client;
 using MQTTnet.Client.Options;
 using MQTTnet.Client.Subscribing;
 using Newtonsoft.Json;
+using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace I4_QM_app.Services
+namespace I4_QM_app.Helpers
 {
-    public class MqttConnection
+    public class MqttConnectionService
     {
         private static string serverURL = "broker.hivemq.com";
-        private static string baseTopicURL = "sfm/sg/";
+        private static string baseTopicURL = "thm/sfm/sg/";
         private static IMqttClient _mqttClient;
 
         // reconnect auto?
@@ -23,7 +24,7 @@ namespace I4_QM_app.Services
 
 
         // refactor 1 connection -> connectionHandler
-        public static async Task HandleFinishedOrder(Order item)
+        public static async Task HandleOrder(Order item, string topic)
         {
             var mqttFactory = new MqttFactory();
 
@@ -38,9 +39,14 @@ namespace I4_QM_app.Services
                 // serialize order to string
                 var message = JsonConvert.SerializeObject(item);
 
-                PublishMessage(baseTopicURL + "order/ready", message);
+                PublishMessage(baseTopicURL + topic, message);
 
             }
+        }
+
+        public static void UpdateBrokerURL(string newURL)
+        {
+            serverURL = newURL;
         }
 
         public static async Task ConnectClient()
@@ -84,6 +90,7 @@ namespace I4_QM_app.Services
                                                                    .WithTopicFilter(baseTopicURL + "#")
                                                                    .Build());
                 // Sen a test message to the server
+                //TODO device id?
                 PublishMessage(baseTopicURL + "connected", "QM App connected");
             });
         }
@@ -93,49 +100,76 @@ namespace I4_QM_app.Services
             _mqttClient.UseApplicationMessageReceivedHandler(async e =>
             {
                 // refactor 
+                // push notification when smth happens?
                 switch (e.ApplicationMessage.Topic)
                 {
-                    case "sfm/sg/order/add":
-                        var message = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                    case "thm/sfm/sg/order/add":
+                        var addOrders = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
                         Console.WriteLine($"+ Add");
 
                         //serialize order and add to db
-                        List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(message);
+                        List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(addOrders);
+
+                        int orderCount = 0;
 
                         foreach (var order in orders)
                         {
-                            await App.OrdersDataStore.AddItemAsync(order);
+                            //check if id is unique
+                            if (await App.OrdersDataStore.GetItemAsync(order.Id) == null)
+                            {
+                                order.Status = Status.open;
+                                await App.OrdersDataStore.AddItemAsync(order);
+                                orderCount++;
+                            }
                         }
-                        break;
 
-                    case "sfm/sg/order/delete":
-                        // maybe refactor to be able to delete from id list
-                        var id = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-
-                        Console.WriteLine($"+ Delete = {id}");
-
-                        //delete order with orderId
-                        await App.OrdersDataStore.DeleteItemAsync(id);
-                        break;
-
-                    case "sfm/sg/order/get":
-                        //delete order with orderId
-                        var orders1 = await App.OrdersDataStore.GetItemsAsync();
-
-                        // todo send list, not single
-                        foreach (var order in orders1)
+                        //notification
+                        if (orderCount > 0)
                         {
-                            PublishMessage("sfm/sg/order/all", order.Id);
+                            var notification = new NotificationRequest
+                            {
+                                BadgeNumber = 1,
+                                Description = orderCount + " new order(s)",
+                                Title = "New Order",
+                                NotificationId = 1,
+                                ReturningData = "OrdersPage"
+                            };
+
+                            await NotificationCenter.Current.Show(notification);
                         }
+
+                        break;
+
+                    case "thm/sfm/sg/order/del":
+                        // maybe refactor to be able to delete from id list
+                        var delOrders = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+
+                        Console.WriteLine($"+ Delete");
+
+                        List<string> ids = JsonConvert.DeserializeObject<List<string>>(delOrders);
+
+                        foreach (string id in ids)
+                        {
+                            await App.OrdersDataStore.DeleteItemAsync(id);
+                        }
+
+                        break;
+
+                    case "thm/sfm/sg/order/get":
+                        //delete order with orderId
+                        var getOrders = await App.OrdersDataStore.GetItemsAsync();
+
+                        var ordersList = JsonConvert.SerializeObject(getOrders);
+
+                        PublishMessage("sfm/sg/order/all", ordersList);
+
                         break;
 
                     default:
                         Console.WriteLine($"+ Rest = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
                         break;
                 }
-
-
 
             });
         }

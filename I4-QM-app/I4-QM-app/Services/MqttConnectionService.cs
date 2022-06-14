@@ -16,7 +16,7 @@ namespace I4_QM_app.Helpers
     public class MqttConnectionService
     {
         private static string serverURL = "broker.hivemq.com";
-        private static string baseTopicURL = "sfm/sg/";
+        private static string baseTopicURL = "thm/sfm/sg/";
         private static IMqttClient _mqttClient;
 
         // reconnect auto?
@@ -103,7 +103,7 @@ namespace I4_QM_app.Helpers
                 // push notification when smth happens?
                 switch (e.ApplicationMessage.Topic)
                 {
-                    case "sfm/sg/order/add":
+                    case "thm/sfm/sg/order/add":
                         var addOrders = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
                         Console.WriteLine($"+ Add");
@@ -142,7 +142,7 @@ namespace I4_QM_app.Helpers
 
                         break;
 
-                    case "sfm/sg/order/del":
+                    case "thm/sfm/sg/order/del":
                         // maybe refactor to be able to delete from id list
                         var delOrders = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
@@ -157,7 +157,7 @@ namespace I4_QM_app.Helpers
 
                         break;
 
-                    case "sfm/sg/order/get":
+                    case "thm/sfm/sg/order/get":
                         //delete order with orderId
                         var getOrders = await App.OrdersDataStore.GetItemsAsync();
 

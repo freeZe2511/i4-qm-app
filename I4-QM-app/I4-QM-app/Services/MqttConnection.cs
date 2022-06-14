@@ -98,18 +98,18 @@ namespace I4_QM_app.Helpers
                 switch (e.ApplicationMessage.Topic)
                 {
                     case "sfm/sg/order/add":
-                        var message = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                        var addOrders = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
                         Console.WriteLine($"+ Add");
 
                         //serialize order and add to db
-                        List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(message);
+                        List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(addOrders);
 
                         int orderCount = 0;
 
                         foreach (var order in orders)
                         {
-                            //TODO  check if id is unique
+                            //check if id is unique
                             if (await App.OrdersDataStore.GetItemAsync(order.Id) == null)
                             {
                                 order.Status = Status.open;
@@ -138,23 +138,27 @@ namespace I4_QM_app.Helpers
 
                     case "sfm/sg/order/del":
                         // maybe refactor to be able to delete from id list
-                        var id = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                        var delOrders = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
 
-                        Console.WriteLine($"+ Delete = {id}");
+                        Console.WriteLine($"+ Delete");
 
-                        //delete order with orderId
-                        await App.OrdersDataStore.DeleteItemAsync(id);
+                        List<string> ids = JsonConvert.DeserializeObject<List<string>>(delOrders);
+
+                        foreach (string id in ids)
+                        {
+                            await App.OrdersDataStore.DeleteItemAsync(id);
+                        }
+
                         break;
 
                     case "sfm/sg/order/get":
                         //delete order with orderId
-                        var orders1 = await App.OrdersDataStore.GetItemsAsync();
+                        var getOrders = await App.OrdersDataStore.GetItemsAsync();
 
-                        // todo send list, not single
-                        foreach (var order in orders1)
-                        {
-                            PublishMessage("sfm/sg/order/all", order.Id);
-                        }
+                        var ordersList = JsonConvert.SerializeObject(getOrders);
+
+                        PublishMessage("sfm/sg/order/all", ordersList);
+
                         break;
 
                     default:

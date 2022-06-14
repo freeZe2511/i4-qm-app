@@ -1,17 +1,35 @@
-﻿using System;
+﻿using I4_QM_app.Helpers;
+using I4_QM_app.Models;
+using I4_QM_app.Views;
+using System;
 using System.Diagnostics;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
 {
     [QueryProperty(nameof(OrderId), nameof(OrderId))]
-    public class FeedbackViewModel
+    public class FeedbackViewModel : BaseViewModel
     {
+        private Order order;
         private string orderId;
+        private Rating rating;
+
+        public Command SendFeedbackCommand { get; }
+        public Command ResetFeedbackCommand { get; }
         public FeedbackViewModel()
         {
-            //FeedbackCommand = new Command(OnFeedbackClicked);
-            //DeleteItemCommand = new Command(DeleteItem);
+            Title = "Feedback (0 - 9)";
+            SendFeedbackCommand = new Command(RateFeedbackAsync);
+            ResetFeedbackCommand = new Command(ResetFeedback);
+            rating = new Rating();
+            rating.RatingId = Guid.NewGuid().ToString();
+
+        }
+
+        public Order Order
+        {
+            get => order;
+            set => SetProperty(ref order, value);
         }
         public string OrderId
         {
@@ -22,19 +40,51 @@ namespace I4_QM_app.ViewModels
                 LoadOrderId(value);
             }
         }
+        public Rating Rating
+        {
+            get => rating;
+            set => SetProperty(ref rating, value);
+        }
 
         public async void LoadOrderId(string orderId)
         {
             try
             {
                 var order = await App.OrdersDataStore.GetItemAsync(orderId);
-
+                Order = order;
 
             }
             catch (Exception)
             {
                 Debug.WriteLine("Failed to Load Item");
             }
+        }
+
+        private async void RateFeedbackAsync()
+        {
+            // TODO abstract dialog_service
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Send feedback?", "Yes", "No");
+
+            // TODO parameter
+            if (answer)
+            {
+                // update                
+                Order.Status = Status.rated;
+                Order.Rating = Rating;
+                await App.OrdersDataStore.UpdateItemAsync(Order);
+
+                // send mqtt
+                await MqttConnectionService.HandleOrder(Order, "order/rated");
+
+                await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
+            }
+        }
+
+        private void ResetFeedback()
+        {
+            Rating = new Rating();
+            Rating.RatingId = Guid.NewGuid().ToString();
+            Order.Rating = Rating;
         }
     }
 }

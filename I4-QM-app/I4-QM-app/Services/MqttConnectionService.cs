@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace I4_QM_app.Helpers
 {
-    public class MqttConnection
+    public class MqttConnectionService
     {
         private static string serverURL = "broker.hivemq.com";
         private static string baseTopicURL = "sfm/sg/";
@@ -24,7 +24,7 @@ namespace I4_QM_app.Helpers
 
 
         // refactor 1 connection -> connectionHandler
-        public static async Task HandleFinishedOrder(Order item)
+        public static async Task HandleOrder(Order item, string topic)
         {
             var mqttFactory = new MqttFactory();
 
@@ -39,9 +39,14 @@ namespace I4_QM_app.Helpers
                 // serialize order to string
                 var message = JsonConvert.SerializeObject(item);
 
-                PublishMessage(baseTopicURL + "order/ready", message);
+                PublishMessage(baseTopicURL + topic, message);
 
             }
+        }
+
+        public static void UpdateBrokerURL(string newURL)
+        {
+            serverURL = newURL;
         }
 
         public static async Task ConnectClient()
@@ -85,6 +90,7 @@ namespace I4_QM_app.Helpers
                                                                    .WithTopicFilter(baseTopicURL + "#")
                                                                    .Build());
                 // Sen a test message to the server
+                //TODO device id?
                 PublishMessage(baseTopicURL + "connected", "QM App connected");
             });
         }

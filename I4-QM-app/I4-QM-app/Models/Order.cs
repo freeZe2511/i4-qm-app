@@ -23,7 +23,7 @@ namespace I4_QM_app.Models
 
         public DateTime Done { get; set; }
 
-        public string Rating { get; set; }
+        public Rating Rating { get; set; }
     }
 
 }

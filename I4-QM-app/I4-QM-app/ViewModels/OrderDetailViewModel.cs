@@ -131,7 +131,7 @@ namespace I4_QM_app.ViewModels
                 await App.OrdersDataStore.UpdateItemAsync(Order);
 
                 // send mqtt
-                await MqttConnection.HandleFinishedOrder(Order);
+                await MqttConnectionService.HandleOrder(Order, "order/mixed");
 
                 // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
                 await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");

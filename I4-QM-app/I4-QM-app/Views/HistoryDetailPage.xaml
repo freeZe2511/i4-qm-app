@@ -12,7 +12,7 @@
 
     <StackLayout Spacing="20" Padding="15">
             <Label Text="{Binding Id, StringFormat='OrderId: {0}'}" FontSize="Medium"/>
-        <Frame  CornerRadius="10" Padding="10" Margin="0, -35, 20, 0" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource colorConvert}}"     
+        <Frame  CornerRadius="10" Padding="10" Margin="0, -35, 20, 0" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
                             BorderColor="{StaticResource Secondary}">
             <Label x:Name="status" Text="{Binding Status}"                                                
                             TextColor="White"></Label>

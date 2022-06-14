@@ -36,7 +36,7 @@
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemDetailTextStyle}"
                             FontSize="14" />
-                        <Frame CornerRadius="10" Padding="10" Margin="0, -35, 20, 5" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource colorConvert}}"     
+                        <Frame CornerRadius="10" Padding="10" Margin="0, -35, 20, 5" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
                             BorderColor="{StaticResource Secondary}">
                             <Label x:Name="status" Text="{Binding Status}"                                                
                             TextColor="White"></Label>

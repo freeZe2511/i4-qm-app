@@ -29,7 +29,7 @@ namespace I4_QM_app
 
         protected override void OnStart()
         {
-            Task.Run(async () => { await MqttConnection.ConnectClient(); });
+            Task.Run(async () => { await MqttConnectionService.ConnectClient(); });
         }
 
         protected override void OnSleep()
@@ -75,7 +75,10 @@ namespace I4_QM_app
             }
 
             // TODO
-            Shell.Current.Navigation.PushAsync(new Views.OrdersPage());
+            Page page = null;
+            if (data == "OrdersPage") page = new Views.OrdersPage();
+
+            Shell.Current.Navigation.PushAsync(page);
 
             //await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
 

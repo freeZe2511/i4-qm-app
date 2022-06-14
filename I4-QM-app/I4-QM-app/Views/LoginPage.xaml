@@ -3,11 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              mc:Ignorable="d"
              x:Class="I4_QM_app.Views.LoginPage"
              Shell.NavBarIsVisible="False">
+    
     <ContentPage.Content>
-        <StackLayout Padding="10,0,10,0" VerticalOptions="Center">
+        <StackLayout Padding="50" VerticalOptions="Center">
+            <Image Source="account48_400.png" HorizontalOptions="Center" xct:IconTintColorEffect.TintColor="{StaticResource Primary}"/>
             <Label Text="Login" FontSize="Title" HorizontalOptions="Center"/>
             <Entry x:Name="entry" Placeholder="UserID" ClearButtonVisibility="WhileEditing" Keyboard="Numeric" />
             <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}" BackgroundColor="{StaticResource Primary}"/>

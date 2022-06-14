@@ -17,7 +17,7 @@ namespace I4_QM_app.Droid
             // change channel to show on screen?
             NotificationCenter.CreateNotificationChannel(
                 new Plugin.LocalNotification.Platform.Droid.NotificationChannelRequestBuilder()
-                .WithImportance(NotificationImportance.High)                
+                .WithImportance(NotificationImportance.High)
                 .Build()
                 );
 

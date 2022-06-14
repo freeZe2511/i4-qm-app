@@ -139,7 +139,6 @@ namespace I4_QM_app.Helpers
                             await NotificationCenter.Current.Show(notification);
                         }
 
-
                         break;
 
                     case "thm/sfm/sg/order/del":
@@ -171,8 +170,6 @@ namespace I4_QM_app.Helpers
                         Console.WriteLine($"+ Rest = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
                         break;
                 }
-
-
 
             });
         }

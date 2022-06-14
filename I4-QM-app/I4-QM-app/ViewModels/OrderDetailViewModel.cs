@@ -111,25 +111,33 @@ namespace I4_QM_app.ViewModels
             // check if all additives are done (mock for enabled/disabled done btn)
             if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
 
-            //calc new portions (percentages) -> should be dynamic with behavoir maybe
-            foreach (var additive in Additives)
+            // TODO display alert
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Done?", "Yes", "No");
+
+            if (answer)
             {
-                additive.ActualPortion = (float)additive.Amount / (Weight * Amount / 100);
+                //calc new portions (percentages) -> should be dynamic with behavoir maybe
+                foreach (var additive in Additives)
+                {
+                    additive.ActualPortion = (float)additive.Amount / (Weight * Amount / 100);
+                }
+
+                // update         
+                Order.Status = Status.mixed;
+                Order.Done = DateTime.Now;
+
+                Console.WriteLine(Order.ToString());
+
+                await App.OrdersDataStore.UpdateItemAsync(Order);
+
+                // send mqtt
+                await MqttConnection.HandleFinishedOrder(Order);
+
+                // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
+                await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
             }
 
-            // update         
-            Order.Status = Status.mixed;
-            Order.Done = DateTime.Now;
 
-            Console.WriteLine(Order.ToString());
-
-            await App.OrdersDataStore.UpdateItemAsync(Order);
-
-            // send mqtt
-            await MqttConnection.HandleFinishedOrder(Order);
-
-            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
-            await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
         }
 
         public async void LoadOrderId(string orderId)

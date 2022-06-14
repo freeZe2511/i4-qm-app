@@ -105,24 +105,33 @@ namespace I4_QM_app.Helpers
                         //serialize order and add to db
                         List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(message);
 
+                        int orderCount = 0;
+
                         foreach (var order in orders)
                         {
-                            order.Status = Status.open;
-                            await App.OrdersDataStore.AddItemAsync(order);
+                            //TODO  check if id is unique
+                            if (await App.OrdersDataStore.GetItemAsync(order.Id) == null)
+                            {
+                                order.Status = Status.open;
+                                await App.OrdersDataStore.AddItemAsync(order);
+                                orderCount++;
+                            }
                         }
 
                         //notification
-
-                        var notification = new NotificationRequest
+                        if (orderCount > 0)
                         {
-                            BadgeNumber = 1,
-                            Description = orders.Count + " new order(s)",
-                            Title = "New Order",
-                            NotificationId = 1,
-                            ReturningData = "OrdersPage"
-                        };
+                            var notification = new NotificationRequest
+                            {
+                                BadgeNumber = 1,
+                                Description = orderCount + " new order(s)",
+                                Title = "New Order",
+                                NotificationId = 1,
+                                ReturningData = "OrdersPage"
+                            };
 
-                        await NotificationCenter.Current.Show(notification);
+                            await NotificationCenter.Current.Show(notification);
+                        }
 
 
                         break;

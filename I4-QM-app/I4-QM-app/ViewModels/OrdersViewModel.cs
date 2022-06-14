@@ -37,6 +37,8 @@ namespace I4_QM_app.ViewModels
             SortByDue = new Command(async () => await SortBy(i => i.Due));
             SortByQty = new Command(async () => await SortBy(i => i.Amount));
             SortByCreated = new Command(async () => await SortBy(i => i.Created));
+
+
         }
 
         private async Task SortBy(Func<Order, object> predicate)

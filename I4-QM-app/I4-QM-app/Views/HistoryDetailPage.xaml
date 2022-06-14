@@ -65,6 +65,35 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
+        <Grid IsVisible="{Binding FeedbackEnabled, Converter={StaticResource InvertedBoolConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+               
+
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Rating.Form, StringFormat='Form: {0}'}"/>
+            <Label Grid.Row="0" Grid.Column="1" Text="{Binding Rating.Color, StringFormat='Color: {0}'}"/>
+            <Label Grid.Row="0" Grid.Column="2" Text="{Binding Rating.Ridge, StringFormat='Ridge: {0}'}" />
+            <Label Grid.Row="0" Grid.Column="3" Text="{Binding Rating.Surface, StringFormat='Surface: {0}'}"/>
+            <Label Grid.Row="0" Grid.Column="4" Text="{Binding Rating.Bindings, StringFormat='Bindings: {0}'}"/>
+            <Label Grid.Row="1" Grid.Column="0" Text="{Binding Rating.Sprue, StringFormat='Sprue: {0}'}"/>
+            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Rating.DropIn, StringFormat='Drop In: {0}'}"/>
+            <Label Grid.Row="1" Grid.Column="2" Text="{Binding Rating.Demolding, StringFormat='Demolding: {0}'}"/>
+            <Label Grid.Row="1" Grid.Column="3" Text="{Binding Rating.AirInclusion, StringFormat='Air Inclusion: {0}'}"/>
+            <Label Grid.Row="1" Grid.Column="4" Text="{Binding Rating.Overall, StringFormat='Overall: {0}'}"/>
+            <Label Grid.Row="2" Grid.ColumnSpan="5" Text="{Binding Rating.Feedback, StringFormat='Feedback: {0}'}"/>
+        </Grid>             
+
         <!--Submit-->
         <Button VerticalOptions="Center" Text="Feedback" Command="{Binding FeedbackCommand}" BackgroundColor="{StaticResource Primary}" IsVisible="{Binding FeedbackEnabled}"/>
 

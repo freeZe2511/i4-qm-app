@@ -21,6 +21,7 @@ namespace I4_QM_app.ViewModels
         private DateTime created;
         private DateTime due;
         private DateTime done;
+        private Rating rating;
         private bool feedbackEnabled;
 
         public Command FeedbackCommand { get; }
@@ -97,6 +98,12 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref done, value);
         }
 
+        public Rating Rating
+        {
+            get => rating;
+            set => SetProperty(ref rating, value);
+        }
+
         public bool FeedbackEnabled
         {
             get => feedbackEnabled;
@@ -131,6 +138,7 @@ namespace I4_QM_app.ViewModels
                 Created = order.Created;
                 Due = order.Due;
                 Done = order.Done;
+                Rating = order.Rating;
                 FeedbackEnabled = order.Status == Status.mixed;
 
             }

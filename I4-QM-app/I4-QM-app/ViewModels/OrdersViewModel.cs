@@ -11,14 +11,11 @@ namespace I4_QM_app.ViewModels
     public class OrdersViewModel : BaseViewModel
     {
         private Order _selectedOrder;
-
         public SortableObservableCollection<Order> Orders { get; }
         public Command LoadOrdersCommand { get; }
-        public Command SortByID { get; }
-        public Command SortByDue { get; }
-        public Command SortByQty { get; }
-        public Command SortByCreated { get; }
         public Command<Order> OrderTapped { get; }
+        public Command DisableCommand { get; }
+        public Command SortByCommand { get; }
 
         public bool Descending { get; set; }
 
@@ -33,10 +30,42 @@ namespace I4_QM_app.ViewModels
 
             OrderTapped = new Command<Order>(OnOrderSelected);
 
-            SortByID = new Command(async () => await SortBy(i => i.Id));
-            SortByDue = new Command(async () => await SortBy(i => i.Due));
-            SortByQty = new Command(async () => await SortBy(i => i.Amount));
-            SortByCreated = new Command(async () => await SortBy(i => i.Created));
+            SortByCommand = new Command<string>(
+                execute: async (string arg) =>
+                {
+                    arg = arg.Trim();
+
+                    // works
+                    if (arg == "Id") await SortBy(i => i.Id);
+                    if (arg == "Due") await SortBy(i => i.Due);
+                    if (arg == "Amount") await SortBy(i => i.Amount);
+                    if (arg == "Created") await SortBy(i => i.Created);
+
+
+                    // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
+                    // only works with id?! Specified cast is not valid
+                    //if (typeof(Order).GetProperty(arg) != null)
+                    //{
+                    //    ParameterExpression parameter = Expression.Parameter(typeof(Order), "i");
+                    //    MemberExpression memberExpression = Expression.Property(parameter, typeof(Order).GetProperty(arg));
+                    //    LambdaExpression lambda = Expression.Lambda(memberExpression, parameter);
+
+                    //    Console.WriteLine(lambda.ToString());
+
+                    //    await SortBy((Func<Order, object>)lambda.Compile());
+                    //}
+
+                    // https://stackoverflow.com/questions/10655761/convert-string-into-func
+                    // compiler error
+                    //var str = "i => i." + arg;
+                    //Console.WriteLine(str);
+                    //var func = await CSharpScript.EvaluateAsync<Func<Order, object>>(str);
+                    //await SortBy(func);
+
+
+                });
+
+            DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
 
 
         }
@@ -77,7 +106,6 @@ namespace I4_QM_app.ViewModels
         }
 
 
-
         public void OnAppearing()
         {
             IsBusy = true;
@@ -105,12 +133,6 @@ namespace I4_QM_app.ViewModels
             // This will push the ItemDetailPage onto the navigation stack
             if (answer) await Shell.Current.GoToAsync($"{nameof(OrderDetailPage)}?{nameof(OrderDetailViewModel.OrderId)}={item.Id}");
 
-        }
-
-        public void SortOrder(object sender)
-        {
-            Console.WriteLine("EEEEEEEEEEE");
-            Console.WriteLine((ToolbarItem)sender);
         }
 
     }

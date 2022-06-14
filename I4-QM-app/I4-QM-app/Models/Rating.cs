@@ -4,7 +4,6 @@
     {
         public string RatingId { get; set; }
         public string Feedback { get; set; }
-
         public int Form { get; set; }
         public int Color { get; set; }
         public int Ridge { get; set; }

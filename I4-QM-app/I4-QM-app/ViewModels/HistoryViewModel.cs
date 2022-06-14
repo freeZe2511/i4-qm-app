@@ -15,16 +15,66 @@ namespace I4_QM_app.ViewModels
         public Command LoadHistoryCommand { get; }
         public Command DeleteAllItemsCommand { get; }
         public Command<Order> OrderTapped { get; }
+        public Command DisableCommand { get; }
+        public Command SortByCommand { get; }
+
+        public bool Descending { get; set; }
         public HistoryViewModel()
         {
             Title = "History";
-            History = new SortableObservableCollection<Order>() { SortingSelector = i => i.Status, Descending = true };
+            Descending = true;
+            History = new SortableObservableCollection<Order>() { SortingSelector = i => i.Status, Descending = Descending };
 
             // TODO maybe overloading main thread
             LoadHistoryCommand = new Command(async () => await ExecuteLoadHistoryCommand());
 
             OrderTapped = new Command<Order>(OnOrderSelected);
             DeleteAllItemsCommand = new Command(DeleteAllHistoryItems);
+            DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
+
+            SortByCommand = new Command<string>(
+                execute: async (string arg) =>
+                {
+                    arg = arg.Trim();
+
+                    // works
+                    if (arg == "Id") await SortBy(i => i.Id);
+                    if (arg == "Done") await SortBy(i => i.Done);
+                    if (arg == "Amount") await SortBy(i => i.Amount);
+                    if (arg == "Created") await SortBy(i => i.Created);
+
+
+                    // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
+                    // only works with id?! Specified cast is not valid
+                    //if (typeof(Order).GetProperty(arg) != null)
+                    //{
+                    //    ParameterExpression parameter = Expression.Parameter(typeof(Order), "i");
+                    //    MemberExpression memberExpression = Expression.Property(parameter, typeof(Order).GetProperty(arg));
+                    //    LambdaExpression lambda = Expression.Lambda(memberExpression, parameter);
+
+                    //    Console.WriteLine(lambda.ToString());
+
+                    //    await SortBy((Func<Order, object>)lambda.Compile());
+                    //}
+
+                    // https://stackoverflow.com/questions/10655761/convert-string-into-func
+                    // compiler error
+                    //var str = "i => i." + arg;
+                    //Console.WriteLine(str);
+                    //var func = await CSharpScript.EvaluateAsync<Func<Order, object>>(str);
+                    //await SortBy(func);
+
+
+                });
+        }
+
+
+        private async Task SortBy(Func<Order, object> predicate)
+        {
+            History.SortingSelector = predicate;
+            History.Descending = Descending;
+            Descending = !Descending;
+            await ExecuteLoadHistoryCommand();
         }
 
         public Order SelectedOrder

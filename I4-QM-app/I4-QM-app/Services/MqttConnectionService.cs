@@ -33,6 +33,7 @@ namespace I4_QM_app.Helpers
                 .WithAutoReconnectDelay(TimeSpan.FromSeconds(3))
                 .Build();
 
+            // get from extern?
             List<MqttTopicFilter> topics = new List<MqttTopicFilter>();
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/add").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/del").Build());
@@ -49,16 +50,38 @@ namespace I4_QM_app.Helpers
 
         }
 
-        //public static async void ToggleMqttClient()
-        //{
-        //    if (managedMqttClient.IsConnected)
-        //    {
-        //        await managedMqttClient.StopAsync();
-        //    } else
-        //    {
-        //        await managedMqttClient.StartAsync();
-        //    }
-        //}
+        public static bool IsConnected { get => managedMqttClient.IsConnected; }
+
+        public static async void ToggleMqttClient()
+        {
+            //    Console.WriteLine(managedMqttClient.IsConnected);
+            //    Console.WriteLine(IsConnected);
+
+            //    if (managedMqttClient.IsConnected)
+            //    {
+            //        await managedMqttClient.StopAsync();
+            //    }
+            //    else
+            //    {
+            //        var mqttClientOptions = new MqttClientOptionsBuilder()
+            //        .WithTcpServer(serverURL)
+            //        .WithWillQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce)
+            //        .Build();
+
+            //        var managedMqttClientOptions = new ManagedMqttClientOptionsBuilder()
+            //        .WithClientOptions(mqttClientOptions)
+            //        .WithAutoReconnectDelay(TimeSpan.FromSeconds(3))
+            //        .Build();
+
+            //        // get from extern?
+            //        List<MqttTopicFilter> topics = new List<MqttTopicFilter>();
+            //        topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/add").Build());
+            //        topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/del").Build());
+            //        topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/get").Build());
+
+            //        await managedMqttClient.StartAsync(managedMqttClientOptions);
+            //    }
+        }
 
         private static async Task<Task> HandleReceivedMessage(MqttApplicationMessageReceivedEventArgs arg)
         {
@@ -67,6 +90,7 @@ namespace I4_QM_app.Helpers
             var message = arg.ApplicationMessage;
             var topic = message.Topic;
 
+            // maybe not ideal
             if (topic == baseTopicURL + "order/add") await HandleAddOrder(message);
             if (topic == baseTopicURL + "order/del") await HandleDelOrder(message);
             if (topic == baseTopicURL + "order/get") await HandleGetOrder(message);

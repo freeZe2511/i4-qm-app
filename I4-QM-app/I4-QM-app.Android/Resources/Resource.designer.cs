@@ -25067,6 +25067,12 @@ namespace I4_QM_app.Droid
 			// aapt resource value: 0x7F07009A
 			public const int tooltip_frame_light = 2131165338;
 			
+			// aapt resource value: 0x7F07009B
+			public const int wifi48_400 = 2131165339;
+			
+			// aapt resource value: 0x7F07009C
+			public const int wifi_off48_400 = 2131165340;
+			
 			static Drawable()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();

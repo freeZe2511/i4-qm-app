@@ -1,8 +1,8 @@
 ﻿using I4_QM_app.Models;
 using MQTTnet;
 using MQTTnet.Client;
-using MQTTnet.Client.Options;
-using MQTTnet.Client.Subscribing;
+using MQTTnet.Extensions.ManagedClient;
+using MQTTnet.Packets;
 using Newtonsoft.Json;
 using Plugin.LocalNotification;
 using System;
@@ -17,31 +17,90 @@ namespace I4_QM_app.Helpers
     {
         private static string serverURL = "broker.hivemq.com";
         private static string baseTopicURL = "thm/sfm/sg/";
-        private static IMqttClient _mqttClient;
+        private static IManagedMqttClient managedMqttClient;
 
-        // reconnect auto?
-        // https://github.com/dotnet/MQTTnet/blob/master/Samples/ManagedClient/Managed_Client_Simple_Samples.cs
-
-
-        // refactor 1 connection -> connectionHandler
-        public static async Task HandleOrder(Order item, string topic)
+        public static async Task ConnectClient()
         {
-            var mqttFactory = new MqttFactory();
+            managedMqttClient = new MqttFactory().CreateManagedMqttClient();
 
-            using (var mqttClient = mqttFactory.CreateMqttClient())
-            {
-                var mqttClientOptions = new MqttClientOptionsBuilder()
-                    .WithTcpServer(serverURL)
-                    .Build();
+            var mqttClientOptions = new MqttClientOptionsBuilder()
+                .WithTcpServer(serverURL)
+                .WithWillQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce)
+                .Build();
 
-                await mqttClient.ConnectAsync(mqttClientOptions, CancellationToken.None);
+            var managedMqttClientOptions = new ManagedMqttClientOptionsBuilder()
+                .WithClientOptions(mqttClientOptions)
+                .WithAutoReconnectDelay(TimeSpan.FromSeconds(3))
+                .Build();
 
-                // serialize order to string
-                var message = JsonConvert.SerializeObject(item);
+            // get from extern?
+            List<MqttTopicFilter> topics = new List<MqttTopicFilter>();
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/add").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/del").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/get").Build());
 
-                PublishMessage(baseTopicURL + topic, message);
+            await managedMqttClient.SubscribeAsync(topics);
+            await managedMqttClient.StartAsync(managedMqttClientOptions);
 
-            }
+            await managedMqttClient.EnqueueAsync(baseTopicURL + "connected", "QM App");
+
+            managedMqttClient.ApplicationMessageReceivedAsync += HandleReceivedMessage;
+
+            SpinWait.SpinUntil(() => managedMqttClient.PendingApplicationMessagesCount == 0, 10000);
+
+        }
+
+        public static bool IsConnected { get => managedMqttClient.IsConnected; }
+
+        public static async void ToggleMqttClient()
+        {
+            //    Console.WriteLine(managedMqttClient.IsConnected);
+            //    Console.WriteLine(IsConnected);
+
+            //    if (managedMqttClient.IsConnected)
+            //    {
+            //        await managedMqttClient.StopAsync();
+            //    }
+            //    else
+            //    {
+            //        var mqttClientOptions = new MqttClientOptionsBuilder()
+            //        .WithTcpServer(serverURL)
+            //        .WithWillQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce)
+            //        .Build();
+
+            //        var managedMqttClientOptions = new ManagedMqttClientOptionsBuilder()
+            //        .WithClientOptions(mqttClientOptions)
+            //        .WithAutoReconnectDelay(TimeSpan.FromSeconds(3))
+            //        .Build();
+
+            //        // get from extern?
+            //        List<MqttTopicFilter> topics = new List<MqttTopicFilter>();
+            //        topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/add").Build());
+            //        topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/del").Build());
+            //        topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/get").Build());
+
+            //        await managedMqttClient.StartAsync(managedMqttClientOptions);
+            //    }
+        }
+
+        private static async Task<Task> HandleReceivedMessage(MqttApplicationMessageReceivedEventArgs arg)
+        {
+            Console.WriteLine(arg.ApplicationMessage.Topic);
+
+            var message = arg.ApplicationMessage;
+            var topic = message.Topic;
+
+            // maybe not ideal
+            if (topic == baseTopicURL + "order/add") await HandleAddOrder(message);
+            if (topic == baseTopicURL + "order/del") await HandleDelOrder(message);
+            if (topic == baseTopicURL + "order/get") await HandleGetOrder(message);
+
+            return Task.CompletedTask;
+        }
+
+        public static async Task HandlePublishMessage(string topic, string message)
+        {
+            await managedMqttClient.EnqueueAsync(baseTopicURL + topic, message);
         }
 
         public static void UpdateBrokerURL(string newURL)
@@ -49,135 +108,70 @@ namespace I4_QM_app.Helpers
             serverURL = newURL;
         }
 
-        public static async Task ConnectClient()
+        private static async Task HandleAddOrder(MqttApplicationMessage message)
         {
-            // Create client
-            if (_mqttClient == null) _mqttClient = new MqttFactory().CreateMqttClient();
+            string addOrders = Encoding.UTF8.GetString(message.Payload);
 
-            var options = new MqttClientOptionsBuilder().WithClientId("QM-App")
-                                                        .WithTcpServer(serverURL)
-                                                        .Build();
-            // When client connected to the server
-            HandleInitialConnection();
+            Console.WriteLine($"+ Add");
 
-            // When client received a message from server
-            HandleReceivedMessage();
+            //serialize order and add to db
+            List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(addOrders);
 
-            // Connect to server
-            await _mqttClient.ConnectAsync(options, CancellationToken.None);
+            int orderCount = 0;
 
-        }
-
-        private static async void PublishMessage(string topic, string message)
-        {
-            // Create mqttMessage
-            var mqttMessage = new MqttApplicationMessageBuilder()
-                                .WithTopic(topic)
-                                .WithPayload(message)
-                                .WithExactlyOnceQoS()
-                                .Build();
-
-            // Publish the message asynchronously
-            await _mqttClient.PublishAsync(mqttMessage, CancellationToken.None);
-        }
-
-        private static void HandleInitialConnection()
-        {
-            _mqttClient.UseConnectedHandler(async e =>
+            foreach (var order in orders)
             {
-                // Subscribe to a topic TODO topic filter
-                MqttClientSubscribeResult subResult = await _mqttClient.SubscribeAsync(new MqttClientSubscribeOptionsBuilder()
-                                                                   .WithTopicFilter(baseTopicURL + "#")
-                                                                   .Build());
-                // Sen a test message to the server
-                //TODO device id?
-                PublishMessage(baseTopicURL + "connected", "QM App connected");
-            });
-        }
-
-        private static void HandleReceivedMessage()
-        {
-            _mqttClient.UseApplicationMessageReceivedHandler(async e =>
-            {
-                // refactor 
-                // push notification when smth happens?
-                switch (e.ApplicationMessage.Topic)
+                //check if id is unique
+                if (await App.OrdersDataStore.GetItemAsync(order.Id) == null)
                 {
-                    case "thm/sfm/sg/order/add":
-                        var addOrders = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-
-                        Console.WriteLine($"+ Add");
-
-                        //serialize order and add to db
-                        List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(addOrders);
-
-                        int orderCount = 0;
-
-                        foreach (var order in orders)
-                        {
-                            //check if id is unique
-                            if (await App.OrdersDataStore.GetItemAsync(order.Id) == null)
-                            {
-                                order.Status = Status.open;
-                                await App.OrdersDataStore.AddItemAsync(order);
-                                orderCount++;
-                            }
-                        }
-
-                        //notification
-                        if (orderCount > 0)
-                        {
-                            var notification = new NotificationRequest
-                            {
-                                BadgeNumber = 1,
-                                Description = orderCount + " new order(s)",
-                                Title = "New Order",
-                                NotificationId = 1,
-                                ReturningData = "OrdersPage"
-                            };
-
-                            await NotificationCenter.Current.Show(notification);
-                        }
-
-                        break;
-
-                    case "thm/sfm/sg/order/del":
-                        // maybe refactor to be able to delete from id list
-                        var delOrders = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-
-                        Console.WriteLine($"+ Delete");
-
-                        List<string> ids = JsonConvert.DeserializeObject<List<string>>(delOrders);
-
-                        foreach (string id in ids)
-                        {
-                            await App.OrdersDataStore.DeleteItemAsync(id);
-                        }
-
-                        break;
-
-                    case "thm/sfm/sg/order/get":
-                        //delete order with orderId
-                        var getOrders = await App.OrdersDataStore.GetItemsAsync();
-
-                        var ordersList = JsonConvert.SerializeObject(getOrders);
-
-                        PublishMessage("sfm/sg/order/all", ordersList);
-
-                        break;
-
-                    default:
-                        Console.WriteLine($"+ Rest = {Encoding.UTF8.GetString(e.ApplicationMessage.Payload)}");
-                        break;
+                    order.Status = Status.open;
+                    await App.OrdersDataStore.AddItemAsync(order);
+                    orderCount++;
                 }
+            }
 
-            });
+            //notification TODO service
+            if (orderCount > 0)
+            {
+                var notification = new NotificationRequest
+                {
+                    BadgeNumber = 1,
+                    Description = orderCount + " new order(s)",
+                    Title = "New Order",
+                    NotificationId = 1,
+                    ReturningData = "OrdersPage"
+                };
+
+                await NotificationCenter.Current.Show(notification);
+            }
+
         }
+
+        private static async Task HandleDelOrder(MqttApplicationMessage message)
+        {
+            string delOrders = Encoding.UTF8.GetString(message.Payload);
+
+            Console.WriteLine($"+ Delete");
+
+            List<string> ids = JsonConvert.DeserializeObject<List<string>>(delOrders);
+
+            foreach (string id in ids)
+            {
+                await App.OrdersDataStore.DeleteItemAsync(id);
+            }
+        }
+
+        private static async Task HandleGetOrder(MqttApplicationMessage message)
+        {
+            var getOrders = await App.OrdersDataStore.GetItemsAsync();
+
+            string ordersList = JsonConvert.SerializeObject(getOrders);
+
+            await HandlePublishMessage("order/list", ordersList);
+        }
+
 
     }
-
-
-
 
 }
 

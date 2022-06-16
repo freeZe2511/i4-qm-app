@@ -1,6 +1,7 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
 using I4_QM_app.Views;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using Xamarin.Forms;
@@ -74,7 +75,8 @@ namespace I4_QM_app.ViewModels
                 await App.OrdersDataStore.UpdateItemAsync(Order);
 
                 // send mqtt
-                await MqttConnectionService.HandleOrder(Order, "order/rated");
+                string res = JsonConvert.SerializeObject(Order);
+                await MqttConnectionService.HandlePublishMessage("order/rated", res);
 
                 await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
             }

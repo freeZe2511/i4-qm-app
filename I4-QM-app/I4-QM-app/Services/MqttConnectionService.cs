@@ -1,10 +1,10 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Packets;
 using Newtonsoft.Json;
-using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -131,19 +131,7 @@ namespace I4_QM_app.Helpers
             }
 
             //notification TODO service
-            if (orderCount > 0)
-            {
-                var notification = new NotificationRequest
-                {
-                    BadgeNumber = 1,
-                    Description = orderCount + " new order(s)",
-                    Title = "New Order",
-                    NotificationId = 1,
-                    ReturningData = "OrdersPage"
-                };
-
-                await NotificationCenter.Current.Show(notification);
-            }
+            if (orderCount > 0) new NotificationService().ShowSimpleNotification(1, orderCount + " new order(s)", "New Order", 1, "OrdersPage");
 
         }
 

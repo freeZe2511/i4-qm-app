@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace I4_QM_app.Helpers
+namespace I4_QM_app.Services
 {
     public class MockDataStore : IDataStore<Order>
     {

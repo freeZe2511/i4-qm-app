@@ -9,11 +9,11 @@
    
     <StackLayout Spacing="20" Padding="15">
 
-        <Frame CornerRadius="10" BackgroundColor="#c0c9cf">
+        <Frame CornerRadius="10" BackgroundColor="#c0c9cf" Padding="5">
             <Label Text="{Binding Id, StringFormat='#{0}'}" FontSize="Title" FontAttributes="Bold" HorizontalTextAlignment="End" TextColor="White"/>
         </Frame>
 
-        <Frame CornerRadius="10" Padding="20, 7, 20, 7" Margin="0, -35, 20, 5" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
+        <Frame CornerRadius="10" Padding="20, 7, 20, 7" Margin="0, -35, 20, -15" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
                             BorderColor="{StaticResource Secondary}">
             <Label x:Name="status" Text="{Binding Status}"                                                
                             TextColor="White"></Label>
@@ -57,13 +57,25 @@
 
         <BoxView   HorizontalOptions="Fill"
                    HeightRequest="1" 
-                   Color="LightGray"/>
+                   Color="LightGray"/>        
+
+        <Grid Padding="10,0,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>                
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Text="Additives" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Column="1" Text="{Binding Additives.Count, StringFormat='{0}'}" HorizontalOptions="End" FontSize="Small"/>            
+        </Grid>
 
         <!--ListView Additives-->
         <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
                 SelectionMode="None" 
-                Header="Additives" >            
+               >            
             <CollectionView.ItemTemplate>
                 <DataTemplate>                   
                     <Grid Padding="0, 20, 0, 0">

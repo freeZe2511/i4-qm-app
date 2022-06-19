@@ -9,12 +9,13 @@
 
     <!--add (+) icon-->
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="add40_400.png" Command="{Binding AddItemCommand}" Order="Primary"/>        
+        <ToolbarItem IconImageSource="add40_400.png" Command="{Binding AddItemCommand}" Order="Primary"/>
+        <ToolbarItem IconImageSource="del_f48_400.png" Command="{Binding DeleteAllItemsCommand}" Order="Primary"/>        
         <ToolbarItem Text="Sort by:" Command="{Binding DisableCommand}" Order="Secondary"/>
         <ToolbarItem Text="ID" Command="{Binding SortByCommand}" CommandParameter="Id" Order="Secondary"/>
         <ToolbarItem Text="Name" Command="{Binding SortByCommand}" CommandParameter="Name" Order="Secondary"/>
-        <ToolbarItem Text="Creator" Command="{Binding SortByCommand}" CommandParameter="Creator" Order="Secondary"/>
-        <ToolbarItem Text="Popularity" Command="{Binding SortByCommand}" CommandParameter="Popularity" Order="Secondary"/>          
+        <ToolbarItem Text="Creator" Command="{Binding SortByCommand}" CommandParameter="CreatorId" Order="Secondary"/>
+        <ToolbarItem Text="Popularity" Command="{Binding SortByCommand}" CommandParameter="Used" Order="Secondary"/>          
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

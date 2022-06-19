@@ -17,6 +17,7 @@ namespace I4_QM_app.ViewModels
         public Command SortByCommand { get; }
         public Command AddItemCommand { get; }
         public Command DisableCommand { get; }
+        public Command DeleteAllItemsCommand { get; }
 
         public bool Descending { get; set; }
 
@@ -30,6 +31,7 @@ namespace I4_QM_app.ViewModels
             // TODO maybe overloading main thread
             LoadRecipesCommand = new Command(async () => await ExecuteLoadRecipesCommand());
             AddItemCommand = new Command(async () => await AddNewItemAsync());
+            DeleteAllItemsCommand = new Command(async () => await DeleteAllItemAsync());
 
             SortByCommand = new Command<string>(
                 execute: async (string arg) =>
@@ -38,9 +40,9 @@ namespace I4_QM_app.ViewModels
 
                     // works
                     if (arg == "Id") await SortBy(i => i.Id);
-                    //if (arg == "Due") await SortBy(i => i.Due);
-                    //if (arg == "Amount") await SortBy(i => i.Amount);
-                    //if (arg == "Created") await SortBy(i => i.Created);
+                    if (arg == "Name") await SortBy(i => i.Name);
+                    if (arg == "CreatorId") await SortBy(i => i.CreatorId);
+                    if (arg == "Used") await SortBy(i => i.Used);
 
 
                     // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
@@ -128,11 +130,8 @@ namespace I4_QM_app.ViewModels
             if (item == null)
                 return;
 
-            // TODO abstract dialog_service
-            //bool answer = await Shell.Current.DisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
-
             // This will push the ItemDetailPage onto the navigation stack
-            //if (answer) await Shell.Current.GoToAsync($"{nameof(OrderDetailPage)}?{nameof(OrderDetailViewModel.OrderId)}={item.Id}");
+            await Shell.Current.GoToAsync($"{nameof(RecipeDetailPage)}?{nameof(RecipeDetailViewModel.RecipeId)}={item.Id}");
 
         }
 
@@ -143,6 +142,15 @@ namespace I4_QM_app.ViewModels
 
             // This will push the ItemDetailPage onto the navigation stack
             if (answer) await Shell.Current.GoToAsync($"{nameof(NewRecipePage)}");
+        }
+
+        private async Task DeleteAllItemAsync()
+        {
+            // TODO abstract dialog_service
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete all recipes?", "Yes", "No");
+
+            if (answer) await App.RecipesDataStore.DeleteAllItemsAsync();
+            await ExecuteLoadRecipesCommand();
         }
     }
 }

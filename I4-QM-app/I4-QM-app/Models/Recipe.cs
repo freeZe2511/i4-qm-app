@@ -13,7 +13,7 @@ namespace I4_QM_app.Models
 
         public List<Additive> Additives { get; set; }
 
-        public int Popularity { get; set; }
+        public int Used { get; set; }
 
     }
 }

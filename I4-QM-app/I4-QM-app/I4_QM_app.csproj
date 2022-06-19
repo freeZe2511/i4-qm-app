@@ -32,28 +32,31 @@
     <Compile Update="Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\NewRecipePage.xaml.cs">
+    <Compile Update="Views\Recipes\NewRecipePage.xaml.cs">
       <DependentUpon>NewRecipePage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\OrderDetailPage.xaml.cs">
+    <Compile Update="Views\Orders\OrderDetailPage.xaml.cs">
       <DependentUpon>OrderDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Update="Views\OrdersPage.xaml.cs">
+    <Compile Update="Views\Orders\OrdersPage.xaml.cs">
       <DependentUpon>OrdersPage.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Update="Views\FeedbackPage.xaml">
+    <EmbeddedResource Update="Views\History\FeedbackPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\HistoryDetailPage.xaml">
+    <EmbeddedResource Update="Views\History\HistoryDetailPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\HistoryPage.xaml">
+    <EmbeddedResource Update="Views\History\HistoryPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\RecipesPage.xaml">
+    <EmbeddedResource Update="Views\Recipes\RecipeDetailPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\Recipes\RecipesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\SettingsPage.xaml">

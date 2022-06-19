@@ -4,6 +4,10 @@
              x:Class="I4_QM_app.Views.RecipeDetailPage"
              Title="{Binding Id}">
 
+    <ContentPage.ToolbarItems>        
+        <ToolbarItem IconImageSource="del_f48_400.png" Command="{Binding DeleteItemCommand}" Order="Primary"/>        
+    </ContentPage.ToolbarItems>
+
     <StackLayout Spacing="20" Padding="15">
         <Label Text="{Binding Id, StringFormat='RecipeId: {0}'}" FontSize="Medium"/>
         <Label Text="{Binding Name, StringFormat='Name: {0}'}" FontSize="Small"/>

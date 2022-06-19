@@ -1,7 +1,9 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -24,12 +26,19 @@ namespace I4_QM_app.ViewModels
         public RecipeDetailViewModel()
         {
             //OrderCommand = new Command();
-            DeleteCommand = new Command(DeleteRecipe);
+            DeleteCommand = new Command(async () => await DeleteRecipeAsync());
         }
 
-        private void DeleteRecipe(object obj)
+        private async Task DeleteRecipeAsync()
         {
-            throw new NotImplementedException();
+            // TODO abstract dialog_service
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete recipe?", "Yes", "No");
+
+            if (answer)
+            {
+                await App.RecipesDataStore.DeleteItemAsync(Id);
+                await Shell.Current.GoToAsync($"//{nameof(RecipesPage)}");
+            }
         }
 
         public string RecipeId

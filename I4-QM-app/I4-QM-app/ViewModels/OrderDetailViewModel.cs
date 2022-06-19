@@ -24,22 +24,21 @@ namespace I4_QM_app.ViewModels
         private DateTime due;
         private DateTime done;
 
-        private bool doneEnabled;
-
         public Command DoneCommand { get; }
 
-        public bool DoneEnabled
-        {
-            get => doneEnabled;
-            set { doneEnabled = value; }
-        }
 
         public OrderDetailViewModel()
         {
             // execute/ canexecute? => canexecute if all additives are checked?
-            DoneCommand = new Command(OnDoneClicked);
+            DoneCommand = new Command(OnDoneClicked, Validate);
             // TODO done btn enable/disable
-            doneEnabled = true;
+            //this.PropertyChanged +=
+            //    (_, __) => DoneCommand.ChangeCanExecute();
+        }
+        private bool Validate()
+        {
+            // check if all additives are done
+            return Order.Additives.TrueForAll(a => a.Done == true);
         }
 
         public string OrderId
@@ -109,9 +108,6 @@ namespace I4_QM_app.ViewModels
 
         private async void OnDoneClicked()
         {
-            // check if all additives are done (mock for enabled/disabled done btn)
-            if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
-
             // TODO display alert
             bool answer = await Shell.Current.DisplayAlert("Confirmation", "Done?", "Yes", "No");
 
@@ -137,6 +133,7 @@ namespace I4_QM_app.ViewModels
 
                 // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
                 await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
+                //await Shell.Current.GoToAsync("..");
             }
 
 

@@ -16,9 +16,7 @@ namespace I4_QM_app.Services
 
         public async Task<bool> AddItemAsync(Recipe recipe)
         {
-            //if (orderCollection.Exists(order.Id)) 
             recipesCollection.Insert(recipe);
-
             return await Task.FromResult(true);
         }
 

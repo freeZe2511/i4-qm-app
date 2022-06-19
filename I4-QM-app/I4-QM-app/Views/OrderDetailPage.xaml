@@ -64,7 +64,7 @@
         </CollectionView>
 
         <!--Submit-->
-        <Button VerticalOptions="Center" Text="Done" Command="{Binding DoneCommand}" BackgroundColor="{StaticResource Primary}" IsEnabled="{Binding DoneEnabled}"/>
+        <Button VerticalOptions="Center" Text="Done" Command="{Binding DoneCommand}" BackgroundColor="{StaticResource Primary}"/>
 
     </StackLayout>
 

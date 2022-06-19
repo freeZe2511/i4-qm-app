@@ -32,13 +32,14 @@ namespace I4_QM_app.ViewModels
             // execute/ canexecute? => canexecute if all additives are checked?
             DoneCommand = new Command(OnDoneClicked, Validate);
             // TODO done btn enable/disable
-            //this.PropertyChanged +=
-            //    (_, __) => DoneCommand.ChangeCanExecute();
+            this.PropertyChanged +=
+                (_, __) => DoneCommand.ChangeCanExecute();
         }
         private bool Validate()
         {
-            // check if all additives are done
-            return Order.Additives.TrueForAll(a => a.Done == true);
+            //TODO check if all additives are done            
+            //return Additives.TrueForAll(a => a.Done == true);
+            return true;
         }
 
         public string OrderId
@@ -108,6 +109,9 @@ namespace I4_QM_app.ViewModels
 
         private async void OnDoneClicked()
         {
+            // check if all additives are done (mock for enabled/disabled done btn)
+            if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
+
             // TODO display alert
             bool answer = await Shell.Current.DisplayAlert("Confirmation", "Done?", "Yes", "No");
 

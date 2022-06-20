@@ -1,4 +1,6 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -90,6 +92,9 @@ namespace I4_QM_app.ViewModels
                 };
 
                 await App.RecipesDataStore.AddItemAsync(newRecipe);
+
+                string res = JsonConvert.SerializeObject(newRecipe);
+                await MqttConnectionService.HandlePublishMessage("recipes/new", res);
 
                 await Shell.Current.GoToAsync("..");
             }

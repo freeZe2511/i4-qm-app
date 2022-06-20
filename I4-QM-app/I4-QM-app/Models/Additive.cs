@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace I4_QM_app.Models
 {
@@ -14,6 +14,7 @@ namespace I4_QM_app.Models
 
         public int Amount { get; set; }
 
+        [JsonIgnore]
         public bool Checked { get; set; }
 
         [JsonIgnore]

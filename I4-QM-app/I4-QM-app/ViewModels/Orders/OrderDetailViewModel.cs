@@ -1,10 +1,11 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Services;
 using I4_QM_app.Views;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -132,8 +133,14 @@ namespace I4_QM_app.ViewModels
                 await App.OrdersDataStore.UpdateItemAsync(Order);
 
                 // send mqtt
-                string res = JsonConvert.SerializeObject(Order);
-                await MqttConnectionService.HandlePublishMessage("order/mixed", res);
+
+                JsonSerializerOptions options = new JsonSerializerOptions()
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+                };
+
+                string res = JsonSerializer.Serialize<Order>(Order, options);
+                await MqttConnectionService.HandlePublishMessage("orders/mixed", res);
 
                 // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
                 await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");

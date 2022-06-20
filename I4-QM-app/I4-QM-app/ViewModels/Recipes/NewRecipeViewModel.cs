@@ -1,8 +1,9 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Services;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -93,7 +94,12 @@ namespace I4_QM_app.ViewModels
 
                 await App.RecipesDataStore.AddItemAsync(newRecipe);
 
-                string res = JsonConvert.SerializeObject(newRecipe);
+                JsonSerializerOptions options = new JsonSerializerOptions()
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+                };
+
+                string res = JsonSerializer.Serialize<Recipe>(newRecipe, options);
                 await MqttConnectionService.HandlePublishMessage("recipes/new", res);
 
                 await Shell.Current.GoToAsync("..");

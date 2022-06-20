@@ -34,9 +34,9 @@ namespace I4_QM_app.Services
 
             // get from extern?
             List<MqttTopicFilter> topics = new List<MqttTopicFilter>();
-            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/add").Build());
-            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/del").Build());
-            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/get").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "orders/add").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "orders/del").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "orders/get").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "additives/sync").Build());
 
             await managedMqttClient.SubscribeAsync(topics);
@@ -91,9 +91,9 @@ namespace I4_QM_app.Services
             var topic = message.Topic;
 
             // maybe not ideal
-            if (topic == baseTopicURL + "order/add") await HandleAddOrder(message);
-            if (topic == baseTopicURL + "order/del") await HandleDelOrder(message);
-            if (topic == baseTopicURL + "order/get") await HandleGetOrder(message);
+            if (topic == baseTopicURL + "orders/add") await HandleAddOrder(message);
+            if (topic == baseTopicURL + "orders/del") await HandleDelOrder(message);
+            if (topic == baseTopicURL + "orders/get") await HandleGetOrder(message);
             if (topic == baseTopicURL + "additives/sync") await HandleSyncAdditives(message);
 
             return Task.CompletedTask;

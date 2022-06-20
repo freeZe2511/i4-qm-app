@@ -1,4 +1,6 @@
-﻿namespace I4_QM_app.Models
+﻿using Newtonsoft.Json;
+
+namespace I4_QM_app.Models
 {
     public class Additive
     {
@@ -13,6 +15,9 @@
         public int Amount { get; set; }
 
         public bool Checked { get; set; }
+
+        [JsonIgnore]
+        public string ImageId { get; set; }
 
     }
 }

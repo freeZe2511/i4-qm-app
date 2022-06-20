@@ -1,6 +1,7 @@
 ﻿using I4_QM_app.Models;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -22,17 +23,12 @@ namespace I4_QM_app.ViewModels
             CancelCommand = new Command(OnCancel);
             ClearCommand = new Command(OnClear);
 
-            additives = new List<Additive>();
-
-            additives.Add(new Additive() { Id = "1", Name = "A1" });
-            additives.Add(new Additive() { Id = "2", Name = "A2" });
-            additives.Add(new Additive() { Id = "3", Name = "A3" });
-            additives.Add(new Additive() { Id = "4", Name = "A4" });
-            additives.Add(new Additive() { Id = "5", Name = "A5" });
+            Task.Run(async () => additives = (List<Additive>)await App.AdditivesDataStore.GetItemsAsync());
 
             this.PropertyChanged +=
                 (_, __) => SaveCommand.ChangeCanExecute();
         }
+
 
         private bool ValidateSave()
         {

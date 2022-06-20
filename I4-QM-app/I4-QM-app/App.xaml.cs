@@ -69,6 +69,7 @@ namespace I4_QM_app
 
         public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
         public static IDataStore<Recipe> RecipesDataStore => DependencyService.Get<IDataStore<Recipe>>();
+        public static IDataStore<Additive> AdditivesDataStore => DependencyService.Get<IDataStore<Additive>>();
 
         private void LoadPageFromNotification(NotificationEventArgs e)
         {

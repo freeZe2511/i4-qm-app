@@ -20,7 +20,7 @@ namespace I4_QM_app.ViewModels
         public Command ResetFeedbackCommand { get; }
         public FeedbackViewModel()
         {
-            Title = "Feedback (0 - 9)";
+            Title = "Feedback (1 - 9)";
             SendFeedbackCommand = new Command(RateFeedbackAsync);
             ResetFeedbackCommand = new Command(ResetFeedback);
             rating = new Rating();

@@ -156,7 +156,7 @@ namespace I4_QM_app.Services
 
             string ordersList = JsonConvert.SerializeObject(getOrders);
 
-            await HandlePublishMessage("order/list", ordersList);
+            await HandlePublishMessage("orders/list", ordersList);
         }
 
         private static async Task HandleSyncAdditives(MqttApplicationMessage message)
@@ -166,8 +166,6 @@ namespace I4_QM_app.Services
             Console.WriteLine($"+ Sync Additives");
 
             List<Additive> additives = JsonConvert.DeserializeObject<List<Additive>>(req);
-
-            Console.WriteLine(additives.Count);
 
             await App.AdditivesDataStore.DeleteAllItemsAsync();
 

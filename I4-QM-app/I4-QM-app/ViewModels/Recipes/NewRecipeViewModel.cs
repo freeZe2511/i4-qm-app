@@ -23,10 +23,23 @@ namespace I4_QM_app.ViewModels
             CancelCommand = new Command(OnCancel);
             ClearCommand = new Command(OnClear);
 
-            Task.Run(async () => additives = (List<Additive>)await App.AdditivesDataStore.GetItemsAsync());
+            additives = new List<Additive>();
+
+            _ = Task.Run(async () => await GetAdditives());
 
             this.PropertyChanged +=
                 (_, __) => SaveCommand.ChangeCanExecute();
+        }
+
+        private async Task GetAdditives()
+        {
+            Additives.Clear();
+
+            var list = await App.AdditivesDataStore.GetItemsAsync();
+            foreach (Additive item in list)
+            {
+                Additives.Add(item);
+            }
         }
 
 
@@ -34,6 +47,7 @@ namespace I4_QM_app.ViewModels
         {
             return !String.IsNullOrWhiteSpace(Name)
                 && !String.IsNullOrWhiteSpace(Description);
+            //&& Additives.FindAll(i => i.Checked == true).Count > 0;
         }
 
         public string Name
@@ -62,23 +76,42 @@ namespace I4_QM_app.ViewModels
 
         private async void OnSave()
         {
-            Recipe newRecipe = new Recipe()
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Save?", "Yes", "No");
+
+            if (answer)
             {
-                Id = Guid.NewGuid().ToString(),
-                Name = Name,
-                Description = Description,
-                //CreatorId = UserId,
-                Additives = Additives.FindAll(i => i.Checked == true)
-            };
+                Recipe newRecipe = new Recipe()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    Name = Name,
+                    Description = Description,
+                    //CreatorId = UserId,
+                    Additives = Additives.FindAll(i => i.Checked == true)
+                };
 
-            await App.RecipesDataStore.AddItemAsync(newRecipe);
+                await App.RecipesDataStore.AddItemAsync(newRecipe);
 
-            await Shell.Current.GoToAsync("..");
+                await Shell.Current.GoToAsync("..");
+            }
 
         }
 
+
         private async void OnClear()
         {
+            Name = "";
+            Description = "";
+
+            // TODO reset additives?
+
+            //await GetAdditives();
+
+            //foreach (Additive additive in Additives)
+            //{
+            //    Console.WriteLine(additive.Name);
+            //    additive.Checked = false;
+            //    additive.Portion = 0;
+            //}
 
         }
     }

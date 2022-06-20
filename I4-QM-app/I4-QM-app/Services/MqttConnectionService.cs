@@ -37,6 +37,7 @@ namespace I4_QM_app.Services
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/add").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/del").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/get").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "additives/sync").Build());
 
             await managedMqttClient.SubscribeAsync(topics);
             await managedMqttClient.StartAsync(managedMqttClientOptions);
@@ -93,6 +94,7 @@ namespace I4_QM_app.Services
             if (topic == baseTopicURL + "order/add") await HandleAddOrder(message);
             if (topic == baseTopicURL + "order/del") await HandleDelOrder(message);
             if (topic == baseTopicURL + "order/get") await HandleGetOrder(message);
+            if (topic == baseTopicURL + "additives/sync") await HandleSyncAdditives(message);
 
             return Task.CompletedTask;
         }
@@ -155,6 +157,29 @@ namespace I4_QM_app.Services
             string ordersList = JsonConvert.SerializeObject(getOrders);
 
             await HandlePublishMessage("order/list", ordersList);
+        }
+
+        private static async Task HandleSyncAdditives(MqttApplicationMessage message)
+        {
+            string req = Encoding.UTF8.GetString(message.Payload);
+
+            Console.WriteLine($"+ Sync Additives");
+
+            List<Additive> additives = JsonConvert.DeserializeObject<List<Additive>>(req);
+
+            Console.WriteLine(additives.Count);
+
+            await App.AdditivesDataStore.DeleteAllItemsAsync();
+
+            foreach (Additive additive in additives)
+            {
+                additive.ActualPortion = 0;
+                additive.Amount = 0;
+                additive.Portion = 0;
+                additive.Checked = false;
+
+                await App.AdditivesDataStore.AddItemAsync(additive);
+            }
         }
 
 

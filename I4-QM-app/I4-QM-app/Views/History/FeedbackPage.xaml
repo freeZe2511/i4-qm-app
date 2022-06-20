@@ -6,7 +6,7 @@
     <!--Shell.PresentationMode="ModalAnimated"-->
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="restart48_400.png" Command="{Binding ResetFeedbackCommand}"></ToolbarItem>
+        <ToolbarItem IconImageSource="undo48_400.png" Command="{Binding ResetFeedbackCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
     
     <ContentPage.Content>

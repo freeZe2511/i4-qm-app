@@ -38,7 +38,11 @@
                             <Label Text="{Binding Description, StringFormat='Description: {0}'}" 
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemDetailTextStyle}"
-                            FontSize="14" />                            
+                            FontSize="14" />
+                            <Label Text="{Binding Used, StringFormat='Used: {0}'}" 
+                            LineBreakMode="NoWrap"
+                            Style="{DynamicResource ListItemDetailTextStyle}"
+                            FontSize="14" />
                             <BoxView HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
                             <StackLayout.GestureRecognizers>
                                 <TapGestureRecognizer 

@@ -4,8 +4,8 @@
              x:Class="I4_QM_app.Views.RecipeDetailPage"
              Title="{Binding Id}">
 
-    <ContentPage.ToolbarItems>        
-        <ToolbarItem IconImageSource="del_f48_400.png" Command="{Binding DeleteItemCommand}" Order="Primary"/>        
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="del_f48_400.png" Command="{Binding DeleteCommand}" Order="Primary"/>        
     </ContentPage.ToolbarItems>
 
     <StackLayout Spacing="20" Padding="15">
@@ -41,7 +41,7 @@
                        Grid.Column="3"
                        Text="{Binding Portion, StringFormat='{0} %'}"
                        FontAttributes="Italic"
-                       VerticalOptions="Center" />
+                       VerticalOptions="Center" HorizontalOptions="End" />
 
                     </Grid>
                 </DataTemplate>

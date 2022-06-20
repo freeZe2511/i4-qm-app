@@ -1,5 +1,7 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.ViewModels.Recipes;
 using I4_QM_app.Views;
+using I4_QM_app.Views.Recipes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,8 +27,19 @@ namespace I4_QM_app.ViewModels
 
         public RecipeDetailViewModel()
         {
-            //OrderCommand = new Command();
+            OrderCommand = new Command(async () => await TransformRecipeAsync());
             DeleteCommand = new Command(async () => await DeleteRecipeAsync());
+        }
+
+        private async Task TransformRecipeAsync()
+        {
+            // TODO abstract dialog_service
+            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Transform recipe?", "Yes", "No");
+
+            if (answer)
+            {
+                await Shell.Current.GoToAsync($"{nameof(TransformRecipePage)}?{nameof(TransformRecipeViewModel.RecipeId)}={Id}");
+            }
         }
 
         private async Task DeleteRecipeAsync()

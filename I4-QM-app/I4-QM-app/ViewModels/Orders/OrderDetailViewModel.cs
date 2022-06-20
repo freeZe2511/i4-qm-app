@@ -118,6 +118,7 @@ namespace I4_QM_app.ViewModels
 
             if (answer)
             {
+
                 //calc new portions (percentages) -> should be dynamic with behavoir maybe
                 foreach (var additive in Additives)
                 {
@@ -128,18 +129,16 @@ namespace I4_QM_app.ViewModels
                 Order.Status = Status.mixed;
                 Order.Done = DateTime.Now;
 
-                Console.WriteLine(Order.ToString());
-
                 await App.OrdersDataStore.UpdateItemAsync(Order);
 
                 // send mqtt
-
                 JsonSerializerOptions options = new JsonSerializerOptions()
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
                 };
 
                 string res = JsonSerializer.Serialize<Order>(Order, options);
+
                 await MqttConnectionService.HandlePublishMessage("orders/mixed", res);
 
                 // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
@@ -171,6 +170,8 @@ namespace I4_QM_app.ViewModels
                 // calc
                 foreach (var additive in Additives)
                 {
+                    // TODO
+                    additive.Checked = false;
                     additive.Amount = (int)(additive.Portion * Weight * Amount / 100);
                     //additive.Image = App.AdditiveDataSource. ...
                 }

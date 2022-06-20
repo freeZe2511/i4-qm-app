@@ -38,7 +38,7 @@ namespace I4_QM_app.ViewModels
         private bool Validate()
         {
             //TODO check if all additives are done            
-            //return Additives.TrueForAll(a => a.Done == true);
+            //return Additives.TrueForAll(a => a.Checked == true);
             return true;
         }
 
@@ -109,8 +109,8 @@ namespace I4_QM_app.ViewModels
 
         private async void OnDoneClicked()
         {
-            // check if all additives are done (mock for enabled/disabled done btn)
-            if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
+            // check if all additives are checked (mock for enabled/disabled done btn)
+            if (!Additives.TrueForAll(a => a.Checked == true)) return;
 
             // TODO display alert
             bool answer = await Shell.Current.DisplayAlert("Confirmation", "Done?", "Yes", "No");

@@ -72,7 +72,7 @@ namespace I4_QM_app.ViewModels
                 Name = Name,
                 Description = Description,
                 //CreatorId = UserId,
-                Additives = Additives.FindAll(i => i.Done == true)
+                Additives = Additives.FindAll(i => i.Checked == true)
             };
 
             await App.RecipesDataStore.AddItemAsync(newRecipe);

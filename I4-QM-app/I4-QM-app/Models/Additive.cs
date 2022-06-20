@@ -7,11 +7,12 @@
         public string Name { get; set; }
 
         public float Portion { get; set; }
+
         public float ActualPortion { get; set; }
 
         public int Amount { get; set; }
 
-        public bool Done { get; set; }
+        public bool Checked { get; set; }
 
     }
 }

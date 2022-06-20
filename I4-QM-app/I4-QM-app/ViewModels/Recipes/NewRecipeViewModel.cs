@@ -9,8 +9,8 @@ namespace I4_QM_app.ViewModels
     {
         private string name;
         private string description;
-        private List<Additive> additivesDatabase;
-        private List<Additive> additivesSelected;
+        private List<Additive> additives;
+
         public Command SaveCommand { get; }
         public Command CancelCommand { get; }
         public Command ClearCommand { get; }
@@ -22,12 +22,13 @@ namespace I4_QM_app.ViewModels
             CancelCommand = new Command(OnCancel);
             ClearCommand = new Command(OnClear);
 
-            additivesDatabase = new List<Additive>();
-            additivesDatabase.Add(new Additive() { Id = "1", Name = "A1" });
-            additivesDatabase.Add(new Additive() { Id = "2", Name = "A2" });
-            additivesDatabase.Add(new Additive() { Id = "3", Name = "A3" });
-            additivesDatabase.Add(new Additive() { Id = "4", Name = "A4" });
-            additivesDatabase.Add(new Additive() { Id = "5", Name = "A5" });
+            additives = new List<Additive>();
+
+            additives.Add(new Additive() { Id = "1", Name = "A1" });
+            additives.Add(new Additive() { Id = "2", Name = "A2" });
+            additives.Add(new Additive() { Id = "3", Name = "A3" });
+            additives.Add(new Additive() { Id = "4", Name = "A4" });
+            additives.Add(new Additive() { Id = "5", Name = "A5" });
 
             this.PropertyChanged +=
                 (_, __) => SaveCommand.ChangeCanExecute();
@@ -51,16 +52,10 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref description, value);
         }
 
-        public List<Additive> AdditivesDatabase
+        public List<Additive> Additives
         {
-            get => additivesDatabase;
-            set => SetProperty(ref additivesDatabase, value);
-        }
-
-        public List<Additive> AdditivesSelected
-        {
-            get => additivesSelected;
-            set => SetProperty(ref additivesSelected, value);
+            get => additives;
+            set => SetProperty(ref additives, value);
         }
 
         private async void OnCancel()
@@ -77,7 +72,7 @@ namespace I4_QM_app.ViewModels
                 Name = Name,
                 Description = Description,
                 //CreatorId = UserId,
-                Additives = AdditivesDatabase
+                Additives = Additives.FindAll(i => i.Done == true)
             };
 
             await App.RecipesDataStore.AddItemAsync(newRecipe);

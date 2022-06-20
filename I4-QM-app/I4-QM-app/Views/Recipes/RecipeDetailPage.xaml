@@ -39,7 +39,7 @@
                        FontAttributes="Bold" />                                      
                         <Label
                        Grid.Column="3"
-                       Text="{Binding Portion, StringFormat='({0} %)'}"
+                       Text="{Binding Portion, StringFormat='{0} %'}"
                        FontAttributes="Italic"
                        VerticalOptions="Center" />
 

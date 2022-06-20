@@ -15,7 +15,7 @@
             
 
             <CollectionView x:Name="AdditivesListView"
-                ItemsSource="{Binding AdditivesDatabase}"
+                ItemsSource="{Binding Additives}"
                 SelectionMode="None" 
                 Header="Additives" >
                 <CollectionView.ItemTemplate>
@@ -33,7 +33,7 @@
                             </Grid.ColumnDefinitions>
                             <Label Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" />
                             <Entry Grid.Column="1" Text="{Binding Portion}" Keyboard="Numeric"></Entry>
-                            <CheckBox Grid.Column="2"></CheckBox>
+                            <CheckBox Grid.Column="2" Color="{StaticResource AccentRed}" Opacity="0.75" IsChecked="{Binding Done}" ></CheckBox>
 
                             <BoxView Grid.Row="2" Grid.ColumnSpan="4" HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
                         </Grid>

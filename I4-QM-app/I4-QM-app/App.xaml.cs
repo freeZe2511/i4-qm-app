@@ -21,6 +21,7 @@ namespace I4_QM_app
             //DependencyService.Register<MockDataStore>();
             DependencyService.Register<OrderService>();
             DependencyService.Register<RecipeService>();
+            DependencyService.Register<AdditiveService>();
 
             NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
 
@@ -58,6 +59,7 @@ namespace I4_QM_app
             var db = new LiteDatabase(connection);
             var orders = db.GetCollection<Order>("orders");
             var recipes = db.GetCollection<Order>("recipes");
+            var additives = db.GetCollection<Order>("additives");
 
             return db;
         }

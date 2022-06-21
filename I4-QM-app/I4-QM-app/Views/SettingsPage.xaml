@@ -1,12 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="I4_QM_app.Views.SettingsPage">
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="I4_QM_app.Views.SettingsPage"
+             Title="{Binding Title}">
+    
     <ContentPage.Content>
         <StackLayout>
-            <Label Text="Settings!"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="CenterAndExpand" />
+            <Image Source="wifi48_400.png" IsVisible="{Binding IsConnected}" xct:IconTintColorEffect.TintColor="{StaticResource Primary}"></Image>
+            <Image Source="wifi_off48_400.png" IsVisible="{Binding IsConnected, Converter={StaticResource InvertedBoolConverter}}" xct:IconTintColorEffect.TintColor="{StaticResource AccentRed}"></Image>
+            <Label Text="connected" IsVisible="{Binding IsConnected}"/>
+            <Label Text="disconnected" IsVisible="{Binding IsConnected, Converter={StaticResource InvertedBoolConverter}}"/>
+            <Button Text="Toggle" Command="{Binding ToggleConnectionCommand}" IsEnabled="False"></Button>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

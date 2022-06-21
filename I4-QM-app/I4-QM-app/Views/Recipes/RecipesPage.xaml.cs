@@ -6,11 +6,11 @@ namespace I4_QM_app.Views
 
     public partial class RecipesPage : ContentPage
     {
-        RecipeViewModel _viewModel;
+        RecipesViewModel _viewModel;
         public RecipesPage()
         {
             InitializeComponent();
-            BindingContext = _viewModel = new RecipeViewModel();
+            BindingContext = _viewModel = new RecipesViewModel();
         }
 
         protected override void OnAppearing()

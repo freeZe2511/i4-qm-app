@@ -39,6 +39,7 @@ namespace I4_QM_app.ViewModels
 
                     // works
                     if (arg == "Id") await SortBy(i => i.Id);
+                    if (arg == "Status") await SortBy(i => i.Status);
                     if (arg == "Done") await SortBy(i => i.Done);
                     if (arg == "Amount") await SortBy(i => i.Amount);
                     if (arg == "Created") await SortBy(i => i.Created);

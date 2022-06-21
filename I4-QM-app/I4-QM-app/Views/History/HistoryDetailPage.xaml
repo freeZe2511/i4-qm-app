@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"                        
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.HistoryDetailPage"               
              Title="{Binding Id}">
 
@@ -11,22 +11,79 @@
     </ContentPage.ToolbarItems>
 
     <StackLayout Spacing="20" Padding="15">
-            <Label Text="{Binding Id, StringFormat='OrderId: {0}'}" FontSize="Medium"/>
-        <Frame  CornerRadius="10" Padding="10" Margin="0, -35, 20, 0" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
+        
+        <Frame CornerRadius="10" BackgroundColor="#c0c9cf" Padding="5">
+            <Label Text="{Binding Id, StringFormat='#{0}'}" FontSize="Title" FontAttributes="Bold" HorizontalTextAlignment="End" TextColor="White"/>
+        </Frame>
+
+        <Frame CornerRadius="10" Padding="20, 7, 20, 7" Margin="0, -35, 20, -15" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
                             BorderColor="{StaticResource Secondary}">
             <Label x:Name="status" Text="{Binding Status}"                                                
                             TextColor="White"></Label>
-        </Frame>            
-            <Label Text="{Binding Weight, StringFormat='Weight:    {0} g'}" FontSize="Small"/>
-            <Label Text="{Binding Amount, StringFormat='Qty:           {0}'}" FontSize="Small"/>
-            <Label Text="{Binding Created, StringFormat='Created:   {0}'}" FontSize="Small"/>
-            <Label Text="{Binding Due, StringFormat='Due:           {0}'}" FontSize="Small"/>
-            <Label Text="{Binding Done, StringFormat='Done:         {0}'}" FontSize="Small"/>
+        </Frame>
+        <BoxView   HorizontalOptions="Fill"
+                   HeightRequest="1"
+                   Margin="0, 10, 0, 0"
+                   Color="LightGray"/>
+
+        <Grid Padding="10,0,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Text="Created" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Column="1" Text="{Binding Created}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Row="1" Grid.Column="0" Text="Due" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Row="1" Grid.Column="1" x:Name="due" Text="{Binding Due}" TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Row="2" Grid.Column="0" Text="Done" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Row="2" Grid.Column="1" Text="{Binding Done}" HorizontalOptions="End" FontSize="Small"/>
+        </Grid>
+        
+
+        <BoxView   HorizontalOptions="Fill"
+                   HeightRequest="1" 
+                   Color="LightGray"/>
+
+        <Grid Padding="10,0,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Text="Weight" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Column="1" Text="{Binding Weight, StringFormat='{0} g'}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Row="1" Grid.Column="0" Text="Qty" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Amount}" HorizontalOptions="End" FontSize="Small"/>
+        </Grid>
+
+        <BoxView   HorizontalOptions="Fill"
+                   HeightRequest="1" 
+                   Color="LightGray"/>
+
+        <Grid Padding="10,0,10,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Text="Additives" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Column="1" Text="{Binding Additives.Count, StringFormat='{0}'}" HorizontalOptions="End" FontSize="Small"/>
+        </Grid>
+
 
         <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
-                SelectionMode="None" 
-                Header="Additives" >
+                SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="10">

@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Views;
+using I4_QM_app.Views.Recipes;
 using System;
 using Xamarin.Forms;
 
@@ -11,7 +12,10 @@ namespace I4_QM_app
             InitializeComponent();
             Routing.RegisterRoute(nameof(OrderDetailPage), typeof(OrderDetailPage));
             Routing.RegisterRoute(nameof(HistoryDetailPage), typeof(HistoryDetailPage));
+            Routing.RegisterRoute(nameof(RecipeDetailPage), typeof(RecipeDetailPage));
             Routing.RegisterRoute(nameof(FeedbackPage), typeof(FeedbackPage));
+            Routing.RegisterRoute(nameof(NewRecipePage), typeof(NewRecipePage));
+            Routing.RegisterRoute(nameof(TransformRecipePage), typeof(TransformRecipePage));
             //Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
         }
 

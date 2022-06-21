@@ -1,9 +1,11 @@
-﻿using I4_QM_app.Helpers;
-using I4_QM_app.Models;
+﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -23,22 +25,22 @@ namespace I4_QM_app.ViewModels
         private DateTime due;
         private DateTime done;
 
-        private bool doneEnabled;
-
         public Command DoneCommand { get; }
 
-        public bool DoneEnabled
-        {
-            get => doneEnabled;
-            set { doneEnabled = value; }
-        }
 
         public OrderDetailViewModel()
         {
             // execute/ canexecute? => canexecute if all additives are checked?
-            DoneCommand = new Command(OnDoneClicked);
+            DoneCommand = new Command(OnDoneClicked, Validate);
             // TODO done btn enable/disable
-            doneEnabled = true;
+            this.PropertyChanged +=
+                (_, __) => DoneCommand.ChangeCanExecute();
+        }
+        private bool Validate()
+        {
+            //TODO check if all additives are done            
+            //return Additives.TrueForAll(a => a.Checked == true);
+            return true;
         }
 
         public string OrderId
@@ -108,14 +110,15 @@ namespace I4_QM_app.ViewModels
 
         private async void OnDoneClicked()
         {
-            // check if all additives are done (mock for enabled/disabled done btn)
-            if (!Order.Additives.TrueForAll(a => a.Done == true)) return;
+            // check if all additives are checked (mock for enabled/disabled done btn)
+            if (!Additives.TrueForAll(a => a.Checked == true)) return;
 
             // TODO display alert
             bool answer = await Shell.Current.DisplayAlert("Confirmation", "Done?", "Yes", "No");
 
             if (answer)
             {
+
                 //calc new portions (percentages) -> should be dynamic with behavoir maybe
                 foreach (var additive in Additives)
                 {
@@ -126,15 +129,21 @@ namespace I4_QM_app.ViewModels
                 Order.Status = Status.mixed;
                 Order.Done = DateTime.Now;
 
-                Console.WriteLine(Order.ToString());
-
                 await App.OrdersDataStore.UpdateItemAsync(Order);
 
                 // send mqtt
-                await MqttConnectionService.HandleOrder(Order, "order/mixed");
+                JsonSerializerOptions options = new JsonSerializerOptions()
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+                };
+
+                string res = JsonSerializer.Serialize<Order>(Order, options);
+
+                await MqttConnectionService.HandlePublishMessage("orders/mixed", res);
 
                 // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
                 await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
+                //await Shell.Current.GoToAsync("..");
             }
 
 
@@ -161,6 +170,8 @@ namespace I4_QM_app.ViewModels
                 // calc
                 foreach (var additive in Additives)
                 {
+                    // TODO
+                    additive.Checked = false;
                     additive.Amount = (int)(additive.Portion * Weight * Amount / 100);
                     //additive.Image = App.AdditiveDataSource. ...
                 }

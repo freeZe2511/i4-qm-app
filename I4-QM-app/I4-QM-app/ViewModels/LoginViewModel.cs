@@ -1,4 +1,7 @@
-﻿using I4_QM_app.Views;
+﻿using I4_QM_app.Models;
+using I4_QM_app.Views;
+using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 // using System.Windows.Forms;
 
@@ -13,6 +16,13 @@ namespace I4_QM_app.ViewModels
         public LoginViewModel()
         {
             LoginCommand = new Command(OnLoginClicked);
+
+            string userId = Preferences.Get("UserID", "null");
+
+            if (userId != "null")
+            {
+                Task.Run(async () => await Shell.Current.GoToAsync($"//{nameof(HomePage)}"));
+            }
         }
 
 
@@ -21,12 +31,12 @@ namespace I4_QM_app.ViewModels
         {
             //Application.Current.Properties["UserID"]
 
-            if(!int.TryParse(EntryValue, out int UID))
+            if (!int.TryParse(EntryValue, out int UID))
             {
                 EntryValue = "";
-               //MessageBox.Show("Only decimal numbers allowed. Please, try agian.", "Invalid UserID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                //MessageBox.Show("Only decimal numbers allowed. Please, try agian.", "Invalid UserID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
-           
+
             }
 
             if (UID <= 0)
@@ -35,7 +45,13 @@ namespace I4_QM_app.ViewModels
                 return;
             }
 
-            ((App)App.Current).CurrentUser = new Models.User(EntryValue);
+            ((App)App.Current).CurrentUser = new User(EntryValue);
+
+
+
+            //
+            Preferences.Set("UserID", EntryValue);
+
             EntryValue = "";
 
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one

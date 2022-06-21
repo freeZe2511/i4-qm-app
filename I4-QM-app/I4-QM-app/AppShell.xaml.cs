@@ -1,6 +1,7 @@
 ﻿using I4_QM_app.Views;
 using I4_QM_app.Views.Recipes;
 using System;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app
@@ -21,6 +22,7 @@ namespace I4_QM_app
 
         private async void OnLogoutItemClicked(object sender, EventArgs e)
         {
+            Preferences.Clear();
             await Shell.Current.GoToAsync("//LoginPage");
         }
     }

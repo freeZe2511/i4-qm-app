@@ -21,7 +21,6 @@ namespace I4_QM_app.ViewModels
 
         public bool Descending { get; set; }
 
-
         public RecipesViewModel()
         {
             // maybe bad binding atm

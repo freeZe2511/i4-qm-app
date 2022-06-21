@@ -13,8 +13,8 @@
         <ToolbarItem Text="ID" Command="{Binding SortByCommand}" CommandParameter="Id" Order="Secondary"/>
         <ToolbarItem Text="Due" Command="{Binding SortByCommand}" CommandParameter="Due" Order="Secondary"/>
         <ToolbarItem Text="Quantity" Command="{Binding SortByCommand}" CommandParameter="Amount" Order="Secondary"/>
-        <ToolbarItem Text="Created" Command="{Binding SortByCommand}" CommandParameter="Created" Order="Secondary"/>
-    </ContentPage.ToolbarItems>    
+        <ToolbarItem Text="Received" Command="{Binding SortByCommand}" CommandParameter="Created" Order="Secondary"/>
+    </ContentPage.ToolbarItems>
 
     <!--<ContentPage.ToolbarItems>
         <ToolbarItem Text="Add" Command="{Binding AddItemCommand}" />
@@ -23,48 +23,116 @@
       x:DataType enables compiled bindings for better performance and compile time validation of binding expressions.
       https://docs.microsoft.com/xamarin/xamarin-forms/app-fundamentals/data-binding/compiled-bindings
     -->
-    <ContentPage.Content>
-        <RefreshView x:DataType="local:OrdersViewModel" Command="{Binding LoadOrdersCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
-            <CollectionView x:Name="OrdersListView"
-                    ItemsSource="{Binding Orders}"
-                    SelectionMode="None">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <StackLayout Padding="10" x:DataType="model:Order">
-                            <Label Text="{Binding Id, StringFormat='ID: {0}'}" 
-                                LineBreakMode="NoWrap" 
-                                Style="{DynamicResource ListItemTextStyle}" 
-                                FontSize="16"
-                                FontAttributes="Bold"/>
-                            <Label Text="{Binding Amount, StringFormat='Qty: {0}'}" 
+    <RefreshView x:DataType="local:OrdersViewModel" Command="{Binding LoadOrdersCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <CollectionView x:Name="OrdersListView"
+                ItemsSource="{Binding Orders}"
+                SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Padding="10" x:DataType="model:Order">
+
+                        <Grid Padding="10,0,10,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="1"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="0.5*"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <Frame Grid.Row="0" Grid.ColumnSpan="2" 
+                                   BorderColor="AntiqueWhite" 
+                                   CornerRadius="10" Padding="0" >
+                                <Label 
+                                Text="{Binding Id, StringFormat='#{0}'}"
                                 LineBreakMode="NoWrap"
                                 Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="14" />
-                            <Label Text="{Binding Created, StringFormat='Created: {0}'}" 
-                                LineBreakMode="NoWrap"
-                                Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="14" />
-                            <Label x:Name="due" Text="{Binding Due}" TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}"
-                                LineBreakMode="NoWrap"
-                                Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="14" />
-                            <Frame CornerRadius="10" Padding="10" Margin="0, -35, 20, 5" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
-                                BorderColor="{StaticResource Secondary}">
-                                <Label x:Name="status" Text="{Binding Status}"                                                
-                                TextColor="White"></Label>
+                                FontSize="20" 
+                                Padding="2"
+                                FontAttributes="Bold" 
+                                TextColor="{StaticResource Secondary}" />
                             </Frame>
-                            <BoxView HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
-                            <StackLayout.GestureRecognizers>
-                                <TapGestureRecognizer 
-                                    NumberOfTapsRequired="1"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:OrdersViewModel}}, Path=OrderTapped}"		
-                                    CommandParameter="{Binding .}">
-                                </TapGestureRecognizer>
-                            </StackLayout.GestureRecognizers>
-                        </StackLayout>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </RefreshView>
-    </ContentPage.Content>
+
+
+                            <Label Grid.Row="1"
+                                Text="{Binding Amount, StringFormat='Quantity: {0}'}" 
+                                LineBreakMode="NoWrap"
+                                Style="{DynamicResource ListItemDetailTextStyle}"
+                                FontSize="15"
+                                TextColor="{StaticResource Secondary}"/>
+
+                            <Label Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"
+                               Text=">"
+                               FontSize="25"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"
+                               HorizontalOptions="End">
+                            </Label>
+
+                            <!--<Frame Grid.Row="1" 
+                                   Grid.RowSpan="2"
+                                   CornerRadius="8" 
+                                   Padding="10" 
+                                   HorizontalOptions="End" 
+                                   VerticalOptions="Center"
+                                   BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}">
+                                <Label x:Name="status" 
+                                       Text="{Binding Status}" 
+                                       HorizontalTextAlignment="Center"
+                                       TextColor="White"></Label>
+                            </Frame>-->
+
+                            <Label Grid.Row="2"
+                                   Text="{Binding Created, StringFormat='Received:  {0}'}" 
+                                   LineBreakMode="NoWrap"
+                                   Style="{DynamicResource ListItemDetailTextStyle}"
+                                   FontSize="14"
+                                   TextColor="{StaticResource Secondary}"/>
+
+                            <Label Grid.Row="3"
+                                   Text="Due: "
+                                   LineBreakMode="NoWrap"
+                                   Style="{DynamicResource ListItemDetailTextStyle}"
+                                   FontSize="16"
+                                   TextColor="{StaticResource Secondary}"/>
+
+                            <!--<Frame Grid.Row="3" 
+                                   CornerRadius="10" 
+                                   Padding="0"
+                                   HorizontalOptions="Center"
+                                   BorderColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}"  >-->
+                            <Label Grid.Row="3" x:Name="due" 
+                                    Text="{Binding Due}" 
+                                    Margin="65, 0, 0, 0"
+                                    TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}"
+                                    LineBreakMode="NoWrap"
+                                    Style="{DynamicResource ListItemDetailTextStyle}"
+                                    FontSize="16"/>
+                            <!--</Frame>-->
+                            <!--<Frame CornerRadius="10" Padding="10" Margin="0, -45, 20, 0" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
+                            BorderColor="{StaticResource Secondary}">
+                            <Label x:Name="status" Text="{Binding Status}"                                                
+                            TextColor="White"></Label>                                                      
+                            </Frame>-->
+
+                            <BoxView Color="LightGray" Grid.Row="4" Grid.ColumnSpan="2"/>
+                            
+                        </Grid>
+                        <StackLayout.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                NumberOfTapsRequired="1"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:OrdersViewModel}}, Path=OrderTapped}"		
+                                CommandParameter="{Binding .}">
+                            </TapGestureRecognizer>
+                        </StackLayout.GestureRecognizers>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
 </ContentPage>

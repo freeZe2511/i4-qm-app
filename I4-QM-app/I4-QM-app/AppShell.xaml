@@ -53,6 +53,10 @@
             </DataTemplate>
     </Shell.FlyoutHeaderTemplate>
     
+    <!-- Login -->
+    <ShellItem Route="LoginPage" Title="Login" FlyoutItemIsVisible="False">
+        <ShellContent ContentTemplate="{DataTemplate local:LoginPage}"/>
+    </ShellItem>
 
     <!-- Flyout -->
     <controls:FlyoutItemIconFont Title="Home" IconGlyph="{StaticResource IconHome}">

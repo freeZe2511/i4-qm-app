@@ -13,6 +13,7 @@ namespace I4_QM_app
 {
     public partial class App : Application
     {
+        public User CurrentUser;
 
         public App()
         {

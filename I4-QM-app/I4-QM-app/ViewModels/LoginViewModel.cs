@@ -1,27 +1,67 @@
-﻿using I4_QM_app.Views;
+﻿using I4_QM_app.Models;
+using I4_QM_app.Views;
+using System;
+using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
+// using System.Windows.Forms;
 
 namespace I4_QM_app.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
+        private string entryValue;
+        public int IdLength = 4;
+        public int UID { get; set; }
         public Command LoginCommand { get; }
 
         public LoginViewModel()
         {
-            LoginCommand = new Command(OnLoginClicked);
+            LoginCommand = new Command(OnLoginClicked, Validate);
+
+            string userId = Preferences.Get("UserID", "null");
+
+            if (userId != "null")
+            {
+                Task.Run(async () => await Shell.Current.GoToAsync($"//{nameof(HomePage)}"));
+            }
+
+            this.PropertyChanged +=
+                (_, __) => LoginCommand.ChangeCanExecute();
         }
 
+
+        public string EntryValue
+        {
+            get => entryValue;
+            set => SetProperty(ref entryValue, value);
+        }
+
+        private bool Validate(object arg)
+        {
+            return !String.IsNullOrWhiteSpace(EntryValue)
+                && int.TryParse(EntryValue, out int UID)
+                && UID > 0
+                && EntryValue.Length == IdLength;
+        }
 
 
         private async void OnLoginClicked(object obj)
         {
-            //Application.Current.Properties["UserID"]
+            if (!int.TryParse(EntryValue, out int UID) || String.IsNullOrWhiteSpace(EntryValue) || UID <= 0 || EntryValue.Length != IdLength)
+            {
+                EntryValue = "";
+                //MessageBox.Show("Only decimal numbers allowed. Please, try agian.", "Invalid UserID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+
+            }
+
+            ((App)App.Current).CurrentUser = new User(EntryValue);
+            Preferences.Set("UserID", EntryValue);
+            EntryValue = "";
 
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
-
-
         }
     }
 

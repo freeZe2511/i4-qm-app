@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -118,8 +119,7 @@ namespace I4_QM_app.ViewModels
 
             if (answer)
             {
-
-                //calc new portions (percentages) -> should be dynamic with behavoir maybe
+                //calc new portions (percentages) -> should be dynamic with behavoir maybe TODO
                 foreach (var additive in Additives)
                 {
                     additive.ActualPortion = (float)additive.Amount / (Weight * Amount / 100);
@@ -128,6 +128,7 @@ namespace I4_QM_app.ViewModels
                 // update         
                 Order.Status = Status.mixed;
                 Order.Done = DateTime.Now;
+                Order.UserId = UserId;
 
                 await App.OrdersDataStore.UpdateItemAsync(Order);
 
@@ -156,10 +157,7 @@ namespace I4_QM_app.ViewModels
                 var order = await App.OrdersDataStore.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
-
-                //UserId = (string)Application.Current.Properties["UserID"];
-                UserId = null;
-
+                UserId = Preferences.Get("UserID", "null");
                 Amount = order.Amount;
                 Weight = order.Weight;
                 Additives = order.Additives;

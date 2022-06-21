@@ -57,7 +57,7 @@
 
                 <Label Grid.Row="0" Grid.Column="0" Text="Weight (g): " FontAttributes="Bold" VerticalOptions="Center"/>
                 <Entry Grid.Row="0" Grid.Column="1" Placeholder="Weight" Text="{Binding Weight}" Keyboard="Numeric"></Entry>
-                <Label Grid.Row="1" Grid.Column="0" Text="Amount (%): " FontAttributes="Bold" VerticalOptions="Center"/>
+                <Label Grid.Row="1" Grid.Column="0" Text="Quantity: " FontAttributes="Bold" VerticalOptions="Center"/>
                 <Entry Grid.Row="1" Grid.Column="1" Placeholder="Amount" Text="{Binding Amount}" Keyboard="Numeric"></Entry>
                 <Label Grid.Row="2" Grid.Column="0" Text="Date: " FontAttributes="Bold" VerticalOptions="Center"/>
                 <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding Date}"></DatePicker>

@@ -146,9 +146,6 @@ namespace I4_QM_app.Services
 
             bool parsable = int.TryParse(delOrders, out int status) && Enum.IsDefined(typeof(Status), status);
 
-            Console.WriteLine(delOrders);
-            Console.WriteLine(parsable);
-
             if (parsable)
             {
                 var orders = await App.OrdersDataStore.GetItemsFilteredAsync(x => (int)x.Status == status);
@@ -169,8 +166,6 @@ namespace I4_QM_app.Services
             else
             {
                 List<string> ids = JsonConvert.DeserializeObject<List<string>>(delOrders);
-
-                Console.WriteLine(ids);
 
                 foreach (string id in ids)
                 {
@@ -208,6 +203,9 @@ namespace I4_QM_app.Services
 
                 await App.AdditivesDataStore.AddItemAsync(additive);
             }
+
+            // maybe too much if additives change frequently
+            if (additives.Count > 0) new NotificationService().ShowSimpleNotification(1, additives.Count + " Additive(s) available", "Update Additives", 2, "");
         }
 
     }

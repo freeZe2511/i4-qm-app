@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -88,8 +89,7 @@ namespace I4_QM_app.ViewModels
                     Id = Guid.NewGuid().ToString(),
                     Name = Name,
                     Description = Description,
-                    //CreatorId = UserId,
-                    CreatorId = ((App) App.Current).CurrentUser.UID,
+                    CreatorId = Preferences.Get("UserID", null),
                     Additives = Additives.FindAll(i => i.Checked == true)
                 };
 

@@ -44,8 +44,6 @@ namespace I4_QM_app.Services
             await managedMqttClient.SubscribeAsync(topics);
             await managedMqttClient.StartAsync(managedMqttClientOptions);
 
-            await managedMqttClient.EnqueueAsync(baseTopicURL + "connected", "QM App");
-
             managedMqttClient.ApplicationMessageReceivedAsync += HandleReceivedMessage;
 
             SpinWait.SpinUntil(() => managedMqttClient.PendingApplicationMessagesCount == 0, 10000);

@@ -1,10 +1,10 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-// using System.Windows.Forms;
 
 namespace I4_QM_app.ViewModels
 {
@@ -23,7 +23,11 @@ namespace I4_QM_app.ViewModels
 
             if (userId != "null")
             {
-                Task.Run(async () => await Shell.Current.GoToAsync($"//{nameof(HomePage)}"));
+                Task.Run(async () =>
+                {
+                    await MqttConnectionService.HandlePublishMessage("connected", userId);
+                    await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+                });
             }
 
             this.PropertyChanged +=
@@ -58,10 +62,12 @@ namespace I4_QM_app.ViewModels
 
             ((App)App.Current).CurrentUser = new User(EntryValue);
             Preferences.Set("UserID", EntryValue);
-            EntryValue = "";
 
-            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
+            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one            
+            await MqttConnectionService.HandlePublishMessage("connected", EntryValue);
+
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+            EntryValue = "";
         }
     }
 

@@ -83,7 +83,7 @@ namespace I4_QM_app.ViewModels
 
                 string res = JsonSerializer.Serialize<Order>(Order, options);
 
-                await MqttConnectionService.HandlePublishMessage("orders/rated", res);
+                await MqttConnectionService.HandlePublishMessage("prod/orders/rated", res);
 
                 await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
             }

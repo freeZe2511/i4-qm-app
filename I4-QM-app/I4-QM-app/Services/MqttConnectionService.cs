@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,15 +36,13 @@ namespace I4_QM_app.Services
 
             // get from extern?
             List<MqttTopicFilter> topics = new List<MqttTopicFilter>();
-            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "orders/add").Build());
-            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "orders/del").Build());
-            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "orders/get").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/add").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/del").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/get").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "additives/sync").Build());
 
             await managedMqttClient.SubscribeAsync(topics);
             await managedMqttClient.StartAsync(managedMqttClientOptions);
-
-            await managedMqttClient.EnqueueAsync(baseTopicURL + "connected", "QM App");
 
             managedMqttClient.ApplicationMessageReceivedAsync += HandleReceivedMessage;
 
@@ -91,9 +91,9 @@ namespace I4_QM_app.Services
             var topic = message.Topic;
 
             // maybe not ideal
-            if (topic == baseTopicURL + "orders/add") await HandleAddOrder(message);
-            if (topic == baseTopicURL + "orders/del") await HandleDelOrder(message);
-            if (topic == baseTopicURL + "orders/get") await HandleGetOrder(message);
+            if (topic == baseTopicURL + "prod/orders/add") await HandleAddOrder(message);
+            if (topic == baseTopicURL + "prod/orders/del") await HandleDelOrder(message);
+            if (topic == baseTopicURL + "prod/orders/get") await HandleGetOrder(message);
             if (topic == baseTopicURL + "additives/sync") await HandleSyncAdditives(message);
 
             return Task.CompletedTask;
@@ -101,7 +101,7 @@ namespace I4_QM_app.Services
 
         public static async Task HandlePublishMessage(string topic, string message)
         {
-            await managedMqttClient.EnqueueAsync(baseTopicURL + topic, message);
+            await managedMqttClient.EnqueueAsync(baseTopicURL + topic, message, MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce);
         }
 
         public static void UpdateBrokerURL(string newURL)
@@ -142,12 +142,35 @@ namespace I4_QM_app.Services
 
             Console.WriteLine($"+ Delete");
 
-            List<string> ids = JsonConvert.DeserializeObject<List<string>>(delOrders);
+            bool parsable = int.TryParse(delOrders, out int status) && Enum.IsDefined(typeof(Status), status);
 
-            foreach (string id in ids)
+            if (parsable)
             {
-                await App.OrdersDataStore.DeleteItemAsync(id);
+                var orders = await App.OrdersDataStore.GetItemsFilteredAsync(x => (int)x.Status == status);
+
+                JsonSerializerOptions options = new JsonSerializerOptions()
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+                };
+
+                string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
+
+                //string ordersString = JsonConvert.SerializeObject(orders);
+                await HandlePublishMessage("backup/orders/" + ((Status)status).ToString(), ordersString);
+
+                await App.OrdersDataStore.DeleteManyItemsAsync(x => (int)x.Status == status);
+                return;
             }
+            else
+            {
+                List<string> ids = JsonConvert.DeserializeObject<List<string>>(delOrders);
+
+                foreach (string id in ids)
+                {
+                    await App.OrdersDataStore.DeleteItemAsync(id);
+                }
+            }
+
         }
 
         private static async Task HandleGetOrder(MqttApplicationMessage message)
@@ -156,7 +179,7 @@ namespace I4_QM_app.Services
 
             string ordersList = JsonConvert.SerializeObject(getOrders);
 
-            await HandlePublishMessage("orders/list", ordersList);
+            await HandlePublishMessage("backup/orders", ordersList);
         }
 
         private static async Task HandleSyncAdditives(MqttApplicationMessage message)
@@ -178,8 +201,10 @@ namespace I4_QM_app.Services
 
                 await App.AdditivesDataStore.AddItemAsync(additive);
             }
-        }
 
+            // maybe too much if additives change frequently
+            if (additives.Count > 0) new NotificationService().ShowSimpleNotification(1, additives.Count + " Additive(s) available", "Update Additives", 2, "");
+        }
 
     }
 

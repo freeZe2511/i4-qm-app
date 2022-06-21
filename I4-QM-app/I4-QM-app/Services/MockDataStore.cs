@@ -87,7 +87,7 @@ namespace I4_QM_app.Services
             return await Task.FromResult(true);
         }
 
-        public Task<bool> DeleteManyItemsAsync()
+        public Task<bool> DeleteManyItemsAsync(System.Func<Order, bool> predicate)
         {
             throw new System.NotImplementedException();
         }

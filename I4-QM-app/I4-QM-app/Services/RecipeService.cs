@@ -32,10 +32,11 @@ namespace I4_QM_app.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> DeleteManyItemsAsync()
+        public async Task<bool> DeleteManyItemsAsync(System.Func<Recipe, bool> predicate)
         {
-            // TODO
-            recipesCollection.DeleteMany(x => x.Id != "1");
+            // TODO Func predicate -> BsonExpression ???
+            var list = recipesCollection.FindAll().Where(predicate).ToList();
+            list.ForEach(i => recipesCollection.Delete(i.Id));
             return await Task.FromResult(true);
         }
 

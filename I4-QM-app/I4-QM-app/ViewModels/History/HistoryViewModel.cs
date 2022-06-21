@@ -138,7 +138,7 @@ namespace I4_QM_app.ViewModels
             bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
 
             // TODO parameter
-            if (answer) await App.OrdersDataStore.DeleteManyItemsAsync();
+            if (answer) await App.OrdersDataStore.DeleteManyItemsAsync(x => x.Status != Status.open);
             await ExecuteLoadHistoryCommand();
 
         }

@@ -1,4 +1,5 @@
-﻿using I4_QM_app.Views;
+﻿using I4_QM_app.Services;
+using I4_QM_app.Views;
 using I4_QM_app.Views.Recipes;
 using System;
 using Xamarin.Essentials;
@@ -17,13 +18,17 @@ namespace I4_QM_app
             Routing.RegisterRoute(nameof(FeedbackPage), typeof(FeedbackPage));
             Routing.RegisterRoute(nameof(NewRecipePage), typeof(NewRecipePage));
             Routing.RegisterRoute(nameof(TransformRecipePage), typeof(TransformRecipePage));
-            //Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
         }
 
         private async void OnLogoutItemClicked(object sender, EventArgs e)
         {
-            Preferences.Clear();
+            string userId = Preferences.Get("UserID", null);
+
+            await MqttConnectionService.HandlePublishMessage("disconnected", userId);
             await Shell.Current.GoToAsync("//LoginPage");
+
+            Preferences.Clear();
+
         }
     }
 

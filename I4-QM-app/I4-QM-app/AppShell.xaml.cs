@@ -18,7 +18,6 @@ namespace I4_QM_app
             Routing.RegisterRoute(nameof(FeedbackPage), typeof(FeedbackPage));
             Routing.RegisterRoute(nameof(NewRecipePage), typeof(NewRecipePage));
             Routing.RegisterRoute(nameof(TransformRecipePage), typeof(TransformRecipePage));
-            //Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
         }
 
         private async void OnLogoutItemClicked(object sender, EventArgs e)

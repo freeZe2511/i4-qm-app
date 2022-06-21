@@ -28,11 +28,12 @@ namespace I4_QM_app
 
             MainPage = new AppShell();
             //MainPage = new LoginPage();
+
+            Task.Run(async () => await MqttConnectionService.ConnectClient());
         }
 
         protected override void OnStart()
         {
-            Task.Run(async () => { await MqttConnectionService.ConnectClient(); });
         }
 
         protected override void OnSleep()

@@ -25,8 +25,8 @@ namespace I4_QM_app.ViewModels
             {
                 Task.Run(async () =>
                 {
-                    await MqttConnectionService.HandlePublishMessage("connected", userId);
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
+                    await MqttConnectionService.HandlePublishMessage("connected", userId);
                 });
             }
 
@@ -63,7 +63,6 @@ namespace I4_QM_app.ViewModels
             ((App)App.Current).CurrentUser = new User(EntryValue);
             Preferences.Set("UserID", EntryValue);
 
-            // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one            
             await MqttConnectionService.HandlePublishMessage("connected", EntryValue);
 
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");

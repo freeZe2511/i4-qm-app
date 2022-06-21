@@ -36,10 +36,11 @@ namespace I4_QM_app.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> DeleteManyItemsAsync()
+        public async Task<bool> DeleteManyItemsAsync(System.Func<Order, bool> predicate)
         {
-            // TODO
-            orderCollection.DeleteMany(x => x.Status != Status.open);
+            // TODO Func predicate -> BsonExpression ???
+            var list = orderCollection.FindAll().Where(predicate).ToList();
+            list.ForEach(i => orderCollection.Delete(i.Id));
             return await Task.FromResult(true);
         }
 

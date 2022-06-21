@@ -7,6 +7,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -101,7 +103,7 @@ namespace I4_QM_app.Services
 
         public static async Task HandlePublishMessage(string topic, string message)
         {
-            await managedMqttClient.EnqueueAsync(baseTopicURL + topic, message);
+            await managedMqttClient.EnqueueAsync(baseTopicURL + topic, message, MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce);
         }
 
         public static void UpdateBrokerURL(string newURL)
@@ -142,12 +144,40 @@ namespace I4_QM_app.Services
 
             Console.WriteLine($"+ Delete");
 
-            List<string> ids = JsonConvert.DeserializeObject<List<string>>(delOrders);
+            bool parsable = int.TryParse(delOrders, out int status) && Enum.IsDefined(typeof(Status), status);
 
-            foreach (string id in ids)
+            Console.WriteLine(delOrders);
+            Console.WriteLine(parsable);
+
+            if (parsable)
             {
-                await App.OrdersDataStore.DeleteItemAsync(id);
+                var orders = await App.OrdersDataStore.GetItemsFilteredAsync(x => (int)x.Status == status);
+
+                JsonSerializerOptions options = new JsonSerializerOptions()
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+                };
+
+                string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
+
+                //string ordersString = JsonConvert.SerializeObject(orders);
+                await HandlePublishMessage("backup/orders/" + ((Status)status).ToString(), ordersString);
+
+                await App.OrdersDataStore.DeleteManyItemsAsync(x => (int)x.Status == status);
+                return;
             }
+            else
+            {
+                List<string> ids = JsonConvert.DeserializeObject<List<string>>(delOrders);
+
+                Console.WriteLine(ids);
+
+                foreach (string id in ids)
+                {
+                    await App.OrdersDataStore.DeleteItemAsync(id);
+                }
+            }
+
         }
 
         private static async Task HandleGetOrder(MqttApplicationMessage message)
@@ -156,7 +186,7 @@ namespace I4_QM_app.Services
 
             string ordersList = JsonConvert.SerializeObject(getOrders);
 
-            await HandlePublishMessage("orders/list", ordersList);
+            await HandlePublishMessage("backup/orders", ordersList);
         }
 
         private static async Task HandleSyncAdditives(MqttApplicationMessage message)
@@ -179,7 +209,6 @@ namespace I4_QM_app.Services
                 await App.AdditivesDataStore.AddItemAsync(additive);
             }
         }
-
 
     }
 

@@ -158,6 +158,7 @@ namespace I4_QM_app.ViewModels
                 Id = order.Id;
 
                 //UserId = (string)Application.Current.Properties["UserID"];
+                UserId = ((App)App.Current).CurrentUser.UID;
                 UserId = null;
 
                 Amount = order.Amount;

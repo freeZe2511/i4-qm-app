@@ -1,10 +1,13 @@
 ﻿using I4_QM_app.Views;
 using Xamarin.Forms;
+// using System.Windows.Forms;
 
 namespace I4_QM_app.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
+        public string EntryValue { get; set; }
+        public int UID { get; set; }
         public Command LoginCommand { get; }
 
         public LoginViewModel()
@@ -17,6 +20,23 @@ namespace I4_QM_app.ViewModels
         private async void OnLoginClicked(object obj)
         {
             //Application.Current.Properties["UserID"]
+
+            if(!int.TryParse(EntryValue, out int UID))
+            {
+                EntryValue = "";
+               //MessageBox.Show("Only decimal numbers allowed. Please, try agian.", "Invalid UserID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+           
+            }
+
+            if (UID <= 0)
+            {
+                EntryValue = "";
+                return;
+            }
+
+            ((App)App.Current).CurrentUser = new Models.User(EntryValue);
+            EntryValue = "";
 
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");

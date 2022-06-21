@@ -89,6 +89,7 @@ namespace I4_QM_app.ViewModels
                     Name = Name,
                     Description = Description,
                     //CreatorId = UserId,
+                    CreatorId = ((App) App.Current).CurrentUser.UID,
                     Additives = Additives.FindAll(i => i.Checked == true)
                 };
 

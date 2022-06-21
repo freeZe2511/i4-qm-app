@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"             
-             x:Class="I4_QM_app.Views.FeedbackPage"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="I4_QM_app.Views.FeedbackPage"             
              Title="{Binding Title}">
+    <!--Shell.PresentationMode="ModalAnimated"-->
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="restart48_400.png" Command="{Binding ResetFeedbackCommand}"></ToolbarItem>
+        <ToolbarItem IconImageSource="undo48_400.png" Command="{Binding ResetFeedbackCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
     
     <ContentPage.Content>

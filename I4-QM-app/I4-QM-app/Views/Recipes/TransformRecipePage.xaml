@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="I4_QM_app.Views.Recipes.TransformRecipePage"
+             Title="{Binding Title}"
+             >
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="undo48_400.png" Command="{Binding ClearCommand}"></ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <StackLayout Spacing="3" Padding="15">
+            <Label Text="{Binding Name}" FontSize="Title" FontAttributes="Bold" Padding="10, 0, 0, 0"/>
+            <Label Text="{Binding Description}" FontSize="Small" FontAttributes="Italic" Padding="10, 10, 10, 10"/>
+            <Label Text="Additives: " FontAttributes="Bold" Padding="10"/>
+            
+            <CollectionView x:Name="AdditivesListView"
+                ItemsSource="{Binding Additives}"
+                SelectionMode="None" 
+                >
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                
+                            </Grid.ColumnDefinitions>
+                            <Label Grid.Column="0" Text="{Binding Name}" />
+                            <Label Grid.Column="1" Text="{Binding Portion, StringFormat='{0}%'}" HorizontalOptions="End"/>                           
+
+                            <BoxView Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
+                        </Grid>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+
+            <Grid Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="5*" />
+
+                </Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Text="Weight (g): " FontAttributes="Bold" VerticalOptions="Center"/>
+                <Entry Grid.Row="0" Grid.Column="1" Placeholder="Weight" Text="{Binding Weight}" Keyboard="Numeric"></Entry>
+                <Label Grid.Row="1" Grid.Column="0" Text="Amount (%): " FontAttributes="Bold" VerticalOptions="Center"/>
+                <Entry Grid.Row="1" Grid.Column="1" Placeholder="Amount" Text="{Binding Amount}" Keyboard="Numeric"></Entry>
+                <Label Grid.Row="2" Grid.Column="0" Text="Date: " FontAttributes="Bold" VerticalOptions="Center"/>
+                <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding Date}"></DatePicker>
+                <Label Grid.Row="3" Grid.Column="0" Text="Time: " FontAttributes="Bold" VerticalOptions="Center"/>
+                <TimePicker Grid.Row="3" Grid.Column="1" Time="{Binding Time}"></TimePicker>
+            </Grid>
+
+            <StackLayout Orientation="Horizontal" Padding="10">
+                <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource AccentRed}" Opacity="0.75"></Button>
+                <Button Text="Order" Command="{Binding OrderCommand}" HorizontalOptions="FillAndExpand"></Button>
+            </StackLayout>
+
+        </StackLayout>
+    </ContentPage.Content>
+
+</ContentPage>

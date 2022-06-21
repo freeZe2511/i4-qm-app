@@ -56,7 +56,7 @@
                                 <local:NumericValidationBehavior Portion="{Binding Portion}" BindingContext="{Binding BindingContext, Source={x:Reference Entry}}"/>
                             </Entry.Behaviors>-->
                         </Entry>
-                        <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Done}" ></CheckBox>
+                        <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" ></CheckBox>
                         
                     </Grid>
                 </DataTemplate>
@@ -64,7 +64,7 @@
         </CollectionView>
 
         <!--Submit-->
-        <Button VerticalOptions="Center" Text="Done" Command="{Binding DoneCommand}" BackgroundColor="{StaticResource Primary}" IsEnabled="{Binding DoneEnabled}"/>
+        <Button VerticalOptions="Center" Text="Done" Command="{Binding DoneCommand}" BackgroundColor="{StaticResource Primary}"/>
 
     </StackLayout>
 

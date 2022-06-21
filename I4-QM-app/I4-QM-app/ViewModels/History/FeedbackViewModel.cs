@@ -1,9 +1,10 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Services;
 using I4_QM_app.Views;
-using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -19,7 +20,7 @@ namespace I4_QM_app.ViewModels
         public Command ResetFeedbackCommand { get; }
         public FeedbackViewModel()
         {
-            Title = "Feedback (0 - 9)";
+            Title = "Feedback (1 - 9)";
             SendFeedbackCommand = new Command(RateFeedbackAsync);
             ResetFeedbackCommand = new Command(ResetFeedback);
             rating = new Rating();
@@ -75,8 +76,14 @@ namespace I4_QM_app.ViewModels
                 await App.OrdersDataStore.UpdateItemAsync(Order);
 
                 // send mqtt
-                string res = JsonConvert.SerializeObject(Order);
-                await MqttConnectionService.HandlePublishMessage("order/rated", res);
+                JsonSerializerOptions options = new JsonSerializerOptions()
+                {
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+                };
+
+                string res = JsonSerializer.Serialize<Order>(Order, options);
+
+                await MqttConnectionService.HandlePublishMessage("orders/rated", res);
 
                 await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
             }

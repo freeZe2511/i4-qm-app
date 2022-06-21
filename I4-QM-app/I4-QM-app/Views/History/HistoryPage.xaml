@@ -5,7 +5,7 @@
              xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
              xmlns:model="clr-namespace:I4_QM_app.Models"
              x:Name="BrowseHistoryPage"
-             Title="{Binding Title}">
+             Title="{Binding History.Count, StringFormat='History ({0})'}">
    
     <ContentPage.ToolbarItems>        
         <ToolbarItem IconImageSource="del_f48_400.png" Command="{Binding DeleteAllItemsCommand}" Order="Primary"/>

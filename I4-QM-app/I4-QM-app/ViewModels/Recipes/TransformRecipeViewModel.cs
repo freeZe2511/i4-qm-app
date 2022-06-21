@@ -33,6 +33,7 @@ namespace I4_QM_app.ViewModels.Recipes
             Title = "Transform";
             OrderCommand = new Command(async () => await TransformRecipe());
             CancelCommand = new Command(OnCancel);
+            ClearCommand = new Command(OnClear);
             Date = DateTime.Now;
             Time = DateTime.Now.TimeOfDay;
             Weight = 0;
@@ -101,6 +102,14 @@ namespace I4_QM_app.ViewModels.Recipes
         {
             // This will pop the current page off the navigation stack
             await Shell.Current.GoToAsync("..");
+        }
+
+        private void OnClear()
+        {
+            Date = DateTime.Now;
+            Time = DateTime.Now.TimeOfDay;
+            Weight = 0;
+            Amount = 0;
         }
 
 

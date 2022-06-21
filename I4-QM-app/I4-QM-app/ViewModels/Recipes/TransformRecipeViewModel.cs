@@ -1,5 +1,4 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -159,7 +158,9 @@ namespace I4_QM_app.ViewModels.Recipes
                 Recipe.Used = Recipe.Used + 1;
                 await App.RecipesDataStore.UpdateItemAsync(Recipe);
 
-                await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
+                // navigate
+                await Shell.Current.Navigation.PopToRootAsync();
+                //await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
 
             }
         }

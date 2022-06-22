@@ -1,5 +1,4 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
@@ -139,7 +138,7 @@ namespace I4_QM_app.ViewModels
 
                 string res = JsonSerializer.Serialize<Order>(Order, options);
 
-                await MqttConnectionService.HandlePublishMessage("prod/orders/mixed", res);
+                await App.ConnectionService.HandlePublishMessage("prod/orders/mixed", res);
 
                 // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
                 await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");

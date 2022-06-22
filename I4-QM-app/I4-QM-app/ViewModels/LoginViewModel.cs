@@ -1,5 +1,4 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Threading.Tasks;
@@ -26,7 +25,7 @@ namespace I4_QM_app.ViewModels
                 Task.Run(async () =>
                 {
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
-                    await MqttConnectionService.HandlePublishMessage("connected", userId);
+                    await App.ConnectionService.HandlePublishMessage("connected", userId);
                 });
             }
 
@@ -63,7 +62,7 @@ namespace I4_QM_app.ViewModels
             ((App)App.Current).CurrentUser = new User(EntryValue);
             Preferences.Set("UserID", EntryValue);
 
-            await MqttConnectionService.HandlePublishMessage("connected", EntryValue);
+            await App.ConnectionService.HandlePublishMessage("connected", EntryValue);
 
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             EntryValue = "";

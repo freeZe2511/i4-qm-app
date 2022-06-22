@@ -1,12 +1,9 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Services;
 using LiteDB;
-using Plugin.LocalNotification;
-using Plugin.LocalNotification.EventArgs;
 using System;
 using System.IO;
 using System.Threading;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app
@@ -24,12 +21,9 @@ namespace I4_QM_app
             DependencyService.Register<RecipeService>();
             DependencyService.Register<AdditiveService>();
             DependencyService.Register<NotificationService>();
-
-            NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
+            DependencyService.Register<ConnectionService>();
 
             MainPage = new AppShell();
-
-            Task.Run(async () => await MqttConnectionService.ConnectClient());
         }
 
         protected override void OnStart()
@@ -73,27 +67,7 @@ namespace I4_QM_app
         public static IDataStore<Recipe> RecipesDataStore => DependencyService.Get<IDataStore<Recipe>>();
         public static IDataStore<Additive> AdditivesDataStore => DependencyService.Get<IDataStore<Additive>>();
         public static Services.INotificationService NotificationService => DependencyService.Get<Services.INotificationService>();
-
-        private void LoadPageFromNotification(NotificationEventArgs e)
-        {
-            var data = e.Request.ReturningData;
-
-            if (string.IsNullOrWhiteSpace(data))
-            {
-                return;
-            }
-
-            // TODO
-            Page page = null;
-            if (data == "OrdersPage") page = new Views.OrdersPage();
-
-            Shell.Current.Navigation.PushAsync(page);
-
-            //await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
-
-
-        }
-
+        public static IConnectionService ConnectionService => DependencyService.Get<IConnectionService>();
 
     }
 }

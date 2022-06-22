@@ -1,5 +1,4 @@
-﻿using I4_QM_app.Services;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
 {
@@ -12,11 +11,11 @@ namespace I4_QM_app.ViewModels
             ToggleConnectionCommand = new Command(ToggleConnection);
         }
 
-        public bool IsConnected { get => MqttConnectionService.IsConnected; }
+        //public bool IsConnected { get => App.ConnectionService.IsConnected; }
 
         public void ToggleConnection()
         {
-            MqttConnectionService.ToggleMqttClient();
+            //App.ConnectionService.ToggleMqttClient();
         }
 
     }

@@ -1,5 +1,4 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -101,7 +100,7 @@ namespace I4_QM_app.ViewModels
                 };
 
                 string res = JsonSerializer.Serialize<Recipe>(newRecipe, options);
-                await MqttConnectionService.HandlePublishMessage("recipes/new", res);
+                await App.ConnectionService.HandlePublishMessage("recipes/new", res);
 
                 await Shell.Current.GoToAsync("..");
             }

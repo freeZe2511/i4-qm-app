@@ -3,6 +3,8 @@ using I4_QM_app.Models;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -134,6 +136,17 @@ namespace I4_QM_app.ViewModels
         async void DeleteAllHistoryItems()
         {
             bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
+
+            var orders = await App.OrdersDataStore.GetItemsFilteredAsync(x => x.Status != Status.open);
+
+            JsonSerializerOptions options = new JsonSerializerOptions()
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+            };
+
+            string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
+
+            await App.ConnectionService.HandlePublishMessage("backup/orders/history", ordersString);
 
             if (answer) await App.OrdersDataStore.DeleteManyItemsAsync(x => x.Status != Status.open);
             await ExecuteLoadHistoryCommand();

@@ -101,7 +101,6 @@ namespace I4_QM_app.Services
 
             Console.WriteLine($"+ Add");
 
-            //serialize order and add to db
             List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(addOrders);
 
             int orderCount = 0;
@@ -117,7 +116,6 @@ namespace I4_QM_app.Services
                 }
             }
 
-            //notification TODO service
             if (orderCount > 0) new NotificationService().ShowSimplePushNotification(1, orderCount + " new order(s)", "New Order", 1, "OrdersPage");
 
         }
@@ -141,7 +139,6 @@ namespace I4_QM_app.Services
 
                 string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
 
-                //string ordersString = JsonConvert.SerializeObject(orders);
                 await HandlePublishMessage("backup/orders/" + ((Status)status).ToString(), ordersString);
 
                 await App.OrdersDataStore.DeleteManyItemsAsync(x => (int)x.Status == status);

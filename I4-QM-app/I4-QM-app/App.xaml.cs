@@ -23,11 +23,11 @@ namespace I4_QM_app
             DependencyService.Register<OrderService>();
             DependencyService.Register<RecipeService>();
             DependencyService.Register<AdditiveService>();
+            DependencyService.Register<NotificationService>();
 
             NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
 
             MainPage = new AppShell();
-            //MainPage = new LoginPage();
 
             Task.Run(async () => await MqttConnectionService.ConnectClient());
         }
@@ -72,6 +72,7 @@ namespace I4_QM_app
         public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
         public static IDataStore<Recipe> RecipesDataStore => DependencyService.Get<IDataStore<Recipe>>();
         public static IDataStore<Additive> AdditivesDataStore => DependencyService.Get<IDataStore<Additive>>();
+        public static Services.INotificationService NotificationService => DependencyService.Get<Services.INotificationService>();
 
         private void LoadPageFromNotification(NotificationEventArgs e)
         {

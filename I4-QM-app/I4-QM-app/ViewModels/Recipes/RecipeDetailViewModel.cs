@@ -33,8 +33,7 @@ namespace I4_QM_app.ViewModels
 
         private async Task TransformRecipeAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Transform recipe?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Transform recipe?", "Yes", "No");
 
             if (answer)
             {
@@ -44,8 +43,7 @@ namespace I4_QM_app.ViewModels
 
         private async Task DeleteRecipeAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete recipe?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete recipe?", "Yes", "No");
 
             if (answer)
             {

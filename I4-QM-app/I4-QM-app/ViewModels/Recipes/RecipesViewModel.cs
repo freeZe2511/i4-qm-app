@@ -136,8 +136,7 @@ namespace I4_QM_app.ViewModels
 
         public async Task AddNewItemAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Add new Recipe?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Add new Recipe?", "Yes", "No");
 
             // This will push the ItemDetailPage onto the navigation stack
             if (answer) await Shell.Current.GoToAsync($"{nameof(NewRecipePage)}");
@@ -145,8 +144,7 @@ namespace I4_QM_app.ViewModels
 
         private async Task DeleteAllItemAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete all recipes?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete all recipes?", "Yes", "No");
 
             if (answer) await App.RecipesDataStore.DeleteAllItemsAsync();
             await ExecuteLoadRecipesCommand();

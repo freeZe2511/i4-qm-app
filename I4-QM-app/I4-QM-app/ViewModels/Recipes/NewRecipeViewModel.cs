@@ -80,7 +80,7 @@ namespace I4_QM_app.ViewModels
 
         private async void OnSave()
         {
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Save?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Save?", "Yes", "No");
 
             if (answer)
             {

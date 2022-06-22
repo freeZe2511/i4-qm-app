@@ -114,8 +114,7 @@ namespace I4_QM_app.ViewModels
             // check if all additives are checked (mock for enabled/disabled done btn)
             if (!Additives.TrueForAll(a => a.Checked == true)) return;
 
-            // TODO display alert
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Done?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Done?", "Yes", "No");
 
             if (answer)
             {

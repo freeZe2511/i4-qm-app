@@ -124,8 +124,7 @@ namespace I4_QM_app.ViewModels
             if (item == null)
                 return;
 
-            // TODO abstract dialog_service
-            //bool answer = await Shell.Current.DisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
 
             // This will push the ItemDetailPage onto the navigation stack
             await Shell.Current.GoToAsync($"{nameof(HistoryDetailPage)}?{nameof(HistoryDetailViewModel.OrderId)}={item.Id}");
@@ -134,10 +133,8 @@ namespace I4_QM_app.ViewModels
 
         async void DeleteAllHistoryItems()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
 
-            // TODO parameter
             if (answer) await App.OrdersDataStore.DeleteManyItemsAsync(x => x.Status != Status.open);
             await ExecuteLoadHistoryCommand();
 

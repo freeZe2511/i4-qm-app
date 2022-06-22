@@ -1,15 +1,16 @@
 ﻿using Plugin.LocalNotification;
+using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace I4_QM_app.Services
 {
-    public class NotificationService
+    public class NotificationService : INotificationService
     {
         public NotificationService()
         {
-
         }
 
-        public async void ShowSimpleNotification(int badgeNumber, string description, string title, int notificationId, string returningData)
+        public async void ShowSimplePushNotification(int badgeNumber, string description, string title, int notificationId, string returningData)
         {
             var notification = new NotificationRequest
             {
@@ -21,6 +22,11 @@ namespace I4_QM_app.Services
             };
 
             await NotificationCenter.Current.Show(notification);
+        }
+
+        public async Task<bool> ShowSimpleDisplayAlert(string title, string message, string accept, string cancel)
+        {
+            return await Shell.Current.DisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
         }
 
     }

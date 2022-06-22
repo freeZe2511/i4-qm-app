@@ -112,13 +112,6 @@ namespace I4_QM_app.ViewModels
 
         private async void OnFeedbackClicked()
         {
-            ////update
-            //Order.Status = Status.rated;
-            //await App.OrdersDataStore.UpdateItemAsync(Order);
-
-            //// send mqtt
-            ////await MqttConnection.HandleFinishedOrder(Order);
-
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             await Shell.Current.GoToAsync($"{nameof(FeedbackPage)}?{nameof(FeedbackViewModel.OrderId)}={order.Id}");
         }
@@ -150,8 +143,7 @@ namespace I4_QM_app.ViewModels
 
         async void DeleteItem()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete item from history?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete item from history?", "Yes", "No");
 
             // TODO parameter
             if (answer)

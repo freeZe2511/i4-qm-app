@@ -132,7 +132,7 @@ namespace I4_QM_app.ViewModels.Recipes
 
         private async Task TransformRecipe()
         {
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Transform into Order?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Transform into Order?", "Yes", "No");
 
             if (answer)
             {
@@ -149,10 +149,6 @@ namespace I4_QM_app.ViewModels.Recipes
 
                 //insert order
                 await App.OrdersDataStore.AddItemAsync(newOrder);
-
-                //debug
-                //string test = JsonSerializer.Serialize<Order>(newOrder);
-                //await MqttConnectionService.HandlePublishMessage("thm/sfm/sg/test", test);
 
                 // update use
                 Recipe.Used = Recipe.Used + 1;

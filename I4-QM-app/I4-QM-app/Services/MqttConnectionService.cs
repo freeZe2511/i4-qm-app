@@ -132,7 +132,7 @@ namespace I4_QM_app.Services
             }
 
             //notification TODO service
-            if (orderCount > 0) new NotificationService().ShowSimpleNotification(1, orderCount + " new order(s)", "New Order", 1, "OrdersPage");
+            if (orderCount > 0) new NotificationService().ShowSimplePushNotification(1, orderCount + " new order(s)", "New Order", 1, "OrdersPage");
 
         }
 
@@ -203,7 +203,7 @@ namespace I4_QM_app.Services
             }
 
             // maybe too much if additives change frequently
-            if (additives.Count > 0) new NotificationService().ShowSimpleNotification(1, additives.Count + " Additive(s) available", "Update Additives", 2, "");
+            if (additives.Count > 0) new NotificationService().ShowSimplePushNotification(1, additives.Count + " Additive(s) available", "Update Additives", 2, "");
         }
 
     }

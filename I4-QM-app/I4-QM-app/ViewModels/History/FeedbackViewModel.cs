@@ -64,8 +64,7 @@ namespace I4_QM_app.ViewModels
 
         private async void RateFeedbackAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Send feedback?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Send feedback?", "Yes", "No");
 
             // TODO parameter
             if (answer)

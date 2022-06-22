@@ -87,7 +87,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 Recipes.Clear();
-                var recipes = await App.RecipesDataStore.GetItemsAsync(true);
+                var recipes = await App.RecipesDataService.GetItemsAsync(true);
 
                 foreach (var recipe in recipes)
                 {
@@ -146,7 +146,7 @@ namespace I4_QM_app.ViewModels
         {
             bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete all recipes?", "Yes", "No");
 
-            if (answer) await App.RecipesDataStore.DeleteAllItemsAsync();
+            if (answer) await App.RecipesDataService.DeleteAllItemsAsync();
             await ExecuteLoadRecipesCommand();
         }
     }

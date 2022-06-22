@@ -51,7 +51,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var order = await App.OrdersDataStore.GetItemAsync(orderId);
+                var order = await App.OrdersDataService.GetItemAsync(orderId);
                 Order = order;
 
             }
@@ -71,7 +71,7 @@ namespace I4_QM_app.ViewModels
                 // update                
                 Order.Status = Status.rated;
                 Order.Rating = Rating;
-                await App.OrdersDataStore.UpdateItemAsync(Order);
+                await App.OrdersDataService.UpdateItemAsync(Order);
 
                 // send mqtt
                 JsonSerializerOptions options = new JsonSerializerOptions()

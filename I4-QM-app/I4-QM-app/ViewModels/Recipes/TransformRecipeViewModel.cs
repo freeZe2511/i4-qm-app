@@ -116,7 +116,7 @@ namespace I4_QM_app.ViewModels.Recipes
         {
             try
             {
-                var recipe = await App.RecipesDataStore.GetItemAsync(recipeId);
+                var recipe = await App.RecipesDataService.GetItemAsync(recipeId);
 
                 Recipe = recipe;
                 Additives = recipe.Additives;
@@ -148,11 +148,11 @@ namespace I4_QM_app.ViewModels.Recipes
                 };
 
                 //insert order
-                await App.OrdersDataStore.AddItemAsync(newOrder);
+                await App.OrdersDataService.AddItemAsync(newOrder);
 
                 // update use
                 Recipe.Used = Recipe.Used + 1;
-                await App.RecipesDataStore.UpdateItemAsync(Recipe);
+                await App.RecipesDataService.UpdateItemAsync(Recipe);
 
                 // navigate
                 await Shell.Current.Navigation.PopToRootAsync();

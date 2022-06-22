@@ -24,8 +24,8 @@ namespace I4_QM_app.ViewModels
             {
                 Task.Run(async () =>
                 {
-                    await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                     await App.ConnectionService.HandlePublishMessage("connected", userId);
+                    await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                 });
             }
 
@@ -54,9 +54,7 @@ namespace I4_QM_app.ViewModels
             if (!int.TryParse(EntryValue, out int UID) || String.IsNullOrWhiteSpace(EntryValue) || UID <= 0 || EntryValue.Length != IdLength)
             {
                 EntryValue = "";
-                //MessageBox.Show("Only decimal numbers allowed. Please, try agian.", "Invalid UserID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
-
             }
 
             ((App)App.Current).CurrentUser = new User(EntryValue);

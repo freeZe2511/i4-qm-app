@@ -47,7 +47,7 @@ namespace I4_QM_app.ViewModels
 
             if (answer)
             {
-                await App.RecipesDataStore.DeleteItemAsync(Id);
+                await App.RecipesDataService.DeleteItemAsync(Id);
                 await Shell.Current.GoToAsync($"//{nameof(RecipesPage)}");
             }
         }
@@ -108,7 +108,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var recipe = await App.RecipesDataStore.GetItemAsync(recipeId);
+                var recipe = await App.RecipesDataService.GetItemAsync(recipeId);
 
                 Id = recipe.Id;
                 CreatorId = null;

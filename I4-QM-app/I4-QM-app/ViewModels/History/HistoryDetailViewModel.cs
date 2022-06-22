@@ -120,7 +120,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var order = await App.OrdersDataStore.GetItemAsync(orderId);
+                var order = await App.OrdersDataService.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
                 UserId = order.UserId;
@@ -148,7 +148,7 @@ namespace I4_QM_app.ViewModels
             // TODO parameter
             if (answer)
             {
-                await App.OrdersDataStore.DeleteItemAsync(Id);
+                await App.OrdersDataService.DeleteItemAsync(Id);
                 await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
             }
 

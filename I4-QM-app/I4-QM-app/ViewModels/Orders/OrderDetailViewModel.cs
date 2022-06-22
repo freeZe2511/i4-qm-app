@@ -128,7 +128,7 @@ namespace I4_QM_app.ViewModels
                 Order.Done = DateTime.Now;
                 Order.UserId = UserId;
 
-                await App.OrdersDataStore.UpdateItemAsync(Order);
+                await App.OrdersDataService.UpdateItemAsync(Order);
 
                 // send mqtt
                 JsonSerializerOptions options = new JsonSerializerOptions()
@@ -152,7 +152,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var order = await App.OrdersDataStore.GetItemAsync(orderId);
+                var order = await App.OrdersDataService.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
                 UserId = Preferences.Get("UserID", "null");

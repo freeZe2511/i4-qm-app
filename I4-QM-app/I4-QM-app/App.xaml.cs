@@ -4,6 +4,7 @@ using LiteDB;
 using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app
@@ -24,6 +25,8 @@ namespace I4_QM_app
             DependencyService.Register<ConnectionService>();
 
             MainPage = new AppShell();
+
+            Task.Run(async () => await App.ConnectionService.ConnectClient());
         }
 
         protected override void OnStart()
@@ -60,13 +63,13 @@ namespace I4_QM_app
             return db;
         }
 
-        // Eigenschaft für den Zugriff
+
         public static ILiteDatabase DB => _db.Value;
 
-        public static IDataService<Order> OrdersDataStore => DependencyService.Get<IDataService<Order>>();
-        public static IDataService<Recipe> RecipesDataStore => DependencyService.Get<IDataService<Recipe>>();
-        public static IDataService<Additive> AdditivesDataStore => DependencyService.Get<IDataService<Additive>>();
-        public static Services.INotificationService NotificationService => DependencyService.Get<Services.INotificationService>();
+        public static IDataService<Order> OrdersDataService => DependencyService.Get<IDataService<Order>>();
+        public static IDataService<Recipe> RecipesDataService => DependencyService.Get<IDataService<Recipe>>();
+        public static IDataService<Additive> AdditivesDataService => DependencyService.Get<IDataService<Additive>>();
+        public static INotificationService NotificationService => DependencyService.Get<INotificationService>();
         public static IConnectionService ConnectionService => DependencyService.Get<IConnectionService>();
 
     }

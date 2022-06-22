@@ -103,7 +103,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 History.Clear();
-                var history = await App.OrdersDataStore.GetItemsFilteredAsync(a => a.Status != Status.open);
+                var history = await App.OrdersDataService.GetItemsFilteredAsync(a => a.Status != Status.open);
 
                 foreach (var order in history)
                 {
@@ -137,7 +137,7 @@ namespace I4_QM_app.ViewModels
         {
             bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
 
-            var orders = await App.OrdersDataStore.GetItemsFilteredAsync(x => x.Status != Status.open);
+            var orders = await App.OrdersDataService.GetItemsFilteredAsync(x => x.Status != Status.open);
 
             JsonSerializerOptions options = new JsonSerializerOptions()
             {
@@ -148,7 +148,7 @@ namespace I4_QM_app.ViewModels
 
             await App.ConnectionService.HandlePublishMessage("backup/orders/history", ordersString);
 
-            if (answer) await App.OrdersDataStore.DeleteManyItemsAsync(x => x.Status != Status.open);
+            if (answer) await App.OrdersDataService.DeleteManyItemsAsync(x => x.Status != Status.open);
             await ExecuteLoadHistoryCommand();
 
         }

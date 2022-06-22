@@ -23,7 +23,6 @@ namespace I4_QM_app.Services
         public ConnectionService()
         {
             managedMqttClient = new MqttFactory().CreateManagedMqttClient();
-            Task.Run(async () => await ConnectClient());
         }
 
         public async Task ConnectClient()
@@ -108,10 +107,10 @@ namespace I4_QM_app.Services
             foreach (var order in orders)
             {
                 //check if id is unique
-                if (await App.OrdersDataStore.GetItemAsync(order.Id) == null)
+                if (await App.OrdersDataService.GetItemAsync(order.Id) == null)
                 {
                     order.Status = Status.open;
-                    await App.OrdersDataStore.AddItemAsync(order);
+                    await App.OrdersDataService.AddItemAsync(order);
                     orderCount++;
                 }
             }
@@ -130,7 +129,7 @@ namespace I4_QM_app.Services
 
             if (parsable)
             {
-                var orders = await App.OrdersDataStore.GetItemsFilteredAsync(x => (int)x.Status == status);
+                var orders = await App.OrdersDataService.GetItemsFilteredAsync(x => (int)x.Status == status);
 
                 JsonSerializerOptions options = new JsonSerializerOptions()
                 {
@@ -141,7 +140,7 @@ namespace I4_QM_app.Services
 
                 await HandlePublishMessage("backup/orders/" + ((Status)status).ToString(), ordersString);
 
-                await App.OrdersDataStore.DeleteManyItemsAsync(x => (int)x.Status == status);
+                await App.OrdersDataService.DeleteManyItemsAsync(x => (int)x.Status == status);
                 return;
             }
             else
@@ -150,7 +149,7 @@ namespace I4_QM_app.Services
 
                 foreach (string id in ids)
                 {
-                    await App.OrdersDataStore.DeleteItemAsync(id);
+                    await App.OrdersDataService.DeleteItemAsync(id);
                 }
             }
 
@@ -158,7 +157,7 @@ namespace I4_QM_app.Services
 
         private async Task HandleGetOrder(MqttApplicationMessage message)
         {
-            var getOrders = await App.OrdersDataStore.GetItemsAsync();
+            var getOrders = await App.OrdersDataService.GetItemsAsync();
 
             string ordersList = JsonConvert.SerializeObject(getOrders);
 
@@ -173,7 +172,7 @@ namespace I4_QM_app.Services
 
             List<Additive> additives = JsonConvert.DeserializeObject<List<Additive>>(req);
 
-            await App.AdditivesDataStore.DeleteAllItemsAsync();
+            await App.AdditivesDataService.DeleteAllItemsAsync();
 
             foreach (Additive additive in additives)
             {
@@ -182,7 +181,7 @@ namespace I4_QM_app.Services
                 additive.Portion = 0;
                 additive.Checked = false;
 
-                await App.AdditivesDataStore.AddItemAsync(additive);
+                await App.AdditivesDataService.AddItemAsync(additive);
             }
 
             // maybe too much if additives change frequently

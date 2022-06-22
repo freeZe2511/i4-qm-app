@@ -38,7 +38,7 @@ namespace I4_QM_app.ViewModels
         {
             Additives.Clear();
 
-            var list = await App.AdditivesDataStore.GetItemsAsync();
+            var list = await App.AdditivesDataService.GetItemsAsync();
             foreach (Additive item in list)
             {
                 Additives.Add(item);
@@ -92,7 +92,7 @@ namespace I4_QM_app.ViewModels
                     Additives = Additives.FindAll(i => i.Checked == true)
                 };
 
-                await App.RecipesDataStore.AddItemAsync(newRecipe);
+                await App.RecipesDataService.AddItemAsync(newRecipe);
 
                 JsonSerializerOptions options = new JsonSerializerOptions()
                 {

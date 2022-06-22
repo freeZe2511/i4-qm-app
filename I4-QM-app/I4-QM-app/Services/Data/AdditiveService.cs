@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace I4_QM_app.Services
 {
-    public class AdditiveService : IDataStore<Additive>
+    public class AdditiveService : IDataService<Additive>
     {
         private readonly ILiteCollection<Additive> additivesCollection;
         public AdditiveService()

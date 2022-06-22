@@ -63,9 +63,9 @@ namespace I4_QM_app
         // Eigenschaft für den Zugriff
         public static ILiteDatabase DB => _db.Value;
 
-        public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
-        public static IDataStore<Recipe> RecipesDataStore => DependencyService.Get<IDataStore<Recipe>>();
-        public static IDataStore<Additive> AdditivesDataStore => DependencyService.Get<IDataStore<Additive>>();
+        public static IDataService<Order> OrdersDataStore => DependencyService.Get<IDataService<Order>>();
+        public static IDataService<Recipe> RecipesDataStore => DependencyService.Get<IDataService<Recipe>>();
+        public static IDataService<Additive> AdditivesDataStore => DependencyService.Get<IDataService<Additive>>();
         public static Services.INotificationService NotificationService => DependencyService.Get<Services.INotificationService>();
         public static IConnectionService ConnectionService => DependencyService.Get<IConnectionService>();
 

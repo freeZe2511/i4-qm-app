@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace I4_QM_app.Services
 {
-    public class RecipeService : IDataStore<Recipe>
+    public class RecipeService : IDataService<Recipe>
     {
         private readonly ILiteCollection<Recipe> recipesCollection;
         public RecipeService()

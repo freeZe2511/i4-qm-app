@@ -3,6 +3,7 @@ using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -25,6 +26,7 @@ namespace I4_QM_app.ViewModels
         private bool feedbackEnabled;
 
         public Command FeedbackCommand { get; }
+
         public Command DeleteItemCommand { get; }
 
         public HistoryDetailViewModel()
@@ -60,6 +62,7 @@ namespace I4_QM_app.ViewModels
             get => userId;
             set => SetProperty(ref userId, value);
         }
+
         public int Amount
         {
             get => amount;
@@ -71,21 +74,25 @@ namespace I4_QM_app.ViewModels
             get => weight;
             set => SetProperty(ref weight, value);
         }
+
         public List<Additive> Additives
         {
             get => additives;
             set => SetProperty(ref additives, value);
         }
+
         public Status Status
         {
             get => status;
             set => SetProperty(ref status, value);
         }
+
         public DateTime Created
         {
             get => created;
             set => SetProperty(ref created, value);
         }
+
         public DateTime Due
         {
             get => due;
@@ -116,7 +123,7 @@ namespace I4_QM_app.ViewModels
             await Shell.Current.GoToAsync($"{nameof(FeedbackPage)}?{nameof(FeedbackViewModel.OrderId)}={order.Id}");
         }
 
-        public async void LoadOrderId(string orderId)
+        private async Task LoadOrderId(string orderId)
         {
             try
             {
@@ -141,7 +148,7 @@ namespace I4_QM_app.ViewModels
             }
         }
 
-        async void DeleteItem()
+        private async void DeleteItem()
         {
             bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete item from history?", "Yes", "No");
 

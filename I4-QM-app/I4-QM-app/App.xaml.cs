@@ -67,9 +67,13 @@ namespace I4_QM_app
         public static ILiteDatabase DB => _db.Value;
 
         public static IDataService<Order> OrdersDataService => DependencyService.Get<IDataService<Order>>();
+
         public static IDataService<Recipe> RecipesDataService => DependencyService.Get<IDataService<Recipe>>();
+
         public static IDataService<Additive> AdditivesDataService => DependencyService.Get<IDataService<Additive>>();
+
         public static INotificationService NotificationService => DependencyService.Get<INotificationService>();
+
         public static IConnectionService ConnectionService => DependencyService.Get<IConnectionService>();
 
     }

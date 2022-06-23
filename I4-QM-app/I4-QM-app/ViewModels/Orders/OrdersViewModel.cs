@@ -39,7 +39,7 @@ namespace I4_QM_app.ViewModels
                     if (arg == "Id") await SortBy(i => i.Id);
                     if (arg == "Due") await SortBy(i => i.Due);
                     if (arg == "Amount") await SortBy(i => i.Amount);
-                    if (arg == "Created") await SortBy(i => i.Created);
+                    if (arg == "Received") await SortBy(i => i.Received);
 
 
                     // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t

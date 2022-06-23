@@ -14,7 +14,7 @@
         <ToolbarItem Text="Status" Command="{Binding SortByCommand}" CommandParameter="Status" Order="Secondary"/>
         <ToolbarItem Text="Done" Command="{Binding SortByCommand}" CommandParameter="Done" Order="Secondary"/>
         <ToolbarItem Text="Quantity" Command="{Binding SortByCommand}" CommandParameter="Amount" Order="Secondary"/>
-        <ToolbarItem Text="Created" Command="{Binding SortByCommand}" CommandParameter="Created" Order="Secondary"/>
+        <ToolbarItem Text="Received" Command="{Binding SortByCommand}" CommandParameter="Received" Order="Secondary"/>
     </ContentPage.ToolbarItems>
 
     <RefreshView x:DataType="local:HistoryViewModel" Command="{Binding LoadHistoryCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">

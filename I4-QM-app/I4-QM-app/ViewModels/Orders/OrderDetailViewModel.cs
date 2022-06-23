@@ -22,7 +22,7 @@ namespace I4_QM_app.ViewModels
         private int weight;
         private List<Additive> additives;
         private Status status;
-        private DateTime created;
+        private DateTime received;
         private DateTime due;
         private DateTime done;
 
@@ -92,10 +92,10 @@ namespace I4_QM_app.ViewModels
             get => status;
             set => SetProperty(ref status, value);
         }
-        public DateTime Created
+        public DateTime Received
         {
-            get => created;
-            set => SetProperty(ref created, value);
+            get => received;
+            set => SetProperty(ref received, value);
         }
         public DateTime Due
         {
@@ -161,7 +161,7 @@ namespace I4_QM_app.ViewModels
                 Weight = order.Weight;
                 Additives = order.Additives;
                 Status = order.Status;
-                Created = order.Created;
+                Received = order.Received;
                 Due = order.Due;
 
                 // calc

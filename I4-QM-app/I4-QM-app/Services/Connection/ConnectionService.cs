@@ -106,10 +106,11 @@ namespace I4_QM_app.Services
 
             foreach (var order in orders)
             {
-                //check if id is unique
+                // check if id is unique
                 if (await App.OrdersDataService.GetItemAsync(order.Id) == null)
                 {
                     order.Status = Status.open;
+                    order.Received = DateTime.Now;
                     await App.OrdersDataService.AddItemAsync(order);
                     orderCount++;
                 }

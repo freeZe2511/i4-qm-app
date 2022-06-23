@@ -12,7 +12,7 @@
         <ToolbarItem Text="ID" Command="{Binding SortByCommand}" CommandParameter="Id" Order="Secondary"/>
         <ToolbarItem Text="Due" Command="{Binding SortByCommand}" CommandParameter="Due" Order="Secondary"/>
         <ToolbarItem Text="Quantity" Command="{Binding SortByCommand}" CommandParameter="Amount" Order="Secondary"/>
-        <ToolbarItem Text="Received" Command="{Binding SortByCommand}" CommandParameter="Created" Order="Secondary"/>
+        <ToolbarItem Text="Received" Command="{Binding SortByCommand}" CommandParameter="Received" Order="Secondary"/>
     </ContentPage.ToolbarItems>
 
     <!--<ContentPage.ToolbarItems>
@@ -87,7 +87,7 @@
                             </Frame>-->
 
                             <Label Grid.Row="2"
-                                   Text="{Binding Created, StringFormat='Received:  {0}'}" 
+                                   Text="{Binding Received, StringFormat='Received:  {0}'}" 
                                    LineBreakMode="NoWrap"
                                    Style="{DynamicResource ListItemDetailTextStyle}"
                                    FontSize="14"

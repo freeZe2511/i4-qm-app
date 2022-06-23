@@ -98,7 +98,7 @@
                        TextColor="{Binding Secondary}"
                        FontAttributes="Bold"
                        HorizontalOptions="Center" />
-                <Label Text="{Binding Source={x:Static sys:DateTime.Now}, StringFormat='{0:dd MMMM yyyy, HH:mm}'}"
+                <Label Text="{Binding Source={x:Static sys:DateTime.Today}, StringFormat='{0:dd MMMM yyyy}'}"
                        TextColor="{Binding Secondary}"
                        HorizontalOptions="Center" />
             </StackLayout>

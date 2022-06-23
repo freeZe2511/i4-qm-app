@@ -109,8 +109,8 @@ namespace I4_QM_app.ViewModels
 
                 var openOrders = orders.Where(x => x.Status == Status.open);
                 NextOrder = openOrders.Any() ? openOrders.Min(x => x.Due) : DateTime.MinValue;
-                LatestOrder = openOrders.Any() ? openOrders.Min(x => x.Created) : DateTime.MinValue;
-                OldestOrder = openOrders.Any() ? openOrders.Max(x => x.Created) : DateTime.MinValue;
+                LatestOrder = openOrders.Any() ? openOrders.Max(x => x.Received) : DateTime.MinValue;
+                OldestOrder = openOrders.Any() ? openOrders.Min(x => x.Received) : DateTime.MinValue;
 
                 RecipesCount = recipes.Count();
                 AdditivesCount = additives.Count();

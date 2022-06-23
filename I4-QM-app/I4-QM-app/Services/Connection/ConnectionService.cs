@@ -6,6 +6,7 @@ using MQTTnet.Packets;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -83,7 +84,7 @@ namespace I4_QM_app.Services
             // maybe not ideal
             if (topic == baseTopicURL + "prod/orders/add") await HandleAddOrder(message);
             if (topic == baseTopicURL + "prod/orders/del") await HandleDelOrder(message);
-            if (topic == baseTopicURL + "prod/orders/get") await HandleGetOrder(message);
+            if (topic == baseTopicURL + "prod/orders/get") await HandleGetOrder();
             if (topic == baseTopicURL + "additives/sync") await HandleSyncAdditives(message);
 
             return Task.CompletedTask;
@@ -101,23 +102,56 @@ namespace I4_QM_app.Services
             Console.WriteLine($"+ Add");
 
             List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(addOrders);
-
             int orderCount = 0;
 
             foreach (var order in orders)
             {
-                // check if id is unique
-                if (await App.OrdersDataService.GetItemAsync(order.Id) == null)
+                bool error = false;
+
+                if (order.Id == null)
+                {
+                    order.Id = Guid.NewGuid().ToString();
+                }
+
+                if (order.Weight > 0 && order.Amount > 0 && order.Additives.Count > 0 && order.Due > DateTime.Now && await App.OrdersDataService.GetItemAsync(order.Id) == null)
                 {
                     order.Status = Status.open;
                     order.Received = DateTime.Now;
-                    await App.OrdersDataService.AddItemAsync(order);
-                    orderCount++;
+
+                    var additives = await App.AdditivesDataService.GetItemsAsync();
+
+                    foreach (var additive in order.Additives)
+                    {
+                        if (additive.Id == null || additive.Portion <= 0)
+                        {
+                            error = true;
+                            break;
+                        }
+
+                        Additive item = additives.FirstOrDefault(x => x.Id == additive.Id);
+
+                        if (item == null)
+                        {
+                            error = true;
+                            break;
+                        }
+
+                        additive.Name = item.Name;
+                        //additive.ImageId = item.ImageId
+                    }
+
+                    if (!error)
+                    {
+                        await App.OrdersDataService.AddItemAsync(order);
+                        orderCount++;
+                    }
                 }
             }
 
-            if (orderCount > 0) new NotificationService().ShowSimplePushNotification(1, orderCount + " new order(s)", "New Order", 1, "OrdersPage");
-
+            if (orderCount > 0)
+            {
+                new NotificationService().ShowSimplePushNotification(1, orderCount + " new order(s)", "New Order", 1, "OrdersPage");
+            }
         }
 
         private async Task HandleDelOrder(MqttApplicationMessage message)
@@ -138,11 +172,8 @@ namespace I4_QM_app.Services
                 };
 
                 string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
-
                 await HandlePublishMessage("backup/orders/" + ((Status)status).ToString(), ordersString);
-
                 await App.OrdersDataService.DeleteManyItemsAsync(x => (int)x.Status == status);
-                return;
             }
             else
             {
@@ -156,12 +187,10 @@ namespace I4_QM_app.Services
 
         }
 
-        private async Task HandleGetOrder(MqttApplicationMessage message)
+        private async Task HandleGetOrder()
         {
             var getOrders = await App.OrdersDataService.GetItemsAsync();
-
             string ordersList = JsonConvert.SerializeObject(getOrders);
-
             await HandlePublishMessage("backup/orders", ordersList);
         }
 
@@ -172,21 +201,32 @@ namespace I4_QM_app.Services
             Console.WriteLine($"+ Sync Additives");
 
             List<Additive> additives = JsonConvert.DeserializeObject<List<Additive>>(req);
-
             await App.AdditivesDataService.DeleteAllItemsAsync();
+
+            int additivesCount = 0;
 
             foreach (Additive additive in additives)
             {
+                // TODO image id
+                if (additive.Id == null || additive.Name == null)
+                {
+                    continue;
+                }
+
                 additive.ActualPortion = 0;
                 additive.Amount = 0;
                 additive.Portion = 0;
                 additive.Checked = false;
 
                 await App.AdditivesDataService.AddItemAsync(additive);
+                additivesCount++;
             }
 
             // maybe too much if additives change frequently
-            if (additives.Count > 0) new NotificationService().ShowSimplePushNotification(1, additives.Count + " Additive(s) available", "Update Additives", 2, "");
+            if (additives.Count > 0)
+            {
+                new NotificationService().ShowSimplePushNotification(1, additivesCount + " Additive(s) available", "Update Additives", 2, string.Empty);
+            }
         }
 
     }

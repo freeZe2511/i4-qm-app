@@ -108,16 +108,7 @@
     <AndroidResource Include="Resources\drawable\SFM_Logo_new_v6.png" />
   </ItemGroup>
   <ItemGroup>
-    <AndroidResource Include="Resources\drawable\add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\add400.png" />
-  </ItemGroup>
-  <ItemGroup>
     <AndroidResource Include="Resources\drawable\add40_400.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\drawable\del40_400.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\del_f48_400.png" />

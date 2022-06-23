@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace I4_QM_app.Services
 {
-    public class OrderService : IDataStore<Order>
+    public class OrderService : IDataService<Order>
     {
         private readonly ILiteCollection<Order> orderCollection;
 

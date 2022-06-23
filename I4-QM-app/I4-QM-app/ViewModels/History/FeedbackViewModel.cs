@@ -1,5 +1,4 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
@@ -52,7 +51,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var order = await App.OrdersDataStore.GetItemAsync(orderId);
+                var order = await App.OrdersDataService.GetItemAsync(orderId);
                 Order = order;
 
             }
@@ -64,8 +63,7 @@ namespace I4_QM_app.ViewModels
 
         private async void RateFeedbackAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Send feedback?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Send feedback?", "Yes", "No");
 
             // TODO parameter
             if (answer)
@@ -73,7 +71,7 @@ namespace I4_QM_app.ViewModels
                 // update                
                 Order.Status = Status.rated;
                 Order.Rating = Rating;
-                await App.OrdersDataStore.UpdateItemAsync(Order);
+                await App.OrdersDataService.UpdateItemAsync(Order);
 
                 // send mqtt
                 JsonSerializerOptions options = new JsonSerializerOptions()
@@ -83,7 +81,7 @@ namespace I4_QM_app.ViewModels
 
                 string res = JsonSerializer.Serialize<Order>(Order, options);
 
-                await MqttConnectionService.HandlePublishMessage("prod/orders/rated", res);
+                await App.ConnectionService.HandlePublishMessage("prod/orders/rated", res);
 
                 await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
             }

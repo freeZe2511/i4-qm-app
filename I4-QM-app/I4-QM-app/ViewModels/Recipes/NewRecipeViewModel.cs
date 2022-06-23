@@ -1,5 +1,4 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -39,7 +38,7 @@ namespace I4_QM_app.ViewModels
         {
             Additives.Clear();
 
-            var list = await App.AdditivesDataStore.GetItemsAsync();
+            var list = await App.AdditivesDataService.GetItemsAsync();
             foreach (Additive item in list)
             {
                 Additives.Add(item);
@@ -80,7 +79,7 @@ namespace I4_QM_app.ViewModels
 
         private async void OnSave()
         {
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Save?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Save?", "Yes", "No");
 
             if (answer)
             {
@@ -89,11 +88,11 @@ namespace I4_QM_app.ViewModels
                     Id = Guid.NewGuid().ToString(),
                     Name = Name,
                     Description = Description,
-                    CreatorId = Preferences.Get("UserID", null),
+                    CreatorId = Preferences.Get("UserID", string.Empty),
                     Additives = Additives.FindAll(i => i.Checked == true)
                 };
 
-                await App.RecipesDataStore.AddItemAsync(newRecipe);
+                await App.RecipesDataService.AddItemAsync(newRecipe);
 
                 JsonSerializerOptions options = new JsonSerializerOptions()
                 {
@@ -101,7 +100,7 @@ namespace I4_QM_app.ViewModels
                 };
 
                 string res = JsonSerializer.Serialize<Recipe>(newRecipe, options);
-                await MqttConnectionService.HandlePublishMessage("recipes/new", res);
+                await App.ConnectionService.HandlePublishMessage("recipes/new", res);
 
                 await Shell.Current.GoToAsync("..");
             }

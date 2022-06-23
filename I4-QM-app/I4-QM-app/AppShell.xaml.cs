@@ -1,5 +1,4 @@
-﻿using I4_QM_app.Services;
-using I4_QM_app.Views;
+﻿using I4_QM_app.Views;
 using I4_QM_app.Views.Recipes;
 using System;
 using Xamarin.Essentials;
@@ -22,9 +21,9 @@ namespace I4_QM_app
 
         private async void OnLogoutItemClicked(object sender, EventArgs e)
         {
-            string userId = Preferences.Get("UserID", null);
+            string userId = Preferences.Get("UserID", string.Empty);
 
-            await MqttConnectionService.HandlePublishMessage("disconnected", userId);
+            await App.ConnectionService.HandlePublishMessage("disconnected", userId);
             await Shell.Current.GoToAsync("//LoginPage");
 
             Preferences.Clear();

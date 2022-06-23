@@ -33,8 +33,7 @@ namespace I4_QM_app.ViewModels
 
         private async Task TransformRecipeAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Transform recipe?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Transform recipe?", "Yes", "No");
 
             if (answer)
             {
@@ -44,12 +43,11 @@ namespace I4_QM_app.ViewModels
 
         private async Task DeleteRecipeAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete recipe?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete recipe?", "Yes", "No");
 
             if (answer)
             {
-                await App.RecipesDataStore.DeleteItemAsync(Id);
+                await App.RecipesDataService.DeleteItemAsync(Id);
                 await Shell.Current.GoToAsync($"//{nameof(RecipesPage)}");
             }
         }
@@ -110,7 +108,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var recipe = await App.RecipesDataStore.GetItemAsync(recipeId);
+                var recipe = await App.RecipesDataService.GetItemAsync(recipeId);
 
                 Id = recipe.Id;
                 CreatorId = null;

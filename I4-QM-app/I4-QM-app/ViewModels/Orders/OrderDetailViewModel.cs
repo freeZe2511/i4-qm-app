@@ -1,11 +1,11 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -22,7 +22,7 @@ namespace I4_QM_app.ViewModels
         private int weight;
         private List<Additive> additives;
         private Status status;
-        private DateTime created;
+        private DateTime received;
         private DateTime due;
         private DateTime done;
 
@@ -92,10 +92,10 @@ namespace I4_QM_app.ViewModels
             get => status;
             set => SetProperty(ref status, value);
         }
-        public DateTime Created
+        public DateTime Received
         {
-            get => created;
-            set => SetProperty(ref created, value);
+            get => received;
+            set => SetProperty(ref received, value);
         }
         public DateTime Due
         {
@@ -114,8 +114,7 @@ namespace I4_QM_app.ViewModels
             // check if all additives are checked (mock for enabled/disabled done btn)
             if (!Additives.TrueForAll(a => a.Checked == true)) return;
 
-            // TODO display alert
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Done?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Done?", "Yes", "No");
 
             if (answer)
             {
@@ -130,7 +129,7 @@ namespace I4_QM_app.ViewModels
                 Order.Done = DateTime.Now;
                 Order.UserId = UserId;
 
-                await App.OrdersDataStore.UpdateItemAsync(Order);
+                await App.OrdersDataService.UpdateItemAsync(Order);
 
                 // send mqtt
                 JsonSerializerOptions options = new JsonSerializerOptions()
@@ -140,7 +139,7 @@ namespace I4_QM_app.ViewModels
 
                 string res = JsonSerializer.Serialize<Order>(Order, options);
 
-                await MqttConnectionService.HandlePublishMessage("prod/orders/mixed", res);
+                await App.ConnectionService.HandlePublishMessage("prod/orders/mixed", res);
 
                 // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
                 await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
@@ -150,19 +149,19 @@ namespace I4_QM_app.ViewModels
 
         }
 
-        public async void LoadOrderId(string orderId)
+        private async Task LoadOrderId(string orderId)
         {
             try
             {
-                var order = await App.OrdersDataStore.GetItemAsync(orderId);
+                var order = await App.OrdersDataService.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
-                UserId = Preferences.Get("UserID", "null");
+                UserId = Preferences.Get("UserID", string.Empty);
                 Amount = order.Amount;
                 Weight = order.Weight;
                 Additives = order.Additives;
                 Status = order.Status;
-                Created = order.Created;
+                Received = order.Received;
                 Due = order.Due;
 
                 // calc

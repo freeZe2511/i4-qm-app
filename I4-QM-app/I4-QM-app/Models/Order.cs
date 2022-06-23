@@ -18,7 +18,7 @@ namespace I4_QM_app.Models
 
         public Status Status { get; set; }
 
-        public DateTime Created { get; set; }
+        public DateTime Received { get; set; }
 
         public DateTime Due { get; set; }
 

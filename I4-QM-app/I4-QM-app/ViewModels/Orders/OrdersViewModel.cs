@@ -39,7 +39,7 @@ namespace I4_QM_app.ViewModels
                     if (arg == "Id") await SortBy(i => i.Id);
                     if (arg == "Due") await SortBy(i => i.Due);
                     if (arg == "Amount") await SortBy(i => i.Amount);
-                    if (arg == "Created") await SortBy(i => i.Created);
+                    if (arg == "Received") await SortBy(i => i.Received);
 
 
                     // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
@@ -78,14 +78,14 @@ namespace I4_QM_app.ViewModels
             await ExecuteLoadOrdersCommand();
         }
 
-        async Task ExecuteLoadOrdersCommand()
+        private async Task ExecuteLoadOrdersCommand()
         {
             IsBusy = true;
 
             try
             {
                 Orders.Clear();
-                var orders = await App.OrdersDataStore.GetItemsFilteredAsync(a => a.Status == Status.open);
+                var orders = await App.OrdersDataService.GetItemsFilteredAsync(a => a.Status == Status.open);
 
                 foreach (var order in orders)
                 {
@@ -127,8 +127,7 @@ namespace I4_QM_app.ViewModels
             if (item == null)
                 return;
 
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
 
             // This will push the ItemDetailPage onto the navigation stack
             if (answer) await Shell.Current.GoToAsync($"{nameof(OrderDetailPage)}?{nameof(OrderDetailViewModel.OrderId)}={item.Id}");

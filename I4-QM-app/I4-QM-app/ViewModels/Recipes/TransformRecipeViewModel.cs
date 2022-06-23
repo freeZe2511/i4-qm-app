@@ -116,7 +116,7 @@ namespace I4_QM_app.ViewModels.Recipes
         {
             try
             {
-                var recipe = await App.RecipesDataStore.GetItemAsync(recipeId);
+                var recipe = await App.RecipesDataService.GetItemAsync(recipeId);
 
                 Recipe = recipe;
                 Additives = recipe.Additives;
@@ -132,7 +132,7 @@ namespace I4_QM_app.ViewModels.Recipes
 
         private async Task TransformRecipe()
         {
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Transform into Order?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Transform into Order?", "Yes", "No");
 
             if (answer)
             {
@@ -143,20 +143,16 @@ namespace I4_QM_app.ViewModels.Recipes
                     Weight = Weight,
                     Additives = Additives,
                     Status = Status.open,
-                    Created = DateTime.Now,
+                    Received = DateTime.Now,
                     Due = Date.Date.Add(Time)
                 };
 
                 //insert order
-                await App.OrdersDataStore.AddItemAsync(newOrder);
-
-                //debug
-                //string test = JsonSerializer.Serialize<Order>(newOrder);
-                //await MqttConnectionService.HandlePublishMessage("thm/sfm/sg/test", test);
+                await App.OrdersDataService.AddItemAsync(newOrder);
 
                 // update use
                 Recipe.Used = Recipe.Used + 1;
-                await App.RecipesDataStore.UpdateItemAsync(Recipe);
+                await App.RecipesDataService.UpdateItemAsync(Recipe);
 
                 // navigate
                 await Shell.Current.Navigation.PopToRootAsync();

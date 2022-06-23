@@ -14,16 +14,19 @@ using System.Threading.Tasks;
 
 namespace I4_QM_app.Services
 {
-    public class MqttConnectionService
+    public class ConnectionService : IConnectionService
     {
         private static string serverURL = "broker.hivemq.com";
         private static string baseTopicURL = "thm/sfm/sg/";
-        private static IManagedMqttClient managedMqttClient;
+        private IManagedMqttClient managedMqttClient;
 
-        public static async Task ConnectClient()
+        public ConnectionService()
         {
             managedMqttClient = new MqttFactory().CreateManagedMqttClient();
+        }
 
+        public async Task ConnectClient()
+        {
             var mqttClientOptions = new MqttClientOptionsBuilder()
                 .WithTcpServer(serverURL)
                 .WithWillQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce)
@@ -50,9 +53,9 @@ namespace I4_QM_app.Services
 
         }
 
-        public static bool IsConnected { get => managedMqttClient.IsConnected; }
+        public bool IsConnected { get => managedMqttClient.IsConnected; }
 
-        public static async void ToggleMqttClient()
+        public async void ToggleMqttClient()
         {
             //    Console.WriteLine(managedMqttClient.IsConnected);
             //    Console.WriteLine(IsConnected);
@@ -63,31 +66,18 @@ namespace I4_QM_app.Services
             //    }
             //    else
             //    {
-            //        var mqttClientOptions = new MqttClientOptionsBuilder()
-            //        .WithTcpServer(serverURL)
-            //        .WithWillQualityOfServiceLevel(MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce)
-            //        .Build();
-
-            //        var managedMqttClientOptions = new ManagedMqttClientOptionsBuilder()
-            //        .WithClientOptions(mqttClientOptions)
-            //        .WithAutoReconnectDelay(TimeSpan.FromSeconds(3))
-            //        .Build();
-
-            //        // get from extern?
-            //        List<MqttTopicFilter> topics = new List<MqttTopicFilter>();
-            //        topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/add").Build());
-            //        topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/del").Build());
-            //        topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "order/get").Build());
-
-            //        await managedMqttClient.StartAsync(managedMqttClientOptions);
+            //        
             //    }
         }
 
-        private static async Task<Task> HandleReceivedMessage(MqttApplicationMessageReceivedEventArgs arg)
+        public void UpdateBrokerURL(string newURL)
         {
-            Console.WriteLine(arg.ApplicationMessage.Topic);
+            serverURL = newURL;
+        }
 
-            var message = arg.ApplicationMessage;
+        public async Task<Task> HandleReceivedMessage(object eventArgs)
+        {
+            var message = ((MqttApplicationMessageReceivedEventArgs)eventArgs).ApplicationMessage;
             var topic = message.Topic;
 
             // maybe not ideal
@@ -99,44 +89,38 @@ namespace I4_QM_app.Services
             return Task.CompletedTask;
         }
 
-        public static async Task HandlePublishMessage(string topic, string message)
+        public async Task HandlePublishMessage(string topic, string message)
         {
             await managedMqttClient.EnqueueAsync(baseTopicURL + topic, message, MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce);
         }
 
-        public static void UpdateBrokerURL(string newURL)
-        {
-            serverURL = newURL;
-        }
-
-        private static async Task HandleAddOrder(MqttApplicationMessage message)
+        private async Task HandleAddOrder(MqttApplicationMessage message)
         {
             string addOrders = Encoding.UTF8.GetString(message.Payload);
 
             Console.WriteLine($"+ Add");
 
-            //serialize order and add to db
             List<Order> orders = JsonConvert.DeserializeObject<List<Order>>(addOrders);
 
             int orderCount = 0;
 
             foreach (var order in orders)
             {
-                //check if id is unique
-                if (await App.OrdersDataStore.GetItemAsync(order.Id) == null)
+                // check if id is unique
+                if (await App.OrdersDataService.GetItemAsync(order.Id) == null)
                 {
                     order.Status = Status.open;
-                    await App.OrdersDataStore.AddItemAsync(order);
+                    order.Received = DateTime.Now;
+                    await App.OrdersDataService.AddItemAsync(order);
                     orderCount++;
                 }
             }
 
-            //notification TODO service
-            if (orderCount > 0) new NotificationService().ShowSimpleNotification(1, orderCount + " new order(s)", "New Order", 1, "OrdersPage");
+            if (orderCount > 0) new NotificationService().ShowSimplePushNotification(1, orderCount + " new order(s)", "New Order", 1, "OrdersPage");
 
         }
 
-        private static async Task HandleDelOrder(MqttApplicationMessage message)
+        private async Task HandleDelOrder(MqttApplicationMessage message)
         {
             string delOrders = Encoding.UTF8.GetString(message.Payload);
 
@@ -146,7 +130,7 @@ namespace I4_QM_app.Services
 
             if (parsable)
             {
-                var orders = await App.OrdersDataStore.GetItemsFilteredAsync(x => (int)x.Status == status);
+                var orders = await App.OrdersDataService.GetItemsFilteredAsync(x => (int)x.Status == status);
 
                 JsonSerializerOptions options = new JsonSerializerOptions()
                 {
@@ -155,10 +139,9 @@ namespace I4_QM_app.Services
 
                 string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
 
-                //string ordersString = JsonConvert.SerializeObject(orders);
                 await HandlePublishMessage("backup/orders/" + ((Status)status).ToString(), ordersString);
 
-                await App.OrdersDataStore.DeleteManyItemsAsync(x => (int)x.Status == status);
+                await App.OrdersDataService.DeleteManyItemsAsync(x => (int)x.Status == status);
                 return;
             }
             else
@@ -167,22 +150,22 @@ namespace I4_QM_app.Services
 
                 foreach (string id in ids)
                 {
-                    await App.OrdersDataStore.DeleteItemAsync(id);
+                    await App.OrdersDataService.DeleteItemAsync(id);
                 }
             }
 
         }
 
-        private static async Task HandleGetOrder(MqttApplicationMessage message)
+        private async Task HandleGetOrder(MqttApplicationMessage message)
         {
-            var getOrders = await App.OrdersDataStore.GetItemsAsync();
+            var getOrders = await App.OrdersDataService.GetItemsAsync();
 
             string ordersList = JsonConvert.SerializeObject(getOrders);
 
             await HandlePublishMessage("backup/orders", ordersList);
         }
 
-        private static async Task HandleSyncAdditives(MqttApplicationMessage message)
+        private async Task HandleSyncAdditives(MqttApplicationMessage message)
         {
             string req = Encoding.UTF8.GetString(message.Payload);
 
@@ -190,7 +173,7 @@ namespace I4_QM_app.Services
 
             List<Additive> additives = JsonConvert.DeserializeObject<List<Additive>>(req);
 
-            await App.AdditivesDataStore.DeleteAllItemsAsync();
+            await App.AdditivesDataService.DeleteAllItemsAsync();
 
             foreach (Additive additive in additives)
             {
@@ -199,11 +182,11 @@ namespace I4_QM_app.Services
                 additive.Portion = 0;
                 additive.Checked = false;
 
-                await App.AdditivesDataStore.AddItemAsync(additive);
+                await App.AdditivesDataService.AddItemAsync(additive);
             }
 
             // maybe too much if additives change frequently
-            if (additives.Count > 0) new NotificationService().ShowSimpleNotification(1, additives.Count + " Additive(s) available", "Update Additives", 2, "");
+            if (additives.Count > 0) new NotificationService().ShowSimplePushNotification(1, additives.Count + " Additive(s) available", "Update Additives", 2, "");
         }
 
     }

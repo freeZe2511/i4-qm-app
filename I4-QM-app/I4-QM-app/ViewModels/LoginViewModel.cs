@@ -1,5 +1,4 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Threading.Tasks;
@@ -19,14 +18,14 @@ namespace I4_QM_app.ViewModels
         {
             LoginCommand = new Command(OnLoginClicked, Validate);
 
-            string userId = Preferences.Get("UserID", "null");
+            string userId = Preferences.Get("UserID", string.Empty);
 
-            if (userId != "null")
+            if (userId != string.Empty)
             {
                 Task.Run(async () =>
                 {
+                    await App.ConnectionService.HandlePublishMessage("connected", userId);
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
-                    await MqttConnectionService.HandlePublishMessage("connected", userId);
                 });
             }
 
@@ -55,15 +54,13 @@ namespace I4_QM_app.ViewModels
             if (!int.TryParse(EntryValue, out int UID) || String.IsNullOrWhiteSpace(EntryValue) || UID <= 0 || EntryValue.Length != IdLength)
             {
                 EntryValue = "";
-                //MessageBox.Show("Only decimal numbers allowed. Please, try agian.", "Invalid UserID", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
-
             }
 
             ((App)App.Current).CurrentUser = new User(EntryValue);
             Preferences.Set("UserID", EntryValue);
 
-            await MqttConnectionService.HandlePublishMessage("connected", EntryValue);
+            await App.ConnectionService.HandlePublishMessage("connected", EntryValue);
 
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             EntryValue = "";

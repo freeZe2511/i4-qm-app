@@ -3,6 +3,8 @@ using I4_QM_app.Models;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -42,7 +44,7 @@ namespace I4_QM_app.ViewModels
                     if (arg == "Status") await SortBy(i => i.Status);
                     if (arg == "Done") await SortBy(i => i.Done);
                     if (arg == "Amount") await SortBy(i => i.Amount);
-                    if (arg == "Created") await SortBy(i => i.Created);
+                    if (arg == "Received") await SortBy(i => i.Received);
 
 
                     // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
@@ -101,7 +103,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 History.Clear();
-                var history = await App.OrdersDataStore.GetItemsFilteredAsync(a => a.Status != Status.open);
+                var history = await App.OrdersDataService.GetItemsFilteredAsync(a => a.Status != Status.open);
 
                 foreach (var order in history)
                 {
@@ -124,8 +126,7 @@ namespace I4_QM_app.ViewModels
             if (item == null)
                 return;
 
-            // TODO abstract dialog_service
-            //bool answer = await Shell.Current.DisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
 
             // This will push the ItemDetailPage onto the navigation stack
             await Shell.Current.GoToAsync($"{nameof(HistoryDetailPage)}?{nameof(HistoryDetailViewModel.OrderId)}={item.Id}");
@@ -134,11 +135,20 @@ namespace I4_QM_app.ViewModels
 
         async void DeleteAllHistoryItems()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
 
-            // TODO parameter
-            if (answer) await App.OrdersDataStore.DeleteManyItemsAsync(x => x.Status != Status.open);
+            var orders = await App.OrdersDataService.GetItemsFilteredAsync(x => x.Status != Status.open);
+
+            JsonSerializerOptions options = new JsonSerializerOptions()
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+            };
+
+            string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
+
+            await App.ConnectionService.HandlePublishMessage("backup/orders/history", ordersString);
+
+            if (answer) await App.OrdersDataService.DeleteManyItemsAsync(x => x.Status != Status.open);
             await ExecuteLoadHistoryCommand();
 
         }

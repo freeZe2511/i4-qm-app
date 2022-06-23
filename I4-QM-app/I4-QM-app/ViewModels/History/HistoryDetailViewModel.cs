@@ -3,6 +3,7 @@ using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -18,13 +19,14 @@ namespace I4_QM_app.ViewModels
         private int weight;
         private List<Additive> additives;
         private Status status;
-        private DateTime created;
+        private DateTime received;
         private DateTime due;
         private DateTime done;
         private Rating rating;
         private bool feedbackEnabled;
 
         public Command FeedbackCommand { get; }
+
         public Command DeleteItemCommand { get; }
 
         public HistoryDetailViewModel()
@@ -60,6 +62,7 @@ namespace I4_QM_app.ViewModels
             get => userId;
             set => SetProperty(ref userId, value);
         }
+
         public int Amount
         {
             get => amount;
@@ -71,21 +74,25 @@ namespace I4_QM_app.ViewModels
             get => weight;
             set => SetProperty(ref weight, value);
         }
+
         public List<Additive> Additives
         {
             get => additives;
             set => SetProperty(ref additives, value);
         }
+
         public Status Status
         {
             get => status;
             set => SetProperty(ref status, value);
         }
-        public DateTime Created
+
+        public DateTime Received
         {
-            get => created;
-            set => SetProperty(ref created, value);
+            get => received;
+            set => SetProperty(ref received, value);
         }
+
         public DateTime Due
         {
             get => due;
@@ -112,22 +119,15 @@ namespace I4_QM_app.ViewModels
 
         private async void OnFeedbackClicked()
         {
-            ////update
-            //Order.Status = Status.rated;
-            //await App.OrdersDataStore.UpdateItemAsync(Order);
-
-            //// send mqtt
-            ////await MqttConnection.HandleFinishedOrder(Order);
-
             // Prefixing with `//` switches to a different navigation stack instead of pushing to the active one
             await Shell.Current.GoToAsync($"{nameof(FeedbackPage)}?{nameof(FeedbackViewModel.OrderId)}={order.Id}");
         }
 
-        public async void LoadOrderId(string orderId)
+        private async Task LoadOrderId(string orderId)
         {
             try
             {
-                var order = await App.OrdersDataStore.GetItemAsync(orderId);
+                var order = await App.OrdersDataService.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
                 UserId = order.UserId;
@@ -135,7 +135,7 @@ namespace I4_QM_app.ViewModels
                 Weight = order.Weight;
                 Additives = order.Additives;
                 Status = order.Status;
-                Created = order.Created;
+                Received = order.Received;
                 Due = order.Due;
                 Done = order.Done;
                 Rating = order.Rating;
@@ -148,15 +148,14 @@ namespace I4_QM_app.ViewModels
             }
         }
 
-        async void DeleteItem()
+        private async void DeleteItem()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete item from history?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete item from history?", "Yes", "No");
 
             // TODO parameter
             if (answer)
             {
-                await App.OrdersDataStore.DeleteItemAsync(Id);
+                await App.OrdersDataService.DeleteItemAsync(Id);
                 await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
             }
 

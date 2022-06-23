@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Xamarin.Forms;
 
 namespace I4_QM_app.Models
 {
@@ -18,7 +19,10 @@ namespace I4_QM_app.Models
         public bool Checked { get; set; }
 
         [JsonIgnore]
-        public string ImageId { get; set; }
+        public string ImageBase64 { get; set; }
+
+        [JsonIgnore]
+        public ImageSource Image { get; set; }
 
     }
 }

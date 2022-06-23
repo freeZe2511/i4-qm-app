@@ -91,7 +91,7 @@
                            
                         </Grid.ColumnDefinitions>
                         <Image Grid.RowSpan="2" Grid.Column="0"
-                       Source="icon_about.png"
+                       Source="{Binding Image}"
                        Aspect="AspectFill"
                        HeightRequest="50"
                        WidthRequest="50" />

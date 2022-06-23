@@ -19,7 +19,7 @@ namespace I4_QM_app.Services
     {
         private static string serverURL = "broker.hivemq.com";
         private static string baseTopicURL = "thm/sfm/sg/";
-        private IManagedMqttClient managedMqttClient;
+        private readonly IManagedMqttClient managedMqttClient;
 
         public ConnectionService()
         {
@@ -44,6 +44,7 @@ namespace I4_QM_app.Services
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/del").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/get").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "additives/sync").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "images/+/x").Build());
 
             await managedMqttClient.SubscribeAsync(topics);
             await managedMqttClient.StartAsync(managedMqttClientOptions);
@@ -168,7 +169,7 @@ namespace I4_QM_app.Services
 
                 JsonSerializerOptions options = new JsonSerializerOptions()
                 {
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
                 };
 
                 string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
@@ -217,6 +218,14 @@ namespace I4_QM_app.Services
                 additive.Amount = 0;
                 additive.Portion = 0;
                 additive.Checked = false;
+
+                if (additive.ImageBase64 == null)
+                {
+                    // TODO standard bild?
+                    Console.WriteLine("no pic");
+                }
+
+                //Console.WriteLine(additive.ImageBase64);
 
                 await App.AdditivesDataService.AddItemAsync(additive);
                 additivesCount++;

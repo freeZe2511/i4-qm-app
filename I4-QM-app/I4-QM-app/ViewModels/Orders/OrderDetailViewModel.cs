@@ -3,6 +3,8 @@ using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -154,6 +156,8 @@ namespace I4_QM_app.ViewModels
             try
             {
                 var order = await App.OrdersDataService.GetItemAsync(orderId);
+                var additives = await App.AdditivesDataService.GetItemsAsync();
+
                 Order = order;
                 Id = order.Id;
                 UserId = Preferences.Get("UserID", string.Empty);
@@ -171,6 +175,13 @@ namespace I4_QM_app.ViewModels
                     additive.Checked = false;
                     additive.Amount = (int)(additive.Portion * Weight * Amount / 100);
                     //additive.Image = App.AdditiveDataSource. ...
+
+                    //var fs = App.DB.GetStorage<object>("files");
+                    //var file = fs.FindById("1");
+                    //var image = file.OpenRead().;
+
+                    Additive item = additives.FirstOrDefault(x => x.Id == additive.Id);
+                    additive.Image = ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(item.ImageBase64)));
                 }
 
 

@@ -21,7 +21,7 @@ namespace I4_QM_app
 
         private async void OnLogoutItemClicked(object sender, EventArgs e)
         {
-            string userId = Preferences.Get("UserID", null);
+            string userId = Preferences.Get("UserID", string.Empty);
 
             await App.ConnectionService.HandlePublishMessage("disconnected", userId);
             await Shell.Current.GoToAsync("//LoginPage");

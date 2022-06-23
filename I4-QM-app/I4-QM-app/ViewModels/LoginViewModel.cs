@@ -18,9 +18,9 @@ namespace I4_QM_app.ViewModels
         {
             LoginCommand = new Command(OnLoginClicked, Validate);
 
-            string userId = Preferences.Get("UserID", "null");
+            string userId = Preferences.Get("UserID", string.Empty);
 
-            if (userId != "null")
+            if (userId != string.Empty)
             {
                 Task.Run(async () =>
                 {

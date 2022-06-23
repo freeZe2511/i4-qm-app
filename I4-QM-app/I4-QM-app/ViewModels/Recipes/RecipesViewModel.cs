@@ -80,7 +80,7 @@ namespace I4_QM_app.ViewModels
             await ExecuteLoadRecipesCommand();
         }
 
-        async Task ExecuteLoadRecipesCommand()
+        private async Task ExecuteLoadRecipesCommand()
         {
             IsBusy = true;
 

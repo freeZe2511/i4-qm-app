@@ -78,7 +78,7 @@ namespace I4_QM_app.ViewModels
             await ExecuteLoadOrdersCommand();
         }
 
-        async Task ExecuteLoadOrdersCommand()
+        private async Task ExecuteLoadOrdersCommand()
         {
             IsBusy = true;
 

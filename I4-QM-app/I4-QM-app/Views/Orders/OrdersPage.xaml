@@ -4,8 +4,7 @@
              x:Class="I4_QM_app.Views.OrdersPage"
              Title="{Binding Orders.Count, StringFormat='Orders ({0})'}"
              xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
-             xmlns:model="clr-namespace:I4_QM_app.Models"  
-             xmlns:local1="clr-namespace:I4_QM_app.Helpers"
+             xmlns:model="clr-namespace:I4_QM_app.Models"            
              x:Name="BrowseOrdersPage">
 
     <ContentPage.ToolbarItems>

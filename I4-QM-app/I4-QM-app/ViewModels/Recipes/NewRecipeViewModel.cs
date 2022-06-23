@@ -88,7 +88,7 @@ namespace I4_QM_app.ViewModels
                     Id = Guid.NewGuid().ToString(),
                     Name = Name,
                     Description = Description,
-                    CreatorId = Preferences.Get("UserID", null),
+                    CreatorId = Preferences.Get("UserID", string.Empty),
                     Additives = Additives.FindAll(i => i.Checked == true)
                 };
 

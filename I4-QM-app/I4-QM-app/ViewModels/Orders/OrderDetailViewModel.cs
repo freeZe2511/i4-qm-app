@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -148,14 +149,14 @@ namespace I4_QM_app.ViewModels
 
         }
 
-        public async void LoadOrderId(string orderId)
+        private async Task LoadOrderId(string orderId)
         {
             try
             {
                 var order = await App.OrdersDataService.GetItemAsync(orderId);
                 Order = order;
                 Id = order.Id;
-                UserId = Preferences.Get("UserID", "null");
+                UserId = Preferences.Get("UserID", string.Empty);
                 Amount = order.Amount;
                 Weight = order.Weight;
                 Additives = order.Additives;

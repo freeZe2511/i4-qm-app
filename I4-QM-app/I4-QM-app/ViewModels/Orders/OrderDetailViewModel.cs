@@ -1,9 +1,9 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Views;
+using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -139,7 +139,7 @@ namespace I4_QM_app.ViewModels
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
                 };
 
-                string res = JsonSerializer.Serialize<Order>(Order, options);
+                string res = System.Text.Json.JsonSerializer.Serialize<Order>(Order, options);
 
                 await App.ConnectionService.HandlePublishMessage("prod/orders/mixed", res);
 
@@ -181,7 +181,19 @@ namespace I4_QM_app.ViewModels
                     //var image = file.OpenRead().;
 
                     Additive item = additives.FirstOrDefault(x => x.Id == additive.Id);
-                    additive.Image = ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(item.ImageBase64)));
+                    Console.WriteLine(item.ImageBase64);
+
+                    var fs = App.DB.GetStorage<string>("myImages");
+                    LiteFileInfo<string> file = fs.FindById(additive.Id);
+
+                    try
+                    {
+                        additive.Image = ImageSource.FromStream(() => file.OpenRead());
+                    }
+                    catch (Exception ex)
+                    {
+                        additive.Image = ImageSource.FromFile("icon_about.png");
+                    }
                 }
 
 

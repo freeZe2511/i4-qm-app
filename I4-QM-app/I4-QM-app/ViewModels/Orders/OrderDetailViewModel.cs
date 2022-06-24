@@ -28,11 +28,14 @@ namespace I4_QM_app.ViewModels
         private DateTime due;
         private DateTime done;
 
+        private bool available;
+
         public Command DoneCommand { get; }
 
 
         public OrderDetailViewModel()
         {
+            available = false;
             // execute/ canexecute? => canexecute if all additives are checked?
             DoneCommand = new Command(OnDoneClicked, Validate);
             // TODO done btn enable/disable
@@ -43,7 +46,8 @@ namespace I4_QM_app.ViewModels
         {
             //TODO check if all additives are done            
             //return Additives.TrueForAll(a => a.Checked == true);
-            return true;
+            Console.WriteLine(Additives);
+            return Available;
         }
 
         public string OrderId
@@ -111,6 +115,12 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref done, value);
         }
 
+        public bool Available
+        {
+            get => available;
+            set => SetProperty(ref available, value);
+        }
+
         private async void OnDoneClicked()
         {
             // check if all additives are checked (mock for enabled/disabled done btn)
@@ -124,9 +134,10 @@ namespace I4_QM_app.ViewModels
                 foreach (var additive in Additives)
                 {
                     additive.ActualPortion = (float)additive.Amount / (Weight * Amount / 100);
+                    additive.Image = null;
                 }
 
-                // update         
+                // update
                 Order.Status = Status.mixed;
                 Order.Done = DateTime.Now;
                 Order.UserId = UserId;
@@ -171,28 +182,30 @@ namespace I4_QM_app.ViewModels
                 // calc
                 foreach (var additive in Additives)
                 {
-                    // TODO
                     additive.Checked = false;
                     additive.Amount = (int)(additive.Portion * Weight * Amount / 100);
-                    //additive.Image = App.AdditiveDataSource. ...
-
-                    //var fs = App.DB.GetStorage<object>("files");
-                    //var file = fs.FindById("1");
-                    //var image = file.OpenRead().;
 
                     Additive item = additives.FirstOrDefault(x => x.Id == additive.Id);
-                    Console.WriteLine(item.ImageBase64);
+
+                    if (item == null)
+                    {
+                        Available = false;
+                        additive.Image = ImageSource.FromFile("no_image.png");
+                        continue;
+                    }
+
+                    Available = true;
 
                     var fs = App.DB.GetStorage<string>("myImages");
                     LiteFileInfo<string> file = fs.FindById(additive.Id);
 
-                    try
+                    if (file != null)
                     {
                         additive.Image = ImageSource.FromStream(() => file.OpenRead());
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        additive.Image = ImageSource.FromFile("icon_about.png");
+                        additive.Image = ImageSource.FromFile("no_image.png");
                     }
                 }
 

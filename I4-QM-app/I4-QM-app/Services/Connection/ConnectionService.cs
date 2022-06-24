@@ -1,14 +1,10 @@
-﻿using I4_QM_app.Models;
-using I4_QM_app.Services.Connection;
+﻿using I4_QM_app.Services.Connection;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Packets;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,7 +22,7 @@ namespace I4_QM_app.Services
         {
             managedMqttClient = new MqttFactory().CreateManagedMqttClient();
             ordersHandler = new OrdersHandler();
-            additivesHandler = new OrdersHandler();
+            additivesHandler = new AdditivesHandler();
         }
 
         public async Task ConnectClient()
@@ -41,13 +37,14 @@ namespace I4_QM_app.Services
                 .WithAutoReconnectDelay(TimeSpan.FromSeconds(3))
                 .Build();
 
-            // get from extern?
+            // get from extern file? wildcard not working???
             List<MqttTopicFilter> topics = new List<MqttTopicFilter>();
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/add").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/del").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/get").Build());
-            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "additives/sync").Build());
-            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "images/+/x").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/additives/add").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/additives/del").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/additives/get").Build());
 
             await managedMqttClient.SubscribeAsync(topics);
             await managedMqttClient.StartAsync(managedMqttClientOptions);
@@ -85,6 +82,8 @@ namespace I4_QM_app.Services
             var message = ((MqttApplicationMessageReceivedEventArgs)eventArgs).ApplicationMessage;
             var topic = message.Topic;
 
+            Console.WriteLine(topic);
+
             // wildcard not working???
             if (topic == baseTopicURL + "prod/orders/add"
                 || topic == baseTopicURL + "prod/orders/del"
@@ -92,7 +91,13 @@ namespace I4_QM_app.Services
             {
                 await ordersHandler.HandleRoutes(message, baseTopicURL);
             }
-            if (topic == baseTopicURL + "additives/sync") await HandleSyncAdditives(message);
+
+            if (topic == baseTopicURL + "prod/additives/add"
+                || topic == baseTopicURL + "prod/additives/del"
+                || topic == baseTopicURL + "prod/additives/get")
+            {
+                await additivesHandler.HandleRoutes(message, baseTopicURL);
+            }
 
             return Task.CompletedTask;
         }
@@ -100,57 +105,6 @@ namespace I4_QM_app.Services
         public async Task HandlePublishMessage(string topic, string message)
         {
             await managedMqttClient.EnqueueAsync(baseTopicURL + topic, message, MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce);
-        }
-
-        private async Task HandleSyncAdditives(MqttApplicationMessage message)
-        {
-            Console.WriteLine(message.Payload);
-            string req = Encoding.UTF8.GetString(message.Payload);
-
-            Console.WriteLine($"+ Sync Additives");
-
-            List<Additive> additives = JsonConvert.DeserializeObject<List<Additive>>(req);
-            await App.AdditivesDataService.DeleteAllItemsAsync();
-
-            int additivesCount = 0;
-
-            foreach (Additive additive in additives)
-            {
-                // TODO image id
-                if (additive.Id == null || additive.Name == null)
-                {
-                    continue;
-                }
-
-                additive.ActualPortion = 0;
-                additive.Amount = 0;
-                additive.Portion = 0;
-                additive.Checked = false;
-
-                if (!String.IsNullOrEmpty(additive.ImageBase64))
-                {
-                    //var img = ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(additive.ImageBase64)));
-
-                    var fs = App.DB.GetStorage<string>("myImages");
-                    fs.Upload(additive.Id, additive.Name, new MemoryStream(Convert.FromBase64String(additive.ImageBase64)));
-                }
-                else
-                {
-                    // TODO standard bild?
-                    Console.WriteLine("no pic");
-                }
-
-                //Console.WriteLine(additive.ImageBase64);
-
-                await App.AdditivesDataService.AddItemAsync(additive);
-                additivesCount++;
-            }
-
-            // maybe too much if additives change frequently
-            if (additives.Count > 0)
-            {
-                new NotificationService().ShowSimplePushNotification(1, additivesCount + " Additive(s) available", "Update Additives", 2, string.Empty);
-            }
         }
 
     }

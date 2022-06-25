@@ -36,12 +36,12 @@
                         </Grid.ColumnDefinitions>
                         <Label Grid.Column="0" 
                        Text="{Binding Name}"
-                       FontAttributes="Bold" />                                      
+                       FontAttributes="Bold" IsEnabled="{Binding Available}"/>                                      
                         <Label
                        Grid.Column="3"
                        Text="{Binding Portion, StringFormat='{0} %'}"
                        FontAttributes="Italic"
-                       VerticalOptions="Center" HorizontalOptions="End" />
+                       VerticalOptions="Center" HorizontalOptions="End" IsEnabled="{Binding Available}"/>
 
                     </Grid>
                 </DataTemplate>

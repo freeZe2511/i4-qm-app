@@ -16,6 +16,9 @@ namespace I4_QM_app.Models
         public int Amount { get; set; }
 
         [JsonIgnore]
+        public bool Available { get; set; }
+
+        [JsonIgnore]
         public bool Checked { get; set; }
 
         [JsonIgnore]

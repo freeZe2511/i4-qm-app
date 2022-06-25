@@ -97,7 +97,7 @@
                        WidthRequest="50" />
                         <Label Grid.Column="1" Grid.Row="0"
                        Text="{Binding Name}"
-                       FontAttributes="Bold" />
+                       FontAttributes="Bold" IsEnabled="{Binding Available}"/>                        
                         <Label Grid.Row="0"
                        Grid.Column="2"
                        Text="{Binding Portion, StringFormat='{0} %'}"
@@ -108,7 +108,7 @@
                                 <local:NumericValidationBehavior Portion="{Binding Portion}" BindingContext="{Binding BindingContext, Source={x:Reference Entry}}"/>
                             </Entry.Behaviors>-->
                         </Entry>
-                        <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" ></CheckBox>
+                        <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" IsEnabled="{Binding Available}" Color="{StaticResource AccentRed}" ></CheckBox>
                         
                     </Grid>
                 </DataTemplate>

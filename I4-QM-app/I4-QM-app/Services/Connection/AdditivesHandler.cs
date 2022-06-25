@@ -66,13 +66,20 @@ namespace I4_QM_app.Services.Connection
         {
             string delAdditives = Encoding.UTF8.GetString(message.Payload);
 
-            List<string> ids = JsonConvert.DeserializeObject<List<string>>(delAdditives);
-
-            foreach (string id in ids)
+            if (delAdditives.Equals("0"))
             {
-                await App.AdditivesDataService.DeleteItemAsync(id);
-                var fs = App.DB.GetStorage<string>("myImages");
-                fs.Delete(id);
+                await App.AdditivesDataService.DeleteAllItemsAsync();
+            }
+            else
+            {
+                List<string> ids = JsonConvert.DeserializeObject<List<string>>(delAdditives);
+
+                foreach (string id in ids)
+                {
+                    await App.AdditivesDataService.DeleteItemAsync(id);
+                    var fs = App.DB.GetStorage<string>("myImages");
+                    fs.Delete(id);
+                }
             }
         }
 
@@ -113,57 +120,6 @@ namespace I4_QM_app.Services.Connection
         public async Task HandleUpdateRoute(MqttApplicationMessage message)
         {
             throw new NotImplementedException();
-        }
-
-        private async Task HandleSyncAdditives(MqttApplicationMessage message)
-        {
-            Console.WriteLine(message.Payload);
-            string req = Encoding.UTF8.GetString(message.Payload);
-
-            Console.WriteLine($"+ Sync Additives");
-
-            List<Additive> additives = JsonConvert.DeserializeObject<List<Additive>>(req);
-            await App.AdditivesDataService.DeleteAllItemsAsync();
-
-            int additivesCount = 0;
-
-            foreach (Additive additive in additives)
-            {
-                // TODO image id
-                if (additive.Id == null || additive.Name == null)
-                {
-                    continue;
-                }
-
-                additive.ActualPortion = 0;
-                additive.Amount = 0;
-                additive.Portion = 0;
-                additive.Checked = false;
-
-                if (!String.IsNullOrEmpty(additive.ImageBase64))
-                {
-                    //var img = ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(additive.ImageBase64)));
-
-                    var fs = App.DB.GetStorage<string>("myImages");
-                    fs.Upload(additive.Id, additive.Name, new MemoryStream(Convert.FromBase64String(additive.ImageBase64)));
-                }
-                else
-                {
-                    // TODO standard bild?
-                    Console.WriteLine("no pic");
-                }
-
-                //Console.WriteLine(additive.ImageBase64);
-
-                await App.AdditivesDataService.AddItemAsync(additive);
-                additivesCount++;
-            }
-
-            // maybe too much if additives change frequently
-            if (additives.Count > 0)
-            {
-                new NotificationService().ShowSimplePushNotification(1, additivesCount + " Additive(s) available", "Update Additives", 2, string.Empty);
-            }
         }
 
     }

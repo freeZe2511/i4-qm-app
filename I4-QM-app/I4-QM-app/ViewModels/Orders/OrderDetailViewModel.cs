@@ -35,7 +35,7 @@ namespace I4_QM_app.ViewModels
 
         public OrderDetailViewModel()
         {
-            available = false;
+            Available = true;
             // execute/ canexecute? => canexecute if all additives are checked?
             DoneCommand = new Command(OnDoneClicked, Validate);
             // TODO done btn enable/disable
@@ -46,7 +46,7 @@ namespace I4_QM_app.ViewModels
         {
             //TODO check if all additives are done            
             //return Additives.TrueForAll(a => a.Checked == true);
-            Console.WriteLine(Additives);
+
             return Available;
         }
 
@@ -179,6 +179,7 @@ namespace I4_QM_app.ViewModels
                 Received = order.Received;
                 Due = order.Due;
 
+
                 // calc
                 foreach (var additive in Additives)
                 {
@@ -189,12 +190,14 @@ namespace I4_QM_app.ViewModels
 
                     if (item == null)
                     {
+                        additive.Available = false;
                         Available = false;
                         additive.Image = ImageSource.FromFile("no_image.png");
                         continue;
                     }
 
-                    Available = true;
+                    additive.Available = true;
+
 
                     var fs = App.DB.GetStorage<string>("myImages");
                     LiteFileInfo<string> file = fs.FindById(additive.Id);
@@ -208,6 +211,8 @@ namespace I4_QM_app.ViewModels
                         additive.Image = ImageSource.FromFile("no_image.png");
                     }
                 }
+
+
 
 
             }

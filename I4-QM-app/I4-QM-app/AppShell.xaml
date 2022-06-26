@@ -32,6 +32,7 @@
             <x:String x:Key="IconHome">&#xe88a;</x:String>
             <x:String x:Key="IconOrders">&#xe0ee;</x:String>
             <x:String x:Key="IconRecipes">&#xe866;</x:String>
+            <x:String x:Key="IconAdditives">&#xe574;</x:String>
             <x:String x:Key="IconHistory">&#xe889;</x:String>
             <x:String x:Key="IconSettings">&#xe8b8;</x:String>
             <x:String x:Key="IconLogout">&#xe9ba;</x:String>
@@ -69,6 +70,10 @@
 
     <controls:FlyoutItemIconFont Title="Recipes" IconGlyph="{StaticResource IconRecipes}">
         <ShellContent Route="RecipesPage" ContentTemplate="{DataTemplate local:RecipesPage}" />
+    </controls:FlyoutItemIconFont>
+
+    <controls:FlyoutItemIconFont Title="Additives" IconGlyph="{StaticResource IconAdditives}">
+        <ShellContent Route="AdditivesPage" ContentTemplate="{DataTemplate local:AdditivesPage}" />
     </controls:FlyoutItemIconFont>
 
     <controls:FlyoutItemIconFont Title="History" IconGlyph="{StaticResource IconHistory}">

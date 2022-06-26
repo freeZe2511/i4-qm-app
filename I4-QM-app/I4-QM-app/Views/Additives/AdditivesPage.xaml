@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="I4_QM_app.Views.AdditivesPage"
+              Title="{Binding Additives.Count, StringFormat='Additives ({0})'}"
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
+             xmlns:model="clr-namespace:I4_QM_app.Models">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Sort by:" Command="{Binding DisableCommand}" Order="Secondary"/>
+        <ToolbarItem Text="ID" Command="{Binding SortByCommand}" CommandParameter="Id" Order="Secondary"/>
+        <ToolbarItem Text="Name" Command="{Binding SortByCommand}" CommandParameter="Name" Order="Secondary"/>        
+    </ContentPage.ToolbarItems>
+
+
+    <RefreshView x:DataType="local:AdditivesViewModel" Command="{Binding LoadAdditivesCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <CollectionView x:Name="AdditivesListView"
+                ItemsSource="{Binding Additives}"
+                SelectionMode="None">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:Additive">
+                    <StackLayout Padding="10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="4*" />
+                        </Grid.ColumnDefinitions>
+                        <Image Grid.RowSpan="2"
+                       Source="{Binding Image}"
+                       Aspect="AspectFit"
+                       HeightRequest="50"
+                       WidthRequest="50" />
+                        <Label Grid.Column="1"
+                       Text="{Binding Name}"
+                       FontAttributes="Bold" />
+                        <Label Grid.Row="1"
+                       Grid.Column="1"
+                       Text="{Binding Id}"
+                       FontAttributes="Italic"
+                       VerticalOptions="End" />
+                        
+                    </Grid>
+                    <BoxView Color="LightGray" HeightRequest="1"/>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </RefreshView>
+
+
+</ContentPage>

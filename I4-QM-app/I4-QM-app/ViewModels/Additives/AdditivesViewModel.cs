@@ -1,6 +1,6 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
-using I4_QM_app.Views;
+using LiteDB;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -8,15 +8,11 @@ using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
 {
-    public class OrdersViewModel : BaseViewModel
+    public class AdditivesViewModel : BaseViewModel
     {
-        private Order _selectedOrder;
+        public SortableObservableCollection<Additive> Additives { get; }
 
-        public SortableObservableCollection<Order> Orders { get; }
-
-        public Command LoadOrdersCommand { get; }
-
-        public Command<Order> OrderTapped { get; }
+        public Command LoadAdditivesCommand { get; }
 
         public Command DisableCommand { get; }
 
@@ -24,16 +20,13 @@ namespace I4_QM_app.ViewModels
 
         public bool Descending { get; set; }
 
-        public OrdersViewModel()
+        public AdditivesViewModel()
         {
-            // maybe bad binding atm
-            Title = "Orders";
+            Title = "Additives";
             Descending = true;
-            Orders = new SortableObservableCollection<Order>() { SortingSelector = i => i.Due, Descending = Descending };
-            // TODO maybe overloading main thread
-            LoadOrdersCommand = new Command(async () => await ExecuteLoadOrdersCommand());
+            Additives = new SortableObservableCollection<Additive>() { SortingSelector = i => i.Id, Descending = Descending };
 
-            OrderTapped = new Command<Order>(OnOrderSelected);
+            LoadAdditivesCommand = new Command(async () => await ExecuteLoadAdditivesCommand());
 
             SortByCommand = new Command<string>(
                 execute: async (string arg) =>
@@ -42,10 +35,7 @@ namespace I4_QM_app.ViewModels
 
                     // works
                     if (arg == "Id") await SortBy(i => i.Id);
-                    if (arg == "Due") await SortBy(i => i.Due);
-                    if (arg == "Amount") await SortBy(i => i.Amount);
-                    if (arg == "Received") await SortBy(i => i.Received);
-
+                    if (arg == "Name") await SortBy(i => i.Name);
 
                     // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
                     // only works with id?! Specified cast is not valid
@@ -71,30 +61,47 @@ namespace I4_QM_app.ViewModels
                 });
 
             DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
-
-
         }
 
-        private async Task SortBy(Func<Order, object> predicate)
+        public void OnAppearing()
         {
-            Orders.SortingSelector = predicate;
-            Orders.Descending = Descending;
-            Descending = !Descending;
-            await ExecuteLoadOrdersCommand();
+            IsBusy = true;
+            //SelectedOrder = null;
         }
 
-        private async Task ExecuteLoadOrdersCommand()
+        private async Task SortBy(Func<Additive, object> predicate)
+        {
+            Additives.SortingSelector = predicate;
+            Additives.Descending = Descending;
+            Descending = !Descending;
+            await ExecuteLoadAdditivesCommand();
+        }
+
+        private async Task ExecuteLoadAdditivesCommand()
         {
             IsBusy = true;
 
             try
             {
-                Orders.Clear();
-                var orders = await App.OrdersDataService.GetItemsFilteredAsync(a => a.Status == Status.open);
+                Additives.Clear();
+                var additives = await App.AdditivesDataService.GetItemsAsync();
 
-                foreach (var order in orders)
+                foreach (var additive in additives)
                 {
-                    Orders.Add(order);
+                    Additives.Add(additive);
+
+                    var fs = App.DB.GetStorage<string>("myImages");
+                    LiteFileInfo<string> file = fs.FindById(additive.Id);
+
+                    if (file != null)
+                    {
+                        additive.Image = ImageSource.FromStream(() => file.OpenRead());
+                    }
+                    else
+                    {
+                        additive.Image = ImageSource.FromFile("no_image.png");
+                    }
+
                 }
 
 
@@ -108,35 +115,5 @@ namespace I4_QM_app.ViewModels
                 IsBusy = false;
             }
         }
-
-
-        public void OnAppearing()
-        {
-            IsBusy = true;
-            SelectedOrder = null;
-        }
-
-        public Order SelectedOrder
-        {
-            get => _selectedOrder;
-            set
-            {
-                SetProperty(ref _selectedOrder, value);
-                OnOrderSelected(value);
-            }
-        }
-
-        async void OnOrderSelected(Order item)
-        {
-            if (item == null)
-                return;
-
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
-
-            // This will push the ItemDetailPage onto the navigation stack
-            if (answer) await Shell.Current.GoToAsync($"{nameof(OrderDetailPage)}?{nameof(OrderDetailViewModel.OrderId)}={item.Id}");
-
-        }
-
     }
 }

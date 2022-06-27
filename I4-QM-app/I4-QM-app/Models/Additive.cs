@@ -13,7 +13,7 @@ namespace I4_QM_app.Models
 
         public float ActualPortion { get; set; }
 
-        public int Amount { get; set; }
+        public double Amount { get; set; }
 
         [JsonIgnore]
         public bool Available { get; set; }

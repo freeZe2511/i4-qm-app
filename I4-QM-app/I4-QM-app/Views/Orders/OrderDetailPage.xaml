@@ -76,8 +76,7 @@
         <!--ListView Additives-->
         <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
-                SelectionMode="None" 
-               >            
+                SelectionMode="None">            
             <CollectionView.ItemTemplate>
                 <DataTemplate>                   
                     <Grid Padding="0, 20, 0, 0">

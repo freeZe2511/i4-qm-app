@@ -122,8 +122,11 @@ namespace I4_QM_app.ViewModels
 
         private async void OnDoneClicked()
         {
-            // check if all additives are checked (mock for enabled/disabled done btn)
-            //if (!Additives.TrueForAll(a => a.Checked == true)) return;
+            // code-side check if all additives are checked
+            if (Additives.Any(a => a.Checked == false))
+            {
+                return;
+            }
 
             bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Done?", "Yes", "No");
 
@@ -178,12 +181,12 @@ namespace I4_QM_app.ViewModels
                 Due = order.Due;
 
                 // calc
-                foreach (var additive in additives)
+                foreach (var additive in order.Additives)
                 {
                     Additives.Add(additive);
 
                     additive.Checked = false;
-                    additive.Amount = (int)(additive.Portion * Weight * Amount / 100);
+                    additive.Amount = Math.Round(additive.Portion * Weight * Amount / 100, 2);
 
                     Additive item = additives.FirstOrDefault(x => x.Id == additive.Id);
 

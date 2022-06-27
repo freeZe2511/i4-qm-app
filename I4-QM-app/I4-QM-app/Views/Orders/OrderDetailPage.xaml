@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.OrderDetailPage"
              xmlns:model="clr-namespace:I4_QM_app.Models" 
-             xmlns:local="clr-namespace:I4_QM_app.ViewModels"
-             Title="{Binding Id}">
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels" 
+             xmlns:b="http://xamarin.com/schemas/2020/toolkit"
+             Title="{Binding Id}"
+             x:Name="OrderDetailPage1">
 
    
     <StackLayout Spacing="20" Padding="15">
@@ -108,7 +110,13 @@
                                 <local:NumericValidationBehavior Portion="{Binding Portion}" BindingContext="{Binding BindingContext, Source={x:Reference Entry}}"/>
                             </Entry.Behaviors>-->
                         </Entry>
-                        <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" IsEnabled="{Binding Available}" Color="{StaticResource AccentRed}" ></CheckBox>
+                        <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" IsEnabled="{Binding Available}" Color="{StaticResource AccentRed}" >
+                            <CheckBox.Behaviors>
+                                <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference OrderDetailPage1}}"                                        
+                                        EventName="CheckedChanged" />
+                            </CheckBox.Behaviors>
+                        </CheckBox>
                         
                     </Grid>
                 </DataTemplate>

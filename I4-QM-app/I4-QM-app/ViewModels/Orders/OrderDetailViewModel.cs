@@ -2,7 +2,7 @@
 using I4_QM_app.Views;
 using LiteDB;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
@@ -22,32 +22,32 @@ namespace I4_QM_app.ViewModels
         private string userId;
         private int amount;
         private int weight;
-        private List<Additive> additives;
+        private ObservableCollection<Additive> additives;
         private Status status;
         private DateTime received;
         private DateTime due;
         private DateTime done;
 
-        private bool available;
-
         public Command DoneCommand { get; }
+
+        public Command UpdateCommand { get; }
 
 
         public OrderDetailViewModel()
         {
-            Available = true;
-            // execute/ canexecute? => canexecute if all additives are checked?
+            additives = new ObservableCollection<Additive>();
             DoneCommand = new Command(OnDoneClicked, Validate);
-            // TODO done btn enable/disable
-            this.PropertyChanged +=
-                (_, __) => DoneCommand.ChangeCanExecute();
+            UpdateCommand = new Command(Update);
         }
+
+        private void Update()
+        {
+            DoneCommand.ChangeCanExecute();
+        }
+
         private bool Validate()
         {
-            //TODO check if all additives are done            
-            //return Additives.TrueForAll(a => a.Checked == true);
-
-            return Available;
+            return !Additives.Any(i => i.Checked == false);
         }
 
         public string OrderId
@@ -77,6 +77,7 @@ namespace I4_QM_app.ViewModels
             get => userId;
             set => SetProperty(ref userId, value);
         }
+
         public int Amount
         {
             get => amount;
@@ -88,21 +89,25 @@ namespace I4_QM_app.ViewModels
             get => weight;
             set => SetProperty(ref weight, value);
         }
-        public List<Additive> Additives
+
+        public ObservableCollection<Additive> Additives
         {
             get => additives;
             set => SetProperty(ref additives, value);
         }
+
         public Status Status
         {
             get => status;
             set => SetProperty(ref status, value);
         }
+
         public DateTime Received
         {
             get => received;
             set => SetProperty(ref received, value);
         }
+
         public DateTime Due
         {
             get => due;
@@ -115,16 +120,10 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref done, value);
         }
 
-        public bool Available
-        {
-            get => available;
-            set => SetProperty(ref available, value);
-        }
-
         private async void OnDoneClicked()
         {
             // check if all additives are checked (mock for enabled/disabled done btn)
-            if (!Additives.TrueForAll(a => a.Checked == true)) return;
+            //if (!Additives.TrueForAll(a => a.Checked == true)) return;
 
             bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Done?", "Yes", "No");
 
@@ -174,15 +173,15 @@ namespace I4_QM_app.ViewModels
                 UserId = Preferences.Get("UserID", string.Empty);
                 Amount = order.Amount;
                 Weight = order.Weight;
-                Additives = order.Additives;
                 Status = order.Status;
                 Received = order.Received;
                 Due = order.Due;
 
-
                 // calc
-                foreach (var additive in Additives)
+                foreach (var additive in additives)
                 {
+                    Additives.Add(additive);
+
                     additive.Checked = false;
                     additive.Amount = (int)(additive.Portion * Weight * Amount / 100);
 
@@ -191,13 +190,11 @@ namespace I4_QM_app.ViewModels
                     if (item == null)
                     {
                         additive.Available = false;
-                        Available = false;
                         additive.Image = ImageSource.FromFile("no_image.png");
                         continue;
                     }
 
                     additive.Available = true;
-
 
                     var fs = App.DB.GetStorage<string>("myImages");
                     LiteFileInfo<string> file = fs.FindById(additive.Id);
@@ -212,13 +209,12 @@ namespace I4_QM_app.ViewModels
                     }
                 }
 
-
-
+                Update();
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Failed to Load Item");
+                Debug.WriteLine(ex.Message);
             }
         }
 

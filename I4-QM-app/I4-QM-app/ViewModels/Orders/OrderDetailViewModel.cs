@@ -55,7 +55,6 @@ namespace I4_QM_app.ViewModels
 
         private void UpdateEntry(object sender)
         {
-            Console.WriteLine(sender.ToString());
             if (sender.GetType() == typeof(Additive))
             {
                 var newItem = (Additive)sender;

@@ -5,17 +5,17 @@
              xmlns:model="clr-namespace:I4_QM_app.Models" 
              xmlns:local="clr-namespace:I4_QM_app.ViewModels" 
              xmlns:b="http://xamarin.com/schemas/2020/toolkit"
-             Title="{Binding Id}"
+             Title="Order"
              x:Name="OrderDetailPage1">
 
    
     <StackLayout Spacing="20" Padding="15">
 
         <Frame CornerRadius="10" BackgroundColor="#c0c9cf" Padding="5">
-            <Label Text="{Binding Id, StringFormat='#{0}'}" FontSize="Title" FontAttributes="Bold" HorizontalTextAlignment="End" TextColor="White"/>
+            <Label Text="{Binding Id, StringFormat='{0}'}" FontSize="Subtitle" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="White"/>
         </Frame>
 
-        <Frame CornerRadius="10" Padding="20, 7, 20, 7" Margin="0, -10, 0, -15" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
+        <Frame CornerRadius="10" Padding="15, 7, 15, 7" Margin="0, -10, 0, -15" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
                             BorderColor="{StaticResource Secondary}">
             <Label x:Name="status" Text="{Binding Status}"                                                
                             TextColor="White"></Label>
@@ -53,7 +53,7 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Text="Weight" HorizontalOptions="Start" FontSize="Small"/>
             <Label Grid.Column="1" Text="{Binding Weight, StringFormat='{0} g'}" HorizontalOptions="End" FontSize="Small"/>
-            <Label Grid.Row="1" Grid.Column="0" Text="Qty" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Row="1" Grid.Column="0" Text="Quantity" HorizontalOptions="Start" FontSize="Small"/>
             <Label Grid.Row="1" Grid.Column="1" Text="{Binding Amount}" HorizontalOptions="End" FontSize="Small"/>
         </Grid>
 
@@ -76,7 +76,7 @@
         <!--ListView Additives-->
         <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
-                SelectionMode="None">            
+                SelectionMode="None" Margin="20, 0, 20, 0">            
             <CollectionView.ItemTemplate>
                 <DataTemplate>                   
                     <Grid Padding="0, 20, 0, 0">
@@ -86,7 +86,7 @@
                             
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
                            

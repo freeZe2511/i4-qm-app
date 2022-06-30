@@ -9,9 +9,9 @@ namespace I4_QM_app.Models
 
         public string Name { get; set; }
 
-        public float Portion { get; set; }
+        public double Portion { get; set; }
 
-        public float ActualPortion { get; set; }
+        public double ActualPortion { get; set; }
 
         public double Amount { get; set; }
 

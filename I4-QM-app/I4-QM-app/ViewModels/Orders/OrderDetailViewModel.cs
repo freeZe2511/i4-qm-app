@@ -47,7 +47,7 @@ namespace I4_QM_app.ViewModels
 
         private bool Validate()
         {
-            return !Additives.Any(i => i.Checked == false);
+            return !Additives.Any(i => !i.Checked);
         }
 
         public string OrderId
@@ -123,7 +123,7 @@ namespace I4_QM_app.ViewModels
         private async void OnDoneClicked()
         {
             // code-side check if all additives are checked
-            if (Additives.Any(a => a.Checked == false))
+            if (Additives.Any(a => !a.Checked))
             {
                 return;
             }
@@ -135,7 +135,7 @@ namespace I4_QM_app.ViewModels
                 //calc new portions (percentages) -> should be dynamic with behavoir maybe TODO
                 foreach (var additive in Additives)
                 {
-                    additive.ActualPortion = (float)additive.Amount / (Weight * Amount / 100);
+                    additive.ActualPortion = Math.Round(additive.Amount / (Weight * Amount * 0.01), 2);
                     additive.Image = null;
                 }
 
@@ -183,10 +183,8 @@ namespace I4_QM_app.ViewModels
                 // calc
                 foreach (var additive in order.Additives)
                 {
-                    Additives.Add(additive);
-
                     additive.Checked = false;
-                    additive.Amount = Math.Round(additive.Portion * Weight * Amount / 100, 2);
+                    additive.Amount = Math.Round(additive.Portion * Weight * Amount * 0.01, 2, MidpointRounding.AwayFromZero);
 
                     Additive item = additives.FirstOrDefault(x => x.Id == additive.Id);
 
@@ -210,6 +208,8 @@ namespace I4_QM_app.ViewModels
                     {
                         additive.Image = ImageSource.FromFile("no_image.png");
                     }
+
+                    Additives.Add(additive);
                 }
 
                 Update();

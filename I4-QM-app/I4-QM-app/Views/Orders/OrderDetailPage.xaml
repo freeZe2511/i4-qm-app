@@ -34,9 +34,9 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Text="Received" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Column="1" Text="{Binding Received}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Column="1" Text="{Binding Received, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small"/>
             <Label Grid.Row="1" Grid.Column="0" Text="Due" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Row="1" Grid.Column="1" x:Name="due" Text="{Binding Due}" TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Row="1" Grid.Column="1" x:Name="due" Text="{Binding Due, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}" HorizontalOptions="End" FontSize="Small"/>
             </Grid>
        
         <BoxView   HorizontalOptions="Fill"
@@ -76,7 +76,7 @@
         <!--ListView Additives-->
         <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
-                SelectionMode="None" Margin="20, 0, 20, 0">            
+                SelectionMode="None" Margin="20, 0, 20, 0" BackgroundColor="AliceBlue">            
             <CollectionView.ItemTemplate>
                 <DataTemplate>                   
                     <Grid Padding="0, 20, 0, 0">
@@ -95,7 +95,7 @@
                        Source="{Binding Image}"
                        Aspect="AspectFill"
                        HeightRequest="50"
-                       WidthRequest="50" />
+                       WidthRequest="50" Margin="10, 5, 5, 5"/>
                         <Label Grid.Column="1" Grid.Row="0"
                        Text="{Binding Name}"
                        FontAttributes="Bold" IsEnabled="{Binding Available}"/>

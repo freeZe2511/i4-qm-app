@@ -34,7 +34,7 @@ namespace I4_QM_app.ViewModels.Recipes
             CancelCommand = new Command(OnCancel);
             ClearCommand = new Command(OnClear);
             UpdateCommand = new Command(OnUpdate);
-            Date = DateTime.Now;
+            Date = DateTime.Now.AddDays(1);
             Time = DateTime.Now.TimeOfDay;
             Weight = 0;
             Amount = 0;
@@ -116,7 +116,7 @@ namespace I4_QM_app.ViewModels.Recipes
 
         private void OnClear()
         {
-            Date = DateTime.Now;
+            Date = DateTime.Now.AddDays(1);
             Time = DateTime.Now.TimeOfDay;
             Weight = 0;
             Amount = 0;

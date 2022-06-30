@@ -19,7 +19,7 @@
             <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
                 SelectionMode="None" 
-                >
+                BackgroundColor="AliceBlue">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="10">

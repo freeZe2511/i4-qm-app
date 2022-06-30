@@ -25,7 +25,10 @@ namespace I4_QM_app.ViewModels
         private bool available;
 
         public Command OrderCommand { get; }
+
         public Command DeleteCommand { get; }
+
+        public Command EditCommand { get; }
 
         public RecipeDetailViewModel()
         {

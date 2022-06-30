@@ -16,14 +16,50 @@ namespace I4_QM_app.ViewModels
         private Rating rating;
 
         public Command SendFeedbackCommand { get; }
+
         public Command ResetFeedbackCommand { get; }
+
+        public Command CancelCommand { get; }
+
+        public Command UpdateCommand { get; }
+
         public FeedbackViewModel()
         {
             Title = "Feedback (1 - 9)";
-            SendFeedbackCommand = new Command(RateFeedbackAsync);
+            SendFeedbackCommand = new Command(RateFeedbackAsync, Validate);
             ResetFeedbackCommand = new Command(ResetFeedback);
+            CancelCommand = new Command(OnCancel);
+            UpdateCommand = new Command(OnUpdate);
             rating = new Rating();
             rating.RatingId = Guid.NewGuid().ToString();
+
+        }
+
+        private async void OnCancel()
+        {
+            // This will pop the current page off the navigation stack
+            await Shell.Current.GoToAsync("..");
+        }
+
+        private bool Validate()
+        {
+            return Rating.Form > 0 && Rating.Color > 0 && Rating.Ridge > 0 && Rating.Surface > 0 && Rating.Surface > 0
+                && Rating.Bindings > 0 && Rating.Sprue > 0 && Rating.DropIn > 0 && Rating.Demolding > 0 &&
+                Rating.AirInclusion > 0 && Rating.Overall > 0 && Rating.Feedback.Length > 0;
+        }
+
+        private void OnUpdate(object sender)
+        {
+            try
+            {
+                Console.WriteLine(sender);
+                SendFeedbackCommand.ChangeCanExecute();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
 
         }
 

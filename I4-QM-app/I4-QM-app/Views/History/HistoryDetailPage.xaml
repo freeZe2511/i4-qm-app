@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.HistoryDetailPage"               
-             Title="{Binding Id}">
+             Title="Order">
 
     <!--del () icon-->
     <ContentPage.ToolbarItems>
@@ -13,10 +13,10 @@
     <StackLayout Spacing="20" Padding="15">
         
         <Frame CornerRadius="10" BackgroundColor="#c0c9cf" Padding="5">
-            <Label Text="{Binding Id, StringFormat='#{0}'}" FontSize="Title" FontAttributes="Bold" HorizontalTextAlignment="End" TextColor="White"/>
+            <Label Text="{Binding Id, StringFormat='{0}'}" FontSize="Subtitle" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="White"/>
         </Frame>
 
-        <Frame CornerRadius="10" Padding="20, 7, 20, 7" Margin="0, -10, 0, -15" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
+        <Frame CornerRadius="10" Padding="15, 7, 15, 7" Margin="0, -10, 0, -15" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
                             BorderColor="{StaticResource Secondary}">
             <Label x:Name="status" Text="{Binding Status}"                                                
                             TextColor="White"></Label>
@@ -58,9 +58,9 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Text="Weight" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Column="1" Text="{Binding Weight, StringFormat='{0} g'}" HorizontalOptions="End" FontSize="Small"/>
-            <Label Grid.Row="1" Grid.Column="0" Text="Qty" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Column="0" Text="Weight (g)" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Column="1" Text="{Binding Weight}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Row="1" Grid.Column="0" Text="Quantity" HorizontalOptions="Start" FontSize="Small"/>
             <Label Grid.Row="1" Grid.Column="1" Text="{Binding Amount}" HorizontalOptions="End" FontSize="Small"/>
         </Grid>
 
@@ -92,7 +92,7 @@
                             
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
@@ -100,22 +100,22 @@
                         </Grid.ColumnDefinitions>                        
                         <Label Grid.Column="0" 
                        Text="{Binding Name}"
-                       FontAttributes="Bold" />
+                       FontAttributes="Bold" HorizontalOptions="Start"/>
                         <Label
                        Grid.Column="1"
                        Text="{Binding Amount, StringFormat='{0} g'}"
                        FontAttributes="Italic"
-                       VerticalOptions="Center" />
+                       VerticalOptions="Center" HorizontalOptions="Center"/>
                         <Label
                        Grid.Column="2"
                        Text="{Binding ActualPortion, StringFormat='{0} %'}"
                        FontAttributes="Italic"
-                       VerticalOptions="Center" />
+                       VerticalOptions="Center" HorizontalOptions="Center"/>
                         <Label
                        Grid.Column="3"
                        Text="{Binding Portion, StringFormat='({0} %)'}"
                        FontAttributes="Italic"
-                       VerticalOptions="Center" />
+                       VerticalOptions="Center" HorizontalOptions="Center"/>
 
                     </Grid>
                 </DataTemplate>

@@ -11,8 +11,6 @@ namespace I4_QM_app.ViewModels.Recipes
     {
         private string recipeId;
         private Recipe recipe;
-        private string id;
-        private string creatorId;
         private List<Additive> additives;
         private string name;
         private string description;

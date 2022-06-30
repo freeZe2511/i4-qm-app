@@ -52,7 +52,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Text="Weight (g)" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Column="1" Text="{Binding Weight, StringFormat='{0}'}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Column="1" Text="{Binding Weight}" HorizontalOptions="End" FontSize="Small"/>
             <Label Grid.Row="1" Grid.Column="0" Text="Quantity" HorizontalOptions="Start" FontSize="Small"/>
             <Label Grid.Row="1" Grid.Column="1" Text="{Binding Amount}" HorizontalOptions="End" FontSize="Small"/>
         </Grid>

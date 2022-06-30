@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels.Recipes
@@ -17,7 +16,6 @@ namespace I4_QM_app.ViewModels.Recipes
         private List<Additive> additives;
         private string name;
         private string description;
-        private int used;
         private int amount;
         private int weight;
         private DateTime date;
@@ -29,16 +27,29 @@ namespace I4_QM_app.ViewModels.Recipes
 
         public Command ClearCommand { get; }
 
+        public Command UpdateCommand { get; }
+
         public TransformRecipeViewModel()
         {
             Title = "Transform";
-            OrderCommand = new Command(async () => await TransformRecipe());
+            OrderCommand = new Command(TransformRecipe, Validate);
             CancelCommand = new Command(OnCancel);
             ClearCommand = new Command(OnClear);
+            UpdateCommand = new Command(OnUpdate);
             Date = DateTime.Now;
             Time = DateTime.Now.TimeOfDay;
             Weight = 0;
             Amount = 0;
+        }
+
+        private void OnUpdate()
+        {
+            OrderCommand.ChangeCanExecute();
+        }
+
+        private bool Validate()
+        {
+            return Weight > 0 && Amount > 0 && Date.Date.Add(Time) >= DateTime.Now;
         }
 
         public string RecipeId
@@ -113,7 +124,6 @@ namespace I4_QM_app.ViewModels.Recipes
             Amount = 0;
         }
 
-
         private async void LoadRecipeId(string recipeId)
         {
             try
@@ -132,8 +142,13 @@ namespace I4_QM_app.ViewModels.Recipes
             }
         }
 
-        private async Task TransformRecipe()
+        private async void TransformRecipe()
         {
+            if (!(Amount > 0 && Weight > 0 && Date.Date.Add(Time) > DateTime.Now))
+            {
+                return;
+            }
+
             bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Transform into Order?", "Yes", "No");
 
             if (answer)
@@ -146,7 +161,7 @@ namespace I4_QM_app.ViewModels.Recipes
                     Additives = Additives,
                     Status = Status.open,
                     Received = DateTime.Now,
-                    Due = Date.Date.Add(Time)
+                    Due = Date.Date.Add(Time),
                 };
 
                 //insert order

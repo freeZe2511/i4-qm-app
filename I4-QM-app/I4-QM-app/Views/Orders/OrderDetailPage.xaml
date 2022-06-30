@@ -81,13 +81,13 @@
                 <DataTemplate>                   
                     <Grid Padding="0, 20, 0, 0">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="*" />
                             
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="1*" />
-                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
                            
                         </Grid.ColumnDefinitions>
@@ -98,16 +98,25 @@
                        WidthRequest="50" />
                         <Label Grid.Column="1" Grid.Row="0"
                        Text="{Binding Name}"
-                       FontAttributes="Bold" IsEnabled="{Binding Available}"/>                        
+                       FontAttributes="Bold" IsEnabled="{Binding Available}"/>
                         <Label Grid.Row="0"
-                       Grid.Column="2"
-                       Text="{Binding Portion, StringFormat='{0} %'}"
+                       Grid.Column="2"                       
                        FontAttributes="Italic"
-                       VerticalOptions="End" />
+                       VerticalOptions="End">
+                            <Label.Text>
+                                <MultiBinding StringFormat="{}{1} % ({0}%)">
+                                    <Binding Path="Portion" />
+                                    <Binding Path="ActualPortion" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
                         <Entry Grid.Row="1" Grid.Column="1" x:Name="Entry" Keyboard="Numeric" Text="{Binding Amount}">
-                            <!--<Entry.Behaviors>
-                                <local:NumericValidationBehavior Portion="{Binding Portion}" BindingContext="{Binding BindingContext, Source={x:Reference Entry}}"/>
-                            </Entry.Behaviors>-->
+                            <Entry.Behaviors>
+                            <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.EntryCommand, Source={x:Reference OrderDetailPage1}}"
+                                        CommandParameter="{Binding .}"
+                                        EventName="Completed" />
+                            </Entry.Behaviors>
                         </Entry>
                         <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" IsEnabled="{Binding Available}" Color="{StaticResource AccentRed}" >
                             <CheckBox.Behaviors>

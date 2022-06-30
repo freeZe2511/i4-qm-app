@@ -32,12 +32,15 @@ namespace I4_QM_app.ViewModels
 
         public Command UpdateCommand { get; }
 
+        public Command EntryCommand { get; }
+
 
         public OrderDetailViewModel()
         {
             additives = new ObservableCollection<Additive>();
             DoneCommand = new Command(OnDoneClicked, Validate);
             UpdateCommand = new Command(Update);
+            EntryCommand = new Command(UpdateEntry);
         }
 
         private void Update()
@@ -48,6 +51,19 @@ namespace I4_QM_app.ViewModels
         private bool Validate()
         {
             return !Additives.Any(i => !i.Checked);
+        }
+
+        private void UpdateEntry(object sender)
+        {
+            Console.WriteLine(sender.ToString());
+            if (sender.GetType() == typeof(Additive))
+            {
+                var newItem = (Additive)sender;
+                newItem.ActualPortion = Math.Round(newItem.Amount / (Weight * Amount * 0.01), 2);
+                var oldItem = Additives.FirstOrDefault(i => i.Id == newItem.Id);
+                var oldIndex = Additives.IndexOf(oldItem);
+                Additives[oldIndex] = newItem;
+            }
         }
 
         public string OrderId
@@ -185,6 +201,7 @@ namespace I4_QM_app.ViewModels
                 {
                     additive.Checked = false;
                     additive.Amount = Math.Round(additive.Portion * Weight * Amount * 0.01, 2, MidpointRounding.AwayFromZero);
+                    additive.ActualPortion = additive.Portion;
 
                     Additive item = additives.FirstOrDefault(x => x.Id == additive.Id);
 
@@ -222,40 +239,6 @@ namespace I4_QM_app.ViewModels
         }
 
     }
-
-    // maybe todo in later iteration (fynamic change of percentage = portion)
-    // https://docs.microsoft.com/en-us/xamarin/xamarin-forms/app-fundamentals/behaviors/creating
-
-    //public class NumericValidationBehavior : Behavior<Entry>
-    //{
-    //    public static readonly BindableProperty Portion = BindableProperty.Create("Portion", typeof(int),
-    //                                    typeof(NumericValidationBehavior), null);
-
-    //    protected override void OnAttachedTo(Entry entry)
-    //    {
-    //        entry.TextChanged += OnEntryTextChanged;
-    //        base.OnAttachedTo(entry);
-    //    }
-
-    //    protected override void OnDetachingFrom(Entry entry)
-    //    {
-    //        entry.TextChanged -= OnEntryTextChanged;
-    //        base.OnDetachingFrom(entry);
-    //    }
-
-    //    void OnEntryTextChanged(object sender, TextChangedEventArgs args)
-    //    {
-    //        double result;
-    //        //bool isValid = double.TryParse(args.NewTextValue, out result);
-    //        //((Entry)sender).TextColor = isValid ? Color.Default : Color.Red;
-    //        //Console.WriteLine(result);
-
-    //        //calc new percentage
-    //        Console.WriteLine(Portion.ReturnType);
-
-
-    //    }
-    //}
 
 }
 

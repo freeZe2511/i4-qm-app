@@ -77,7 +77,7 @@
         <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
                 SelectionMode="None" 
-                 Margin="20, 0, 20, 0">
+                 Margin="20, 0, 20, 0" BackgroundColor="AliceBlue">
             <CollectionView.ItemTemplate>
                 <DataTemplate>                    
                     <Grid Padding="10">
@@ -94,7 +94,7 @@
                         <Label Grid.Column="1" Text="{Binding Portion, StringFormat='{0}%'}" FontAttributes="Italic"
                        VerticalOptions="Center" HorizontalOptions="End" IsEnabled="{Binding Available}"/>
 
-                        <BoxView Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
+                        <BoxView Grid.Row="2" Grid.ColumnSpan="2" HeightRequest="1" Color="LightGray"/>
                     </Grid>
 
                 </DataTemplate>

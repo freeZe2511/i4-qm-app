@@ -30,6 +30,8 @@ namespace I4_QM_app.ViewModels
 
         public Command DoneCommand { get; }
 
+        public Command CancelCommand { get; }
+
         public Command UpdateCommand { get; }
 
         public Command EntryCommand { get; }
@@ -39,11 +41,12 @@ namespace I4_QM_app.ViewModels
         {
             additives = new ObservableCollection<Additive>();
             DoneCommand = new Command(OnDoneClicked, Validate);
-            UpdateCommand = new Command(Update);
-            EntryCommand = new Command(UpdateEntry);
+            CancelCommand = new Command(OnCancel);
+            UpdateCommand = new Command(OnUpdate);
+            EntryCommand = new Command(OnCompleteEntry);
         }
 
-        private void Update()
+        private void OnUpdate()
         {
             DoneCommand.ChangeCanExecute();
         }
@@ -53,7 +56,7 @@ namespace I4_QM_app.ViewModels
             return !Additives.Any(i => !i.Checked);
         }
 
-        private void UpdateEntry(object sender)
+        private void OnCompleteEntry(object sender)
         {
             if (sender.GetType() == typeof(Additive))
             {
@@ -63,6 +66,12 @@ namespace I4_QM_app.ViewModels
                 var oldIndex = Additives.IndexOf(oldItem);
                 Additives[oldIndex] = newItem;
             }
+        }
+
+        private async void OnCancel()
+        {
+            // This will pop the current page off the navigation stack
+            await Shell.Current.GoToAsync("..");
         }
 
         public string OrderId
@@ -228,7 +237,7 @@ namespace I4_QM_app.ViewModels
                     Additives.Add(additive);
                 }
 
-                Update();
+                OnUpdate();
 
             }
             catch (Exception ex)

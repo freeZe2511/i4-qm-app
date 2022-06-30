@@ -51,8 +51,8 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Text="Weight" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Column="1" Text="{Binding Weight, StringFormat='{0} g'}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Column="0" Text="Weight (g)" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Column="1" Text="{Binding Weight, StringFormat='{0}'}" HorizontalOptions="End" FontSize="Small"/>
             <Label Grid.Row="1" Grid.Column="0" Text="Quantity" HorizontalOptions="Start" FontSize="Small"/>
             <Label Grid.Row="1" Grid.Column="1" Text="{Binding Amount}" HorizontalOptions="End" FontSize="Small"/>
         </Grid>
@@ -118,7 +118,7 @@
                                         EventName="Completed" />
                             </Entry.Behaviors>
                         </Entry>
-                        <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" IsEnabled="{Binding Available}" Color="{StaticResource AccentRed}" >
+                        <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" IsEnabled="{Binding Available}" Color="{StaticResource AccentRed}">
                             <CheckBox.Behaviors>
                                 <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference OrderDetailPage1}}"                                        
@@ -131,9 +131,12 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!--Submit-->
-        <Button VerticalOptions="Center" Text="Done" Command="{Binding DoneCommand}" BackgroundColor="{StaticResource Primary}"/>
-
+        <!--Buttons-->
+        <StackLayout Orientation="Horizontal" Padding="10">
+            <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource AccentRed}"></Button>
+            <Button Text="Done" Command="{Binding DoneCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource Primary}"/>
+        </StackLayout>
+        
     </StackLayout>
 
 </ContentPage>

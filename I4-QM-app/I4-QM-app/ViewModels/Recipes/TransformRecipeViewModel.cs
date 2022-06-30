@@ -24,7 +24,9 @@ namespace I4_QM_app.ViewModels.Recipes
         private TimeSpan time;
 
         public Command OrderCommand { get; }
+
         public Command CancelCommand { get; }
+
         public Command ClearCommand { get; }
 
         public TransformRecipeViewModel()

@@ -42,17 +42,27 @@ namespace I4_QM_app.Services
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/add").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/del").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/get").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/orders/sync").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/additives/add").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/additives/del").Build());
             topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/additives/get").Build());
+            topics.Add(new MqttTopicFilterBuilder().WithTopic(baseTopicURL + "prod/additives/sync").Build());
 
             await managedMqttClient.SubscribeAsync(topics);
             await managedMqttClient.StartAsync(managedMqttClientOptions);
+
+            SyncDataAsync();
 
             managedMqttClient.ApplicationMessageReceivedAsync += HandleReceivedMessage;
 
             SpinWait.SpinUntil(() => managedMqttClient.PendingApplicationMessagesCount == 0, 10000);
 
+        }
+
+        private async void SyncDataAsync()
+        {
+            await HandlePublishMessage("backup/orders/sync", string.Empty);
+            await HandlePublishMessage("backup/addditives/sync", string.Empty);
         }
 
         public bool IsConnected { get => managedMqttClient.IsConnected; }
@@ -87,14 +97,16 @@ namespace I4_QM_app.Services
             // wildcard not working???
             if (topic == baseTopicURL + "prod/orders/add"
                 || topic == baseTopicURL + "prod/orders/del"
-                || topic == baseTopicURL + "prod/orders/get")
+                || topic == baseTopicURL + "prod/orders/get"
+                || topic == baseTopicURL + "prod/orders/sync")
             {
                 await ordersHandler.HandleRoutes(message, baseTopicURL);
             }
 
             if (topic == baseTopicURL + "prod/additives/add"
                 || topic == baseTopicURL + "prod/additives/del"
-                || topic == baseTopicURL + "prod/additives/get")
+                || topic == baseTopicURL + "prod/additives/get"
+                || topic == baseTopicURL + "prod/additives/sync")
             {
                 await additivesHandler.HandleRoutes(message, baseTopicURL);
             }

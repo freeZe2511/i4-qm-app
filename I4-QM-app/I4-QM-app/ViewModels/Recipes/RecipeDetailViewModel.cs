@@ -30,12 +30,15 @@ namespace I4_QM_app.ViewModels
 
         public Command EditCommand { get; }
 
+        public Command RefreshCommand { get; }
+
         public RecipeDetailViewModel()
         {
             // TODO bug???
             Available = true;
             OrderCommand = new Command(async () => await TransformRecipeAsync(), Validate);
             DeleteCommand = new Command(async () => await DeleteRecipeAsync());
+            RefreshCommand = new Command(async () => await LoadRecipeId(RecipeId));
         }
 
         private async Task TransformRecipeAsync()
@@ -122,8 +125,10 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref available, value);
         }
 
-        public async void LoadRecipeId(string recipeId)
+        public async Task LoadRecipeId(string recipeId)
         {
+            IsBusy = true;
+
             try
             {
                 var recipe = await App.RecipesDataService.GetItemAsync(recipeId);
@@ -145,10 +150,13 @@ namespace I4_QM_app.ViewModels
                         additive.Available = false;
 
                         Available = false;
+                        OrderCommand.ChangeCanExecute();
                         continue;
                     }
 
+                    additive.Name = item.Name;
                     additive.Available = true;
+                    OrderCommand.ChangeCanExecute();
                 }
 
             }
@@ -156,6 +164,7 @@ namespace I4_QM_app.ViewModels
             {
                 Debug.WriteLine("Failed to Load Item");
             }
+            finally { IsBusy = false; }
         }
     }
 }

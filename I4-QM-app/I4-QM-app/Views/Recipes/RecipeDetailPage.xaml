@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:local1="clr-namespace:I4_QM_app.ViewModels"
              x:Class="I4_QM_app.Views.RecipeDetailPage"
              Title="Recipe">
 
@@ -9,6 +9,8 @@
         <ToolbarItem IconImageSource="del_f48_400.png" Command="{Binding DeleteCommand}" Order="Primary"/>                  
     </ContentPage.ToolbarItems>
 
+    <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+    <ScrollView Orientation="Neither">       
     <StackLayout Spacing="20" Padding="15">        
         <Frame CornerRadius="10" BackgroundColor="#c0c9cf" Padding="5">
             <Label Text="{Binding Id, StringFormat='{0}'}" FontSize="Subtitle" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="White"/>
@@ -102,8 +104,9 @@
         </CollectionView>
 
         <!--Submit-->
-        <Button VerticalOptions="Center" Text="Order" Command="{Binding OrderCommand}" BackgroundColor="{StaticResource Primary}"/>
+        <Button VerticalOptions="EndAndExpand" Text="Order" Command="{Binding OrderCommand}" BackgroundColor="{StaticResource Primary}"/>
 
     </StackLayout>
-
+    </ScrollView>
+    </RefreshView>
 </ContentPage>

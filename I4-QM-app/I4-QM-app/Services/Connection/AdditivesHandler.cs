@@ -115,11 +115,17 @@ namespace I4_QM_app.Services.Connection
             {
                 await HandleGetRoute(message);
             }
+
+            if (topic == baseTopicURL + "prod/additives/sync")
+            {
+                await HandleUpdateRoute(message);
+            }
         }
 
         public async Task HandleUpdateRoute(MqttApplicationMessage message)
         {
-            throw new NotImplementedException();
+            await App.AdditivesDataService.DeleteAllItemsAsync();
+            await HandleAddRoute(message);
         }
 
     }

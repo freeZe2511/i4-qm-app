@@ -6,6 +6,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem IconImageSource="edit48_400.png" Command="{Binding EditCommand}" Order="Primary"/>
+        <ToolbarItem IconImageSource="content_copy_48_400.png"  Order="Primary"/>                  
         <ToolbarItem IconImageSource="del_f48_400.png" Command="{Binding DeleteCommand}" Order="Primary"/>                  
     </ContentPage.ToolbarItems>
 

@@ -8,7 +8,11 @@
              Title="Order"
              x:Name="OrderDetailPage1">
 
-   
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="bookmark_add_48_400.png" Command="{Binding .}" Order="Primary"/>        
+    </ContentPage.ToolbarItems>
+
+
     <StackLayout Spacing="20" Padding="15">
 
         <Frame CornerRadius="10" BackgroundColor="#c0c9cf" Padding="5">

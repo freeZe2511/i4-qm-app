@@ -9,138 +9,142 @@
              x:Name="OrderDetailPage1">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="bookmark_add_48_400.png" Command="{Binding .}" Order="Primary"/>        
+        <ToolbarItem IconImageSource="bookmark_add_48_400.png" Order="Primary"/>        
     </ContentPage.ToolbarItems>
 
+    <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+        <ScrollView Orientation="Neither">
+            <StackLayout Spacing="20" Padding="15">
 
-    <StackLayout Spacing="20" Padding="15">
+                <Frame CornerRadius="10" BackgroundColor="#c0c9cf" Padding="5">
+                    <Label Text="{Binding Id, StringFormat='{0}'}" FontSize="Subtitle" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="White"/>
+                </Frame>
 
-        <Frame CornerRadius="10" BackgroundColor="#c0c9cf" Padding="5">
-            <Label Text="{Binding Id, StringFormat='{0}'}" FontSize="Subtitle" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="White"/>
-        </Frame>
-
-        <Frame CornerRadius="10" Padding="15, 7, 15, 7" Margin="0, -10, 0, -15" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
+                <Frame CornerRadius="10" Padding="15, 7, 15, 7" Margin="0, -10, 0, -15" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
                             BorderColor="{StaticResource Secondary}">
-            <Label x:Name="status" Text="{Binding Status}"                                                
+                    <Label x:Name="status" Text="{Binding Status}"                                                
                             TextColor="White"></Label>
-        </Frame>
-        <BoxView   HorizontalOptions="Fill"
+                </Frame>
+                <BoxView   HorizontalOptions="Fill"
                    HeightRequest="1"
                    Margin="0, 10, 0, 0"
                    Color="LightGray"/>
-        <Grid Padding="10,0,10,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Text="Received" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Column="1" Text="{Binding Received, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small"/>
-            <Label Grid.Row="1" Grid.Column="0" Text="Due" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Row="1" Grid.Column="1" x:Name="due" Text="{Binding Due, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}" HorizontalOptions="End" FontSize="Small"/>
-            </Grid>
-       
-        <BoxView   HorizontalOptions="Fill"
+                <Grid Padding="10,0,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Text="Received" HorizontalOptions="Start" FontSize="Small"/>
+                    <Label Grid.Column="1" Text="{Binding Received, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small"/>
+                    <Label Grid.Row="1" Grid.Column="0" Text="Due" HorizontalOptions="Start" FontSize="Small"/>
+                    <Label Grid.Row="1" Grid.Column="1" x:Name="due" Text="{Binding Due, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}" HorizontalOptions="End" FontSize="Small"/>
+                </Grid>
+
+                <BoxView   HorizontalOptions="Fill"
                    HeightRequest="1" 
                    Color="LightGray"/>
-        <Grid Padding="10,0,10,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Text="Weight (g)" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Column="1" Text="{Binding Weight}" HorizontalOptions="End" FontSize="Small"/>
-            <Label Grid.Row="1" Grid.Column="0" Text="Quantity" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Amount}" HorizontalOptions="End" FontSize="Small"/>
-        </Grid>
+                <Grid Padding="10,0,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Text="Weight (g)" HorizontalOptions="Start" FontSize="Small"/>
+                    <Label Grid.Column="1" Text="{Binding Weight}" HorizontalOptions="End" FontSize="Small"/>
+                    <Label Grid.Row="1" Grid.Column="0" Text="Quantity" HorizontalOptions="Start" FontSize="Small"/>
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Amount}" HorizontalOptions="End" FontSize="Small"/>
+                </Grid>
 
-        <BoxView   HorizontalOptions="Fill"
+                <BoxView   HorizontalOptions="Fill"
                    HeightRequest="1" 
-                   Color="LightGray"/>        
+                   Color="LightGray"/>
 
-        <Grid Padding="10,0,10,0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>                
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Text="Additives" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Column="1" Text="{Binding Additives.Count, StringFormat='{0}'}" HorizontalOptions="End" FontSize="Small"/>            
-        </Grid>
+                <Grid Padding="10,0,10,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Label Grid.Column="0" Text="Additives" HorizontalOptions="Start" FontSize="Small"/>
+                    <Label Grid.Column="1" Text="{Binding Additives.Count, StringFormat='{0}'}" HorizontalOptions="End" FontSize="Small"/>
+                </Grid>
 
-        <!--ListView Additives-->
-        <CollectionView x:Name="AdditivesListView"
+                <!--ListView Additives-->
+                <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
-                SelectionMode="None" Margin="20, 0, 20, 0" BackgroundColor="AliceBlue">            
-            <CollectionView.ItemTemplate>
-                <DataTemplate>                   
-                    <Grid Padding="0, 20, 0, 0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="*" />
-                            
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="1*" />
-                           
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.RowSpan="2" Grid.Column="0"
+                SelectionMode="None" Margin="20, 0, 20, 0" BackgroundColor="AliceBlue">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="0, 20, 0, 0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
+
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="1*" />
+
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.RowSpan="2" Grid.Column="0"
                        Source="{Binding Image}"
                        Aspect="AspectFill"
                        HeightRequest="50"
                        WidthRequest="50" Margin="10, 5, 5, 5"/>
-                        <Label Grid.Column="1" Grid.Row="0"
+                                <Label Grid.Column="1" Grid.Row="0"
                        Text="{Binding Name}"
                        FontAttributes="Bold" IsEnabled="{Binding Available}"/>
-                        <Label Grid.Row="0"
+                                <Label Grid.Row="0"
                        Grid.Column="2"                       
                        FontAttributes="Italic"
-                       VerticalOptions="End">
-                            <Label.Text>
-                                <MultiBinding StringFormat="{}{1} % ({0}%)">
-                                    <Binding Path="Portion" />
-                                    <Binding Path="ActualPortion" />
-                                </MultiBinding>
-                            </Label.Text>
-                        </Label>
-                        <Entry Grid.Row="1" Grid.Column="1" x:Name="Entry" Keyboard="Numeric" Text="{Binding Amount}">
-                            <Entry.Behaviors>
-                            <b:EventToCommandBehavior
+                       VerticalOptions="End" IsEnabled="{Binding Available}">
+                                    <Label.Text>
+                                        <MultiBinding StringFormat="{}{1} % ({0}%)">
+                                            <Binding Path="Portion" />
+                                            <Binding Path="ActualPortion" />
+                                        </MultiBinding>
+                                    </Label.Text>
+                                </Label>
+                                <Entry Grid.Row="1" Grid.Column="1" x:Name="Entry" Keyboard="Numeric" Text="{Binding Amount}" IsEnabled="{Binding Available}">
+                                    <Entry.Behaviors>
+                                        <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.EntryCommand, Source={x:Reference OrderDetailPage1}}"
                                         CommandParameter="{Binding .}"
                                         EventName="Completed" />
-                            </Entry.Behaviors>
-                        </Entry>
-                        <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" IsEnabled="{Binding Available}" Color="{StaticResource AccentRed}">
-                            <CheckBox.Behaviors>
-                                <b:EventToCommandBehavior
+                                    </Entry.Behaviors>
+                                </Entry>
+                                <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" IsEnabled="{Binding Available}" Color="{StaticResource AccentRed}">
+                                    <CheckBox.Behaviors>
+                                        <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference OrderDetailPage1}}"                                        
                                         EventName="CheckedChanged" />
-                            </CheckBox.Behaviors>
-                        </CheckBox>
-                        
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+                                    </CheckBox.Behaviors>
+                                </CheckBox>
 
-        <!--Buttons-->
-        <StackLayout Orientation="Horizontal" Padding="10">
-            <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource AccentRed}"></Button>
-            <Button Text="Done" Command="{Binding DoneCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource Primary}"/>
-        </StackLayout>
-        
-    </StackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!--Buttons-->
+                <StackLayout Orientation="Horizontal" Padding="10">
+                    <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource AccentRed}"></Button>
+                    <Button Text="Done" Command="{Binding DoneCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource Primary}"/>
+                </StackLayout>
+
+            </StackLayout>
+        </ScrollView>
+    </RefreshView>
+    
 
 </ContentPage>

@@ -34,7 +34,6 @@ namespace I4_QM_app.ViewModels
 
         public RecipeDetailViewModel()
         {
-            // TODO bug???
             Available = true;
             OrderCommand = new Command(async () => await TransformRecipeAsync(), Validate);
             DeleteCommand = new Command(async () => await DeleteRecipeAsync());
@@ -156,8 +155,11 @@ namespace I4_QM_app.ViewModels
 
                     additive.Name = item.Name;
                     additive.Available = true;
-                    OrderCommand.ChangeCanExecute();
+                    Available = true;
+
                 }
+
+                OrderCommand.ChangeCanExecute();
 
             }
             catch (Exception)

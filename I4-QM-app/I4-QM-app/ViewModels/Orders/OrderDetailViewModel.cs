@@ -36,6 +36,8 @@ namespace I4_QM_app.ViewModels
 
         public Command EntryCommand { get; }
 
+        public Command RefreshCommand { get; }
+
 
         public OrderDetailViewModel()
         {
@@ -44,6 +46,7 @@ namespace I4_QM_app.ViewModels
             CancelCommand = new Command(OnCancel);
             UpdateCommand = new Command(OnUpdate);
             EntryCommand = new Command(OnCompleteEntry);
+            RefreshCommand = new Command(async () => await LoadOrderId(OrderId));
         }
 
         private void OnUpdate()
@@ -53,7 +56,7 @@ namespace I4_QM_app.ViewModels
 
         private bool Validate()
         {
-            return !Additives.Any(i => !i.Checked);
+            return Additives.Count > 0 && !Additives.Any(i => !i.Checked);
         }
 
         private void OnCompleteEntry(object sender)
@@ -190,6 +193,8 @@ namespace I4_QM_app.ViewModels
 
         private async Task LoadOrderId(string orderId)
         {
+            IsBusy = true;
+
             try
             {
                 var order = await App.OrdersDataService.GetItemAsync(orderId);
@@ -204,9 +209,12 @@ namespace I4_QM_app.ViewModels
                 Received = order.Received;
                 Due = order.Due;
 
-                // calc
+                Additives.Clear();
+
                 foreach (var additive in order.Additives)
                 {
+                    Additives.Add(additive);
+
                     additive.Checked = false;
                     additive.Amount = Math.Round(additive.Portion * Weight * Amount * 0.01, 2, MidpointRounding.AwayFromZero);
                     additive.ActualPortion = additive.Portion;
@@ -221,6 +229,7 @@ namespace I4_QM_app.ViewModels
                     }
 
                     additive.Available = true;
+                    additive.Name = item.Name;
 
                     var fs = App.DB.GetStorage<string>("myImages");
                     LiteFileInfo<string> file = fs.FindById(additive.Id);
@@ -234,7 +243,7 @@ namespace I4_QM_app.ViewModels
                         additive.Image = ImageSource.FromFile("no_image.png");
                     }
 
-                    Additives.Add(additive);
+
                 }
 
                 OnUpdate();
@@ -243,6 +252,10 @@ namespace I4_QM_app.ViewModels
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 

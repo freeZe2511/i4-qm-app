@@ -1,16 +1,17 @@
 ﻿using I4_QM_app.ViewModels;
 using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
 
 namespace I4_QM_app.Views
 {
-    public partial class NewRecipePage : ContentPage
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class AdditivesPage : ContentPage
     {
-        NewRecipeViewModel _viewModel;
-
-        public NewRecipePage()
+        AdditivesViewModel _viewModel;
+        public AdditivesPage()
         {
             InitializeComponent();
-            BindingContext = _viewModel = new NewRecipeViewModel();
+            BindingContext = _viewModel = new AdditivesViewModel();
         }
 
         protected override void OnAppearing()

@@ -26,7 +26,7 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout Padding="10" x:DataType="model:Recipe">
-                            <Label Text="{Binding Id, StringFormat='ID: {0}'}" 
+                            <Label Text="{Binding Id, StringFormat='{0}'}" 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16"

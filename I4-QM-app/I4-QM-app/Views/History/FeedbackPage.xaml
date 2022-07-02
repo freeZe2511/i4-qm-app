@@ -1,8 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:b="http://xamarin.com/schemas/2020/toolkit"
              x:Class="I4_QM_app.Views.FeedbackPage"             
-             Title="{Binding Title}">
+             Title="{Binding Title}"
+             x:Name="FeedbackPage1">
     <!--Shell.PresentationMode="ModalAnimated"-->
 
     <ContentPage.ToolbarItems>
@@ -10,15 +12,14 @@
     </ContentPage.ToolbarItems>
     
     <ContentPage.Content>
-        <Grid Padding="15">
+        <StackLayout Padding="15">
+        <Grid Padding="15" BackgroundColor="AliceBlue">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" /> 
-                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />               
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
@@ -27,43 +28,98 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="0" Grid.Column="0" Text="Form" VerticalOptions="Center"></Label>
-            <Entry TextColor="{StaticResource Secondary}" Grid.Row="0" Grid.Column="1" Text="{Binding Rating.Form}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Start"></Entry>
+                <Entry TextColor="{StaticResource Secondary}" Grid.Row="0" Grid.Column="1" Text="{Binding Rating.Form}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="0" Grid.Column="2" Text="Color" VerticalOptions="Center"></Label>
-            <Entry TextColor="{StaticResource Secondary}" Grid.Row="0" Grid.Column="3" Text="{Binding Rating.Color}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Start"></Entry>
+                <Entry TextColor="{StaticResource Secondary}" Grid.Row="0" Grid.Column="3" Text="{Binding Rating.Color}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="1" Grid.Column="0" Text="Ridge" VerticalOptions="Center"></Label>
-            <Entry TextColor="{StaticResource Secondary}" Grid.Row="1" Grid.Column="1" Text="{Binding Rating.Ridge}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Start"></Entry>
+                <Entry TextColor="{StaticResource Secondary}" Grid.Row="1" Grid.Column="1" Text="{Binding Rating.Ridge}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="1" Grid.Column="2" Text="Surface" VerticalOptions="Center"></Label>
-            <Entry TextColor="{StaticResource Secondary}" Grid.Row="1" Grid.Column="3" Text="{Binding Rating.Surface}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Start"></Entry>
+                <Entry TextColor="{StaticResource Secondary}" Grid.Row="1" Grid.Column="3" Text="{Binding Rating.Surface}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="2" Grid.Column="0" Text="Bindings" VerticalOptions="Center"></Label>
-            <Entry TextColor="{StaticResource Secondary}" Grid.Row="2" Grid.Column="1" Text="{Binding Rating.Bindings}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Start"></Entry>
+                <Entry TextColor="{StaticResource Secondary}" Grid.Row="2" Grid.Column="1" Text="{Binding Rating.Bindings}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="2" Grid.Column="2" Text="Sprue" VerticalOptions="Center"></Label>
-            <Entry TextColor="{StaticResource Secondary}" Grid.Row="2" Grid.Column="3" Text="{Binding Rating.Sprue}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Start"></Entry>
+                <Entry TextColor="{StaticResource Secondary}" Grid.Row="2" Grid.Column="3" Text="{Binding Rating.Sprue}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="3" Grid.Column="0" Text="Drop In" VerticalOptions="Center"></Label>
-            <Entry TextColor="{StaticResource Secondary}" Grid.Row="3" Grid.Column="1" Text="{Binding Rating.DropIn}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Start"></Entry>
+                <Entry TextColor="{StaticResource Secondary}" Grid.Row="3" Grid.Column="1" Text="{Binding Rating.DropIn}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="3" Grid.Column="2" Text="Demolding" VerticalOptions="Center"></Label>
-            <Entry TextColor="{StaticResource Secondary}" Grid.Row="3" Grid.Column="3" Text="{Binding Rating.Demolding}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Start"></Entry>
+                <Entry TextColor="{StaticResource Secondary}" Grid.Row="3" Grid.Column="3" Text="{Binding Rating.Demolding}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="4" Grid.Column="0" Text="Air Inclusion" VerticalOptions="Center"></Label>
-            <Entry TextColor="{StaticResource Secondary}" Grid.Row="4" Grid.Column="1" Text="{Binding Rating.AirInclusion}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Start"></Entry>
+                <Entry TextColor="{StaticResource Secondary}" Grid.Row="4" Grid.Column="1" Text="{Binding Rating.AirInclusion}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="4" Grid.Column="2" Text="Overall" VerticalOptions="Center"></Label>
-            <Entry TextColor="{StaticResource Secondary}" Grid.Row="4" Grid.Column="3" Text="{Binding Rating.Overall}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Start"></Entry>
-            <Editor TextColor="{StaticResource Secondary}" Grid.Row="5" Grid.ColumnSpan="4" AutoSize="TextChanges" Placeholder="Feedback" Text="{Binding Rating.Feedback}"></Editor>
-            <Button Grid.Row="6" Grid.ColumnSpan="4" VerticalOptions="Center" Text="Rate" Command="{Binding SendFeedbackCommand}" BackgroundColor="{StaticResource Primary}"/>
-        </Grid>
+                <Entry TextColor="{StaticResource Secondary}" Grid.Row="4" Grid.Column="3" Text="{Binding Rating.Overall}" Keyboard="Numeric" MaxLength="1" VerticalOptions="Center" HorizontalOptions="Center">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>             
 
-        <!--<StackLayout Spacing="20" Padding="15">
-            <Entry Text="{Binding Rating.Form}" Keyboard="Numeric"></Entry>
-            <Entry Text="{Binding Rating.Color}" Keyboard="Numeric"></Entry>
-            <Entry Text="{Binding Rating.Ridge}" Keyboard="Numeric"></Entry>
-            <Entry Text="{Binding Rating.Surface}" Keyboard="Numeric"></Entry>
-            <Entry Text="{Binding Rating.Bindings}" Keyboard="Numeric"></Entry>
-            <Entry Text="{Binding Rating.Sprue}" Keyboard="Numeric"></Entry>
-            <Entry Text="{Binding Rating.DropIn}" Keyboard="Numeric"></Entry>
-            <Entry Text="{Binding Rating.Demolding}" Keyboard="Numeric"></Entry>
-            <Entry Text="{Binding Rating.AirInclusion}" Keyboard="Numeric"></Entry>
-            <Editor AutoSize="TextChanges" Placeholder="Feedback" Text="{Binding Rating.Feedback}"></Editor>
-            --><!--Submit--><!--
-            <Button VerticalOptions="Center" Text="Rate" Command="{Binding SendFeedbackCommand}" BackgroundColor="{StaticResource Primary}"/>
-
-        </StackLayout>-->
+            </Grid>
+            <Editor TextColor="{StaticResource Secondary}" AutoSize="TextChanges" Placeholder="Feedback" Text="{Binding Rating.Feedback}" MaxLength="300">
+                <Editor.Behaviors>
+                    <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                </Editor.Behaviors>
+            </Editor>
+            <StackLayout Orientation="Horizontal" Padding="10" VerticalOptions="EndAndExpand">                
+                <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource AccentRed}"></Button>
+                <Button Text="Rate" Command="{Binding SendFeedbackCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource Primary}"></Button>
+            </StackLayout>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

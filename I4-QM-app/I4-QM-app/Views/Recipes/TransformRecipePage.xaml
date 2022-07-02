@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:b="http://xamarin.com/schemas/2020/toolkit"
              x:Class="I4_QM_app.Views.Recipes.TransformRecipePage"
              Title="{Binding Title}"
-             >
+             x:Name="TransformRecipePage1">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem IconImageSource="undo48_400.png" Command="{Binding ClearCommand}"></ToolbarItem>
@@ -18,7 +19,7 @@
             <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
                 SelectionMode="None" 
-                >
+                BackgroundColor="AliceBlue">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Grid Padding="10">
@@ -56,18 +57,46 @@
                 </Grid.ColumnDefinitions>
 
                 <Label Grid.Row="0" Grid.Column="0" Text="Weight (g): " FontAttributes="Bold" VerticalOptions="Center"/>
-                <Entry Grid.Row="0" Grid.Column="1" Placeholder="Weight" Text="{Binding Weight}" Keyboard="Numeric"></Entry>
+                <Entry Grid.Row="0" Grid.Column="1" Placeholder="Weight" Text="{Binding Weight}" Keyboard="Numeric">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference TransformRecipePage1}}"
+                                        EventName="TextChanged"/>
+                    </Entry.Behaviors>
+                </Entry>
+                
                 <Label Grid.Row="1" Grid.Column="0" Text="Quantity: " FontAttributes="Bold" VerticalOptions="Center"/>
-                <Entry Grid.Row="1" Grid.Column="1" Placeholder="Amount" Text="{Binding Amount}" Keyboard="Numeric"></Entry>
+                <Entry Grid.Row="1" Grid.Column="1" Placeholder="Amount" Text="{Binding Amount}" Keyboard="Numeric">
+                    <Entry.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference TransformRecipePage1}}"
+                                        EventName="TextChanged" />
+                    </Entry.Behaviors>
+                </Entry>
+                
                 <Label Grid.Row="2" Grid.Column="0" Text="Date: " FontAttributes="Bold" VerticalOptions="Center"/>
-                <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding Date}"></DatePicker>
+                <DatePicker Grid.Row="2" Grid.Column="1" Date="{Binding Date}">
+                    <DatePicker.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference TransformRecipePage1}}"
+                                        EventName="PropertyChanged" />
+                    </DatePicker.Behaviors>
+                </DatePicker>
+                
                 <Label Grid.Row="3" Grid.Column="0" Text="Time: " FontAttributes="Bold" VerticalOptions="Center"/>
-                <TimePicker Grid.Row="3" Grid.Column="1" Time="{Binding Time}"></TimePicker>
+                <TimePicker Grid.Row="3" Grid.Column="1" Time="{Binding Time}">
+                    <TimePicker.Behaviors>
+                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference TransformRecipePage1}}"
+                                        EventName="PropertyChanged" />
+                    </TimePicker.Behaviors>
+                </TimePicker>
+                
             </Grid>
 
             <StackLayout Orientation="Horizontal" Padding="10">
-                <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource AccentRed}" Opacity="0.75"></Button>
-                <Button Text="Order" Command="{Binding OrderCommand}" HorizontalOptions="FillAndExpand"></Button>
+                <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource AccentRed}"></Button>
+                <Button Text="Order" Command="{Binding OrderCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource Primary}"></Button>
             </StackLayout>
 
         </StackLayout>

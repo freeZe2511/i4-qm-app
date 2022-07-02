@@ -1,8 +1,10 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Views;
+using LiteDB;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
@@ -20,7 +22,7 @@ namespace I4_QM_app.ViewModels
         private string userId;
         private int amount;
         private int weight;
-        private List<Additive> additives;
+        private ObservableCollection<Additive> additives;
         private Status status;
         private DateTime received;
         private DateTime due;
@@ -28,20 +30,51 @@ namespace I4_QM_app.ViewModels
 
         public Command DoneCommand { get; }
 
+        public Command CancelCommand { get; }
+
+        public Command UpdateCommand { get; }
+
+        public Command EntryCommand { get; }
+
+        public Command RefreshCommand { get; }
+
 
         public OrderDetailViewModel()
         {
-            // execute/ canexecute? => canexecute if all additives are checked?
+            additives = new ObservableCollection<Additive>();
             DoneCommand = new Command(OnDoneClicked, Validate);
-            // TODO done btn enable/disable
-            this.PropertyChanged +=
-                (_, __) => DoneCommand.ChangeCanExecute();
+            CancelCommand = new Command(OnCancel);
+            UpdateCommand = new Command(OnUpdate);
+            EntryCommand = new Command(OnCompleteEntry);
+            RefreshCommand = new Command(async () => await LoadOrderId(OrderId));
         }
+
+        private void OnUpdate()
+        {
+            DoneCommand.ChangeCanExecute();
+        }
+
         private bool Validate()
         {
-            //TODO check if all additives are done            
-            //return Additives.TrueForAll(a => a.Checked == true);
-            return true;
+            return Additives.Count > 0 && !Additives.Any(i => !i.Checked);
+        }
+
+        private void OnCompleteEntry(object sender)
+        {
+            if (sender.GetType() == typeof(Additive))
+            {
+                var newItem = (Additive)sender;
+                newItem.ActualPortion = Math.Round(newItem.Amount / (Weight * Amount * 0.01), 2);
+                var oldItem = Additives.FirstOrDefault(i => i.Id == newItem.Id);
+                var oldIndex = Additives.IndexOf(oldItem);
+                Additives[oldIndex] = newItem;
+            }
+        }
+
+        private async void OnCancel()
+        {
+            // This will pop the current page off the navigation stack
+            await Shell.Current.GoToAsync("..");
         }
 
         public string OrderId
@@ -71,6 +104,7 @@ namespace I4_QM_app.ViewModels
             get => userId;
             set => SetProperty(ref userId, value);
         }
+
         public int Amount
         {
             get => amount;
@@ -82,21 +116,25 @@ namespace I4_QM_app.ViewModels
             get => weight;
             set => SetProperty(ref weight, value);
         }
-        public List<Additive> Additives
+
+        public ObservableCollection<Additive> Additives
         {
             get => additives;
             set => SetProperty(ref additives, value);
         }
+
         public Status Status
         {
             get => status;
             set => SetProperty(ref status, value);
         }
+
         public DateTime Received
         {
             get => received;
             set => SetProperty(ref received, value);
         }
+
         public DateTime Due
         {
             get => due;
@@ -111,8 +149,11 @@ namespace I4_QM_app.ViewModels
 
         private async void OnDoneClicked()
         {
-            // check if all additives are checked (mock for enabled/disabled done btn)
-            if (!Additives.TrueForAll(a => a.Checked == true)) return;
+            // code-side check if all additives are checked
+            if (Additives.Any(a => !a.Checked))
+            {
+                return;
+            }
 
             bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Done?", "Yes", "No");
 
@@ -121,10 +162,11 @@ namespace I4_QM_app.ViewModels
                 //calc new portions (percentages) -> should be dynamic with behavoir maybe TODO
                 foreach (var additive in Additives)
                 {
-                    additive.ActualPortion = (float)additive.Amount / (Weight * Amount / 100);
+                    additive.ActualPortion = Math.Round(additive.Amount / (Weight * Amount * 0.01), 2);
+                    additive.Image = null;
                 }
 
-                // update         
+                // update
                 Order.Status = Status.mixed;
                 Order.Done = DateTime.Now;
                 Order.UserId = UserId;
@@ -137,7 +179,7 @@ namespace I4_QM_app.ViewModels
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
                 };
 
-                string res = JsonSerializer.Serialize<Order>(Order, options);
+                string res = System.Text.Json.JsonSerializer.Serialize<Order>(Order, options);
 
                 await App.ConnectionService.HandlePublishMessage("prod/orders/mixed", res);
 
@@ -151,71 +193,73 @@ namespace I4_QM_app.ViewModels
 
         private async Task LoadOrderId(string orderId)
         {
+            IsBusy = true;
+
             try
             {
                 var order = await App.OrdersDataService.GetItemAsync(orderId);
+                var additives = await App.AdditivesDataService.GetItemsAsync();
+
                 Order = order;
                 Id = order.Id;
                 UserId = Preferences.Get("UserID", string.Empty);
                 Amount = order.Amount;
                 Weight = order.Weight;
-                Additives = order.Additives;
                 Status = order.Status;
                 Received = order.Received;
                 Due = order.Due;
 
-                // calc
-                foreach (var additive in Additives)
+                Additives.Clear();
+
+                foreach (var additive in order.Additives)
                 {
-                    // TODO
+                    Additives.Add(additive);
+
                     additive.Checked = false;
-                    additive.Amount = (int)(additive.Portion * Weight * Amount / 100);
-                    //additive.Image = App.AdditiveDataSource. ...
+                    additive.Amount = Math.Round(additive.Portion * Weight * Amount * 0.01, 2, MidpointRounding.AwayFromZero);
+                    additive.ActualPortion = additive.Portion;
+
+                    Additive item = additives.FirstOrDefault(x => x.Id == additive.Id);
+
+                    if (item == null)
+                    {
+                        additive.Available = false;
+                        additive.Image = ImageSource.FromFile("no_image.png");
+                        continue;
+                    }
+
+                    additive.Available = true;
+                    additive.Name = item.Name;
+
+                    var fs = App.DB.GetStorage<string>("myImages");
+                    LiteFileInfo<string> file = fs.FindById(additive.Id);
+
+                    if (file != null)
+                    {
+                        additive.Image = ImageSource.FromStream(() => file.OpenRead());
+                    }
+                    else
+                    {
+                        additive.Image = ImageSource.FromFile("no_image.png");
+                    }
+
+
                 }
 
+                OnUpdate();
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Debug.WriteLine("Failed to Load Item");
+                Debug.WriteLine(ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
 
     }
-
-    // maybe todo in later iteration (fynamic change of percentage = portion)
-    // https://docs.microsoft.com/en-us/xamarin/xamarin-forms/app-fundamentals/behaviors/creating
-
-    //public class NumericValidationBehavior : Behavior<Entry>
-    //{
-    //    public static readonly BindableProperty Portion = BindableProperty.Create("Portion", typeof(int),
-    //                                    typeof(NumericValidationBehavior), null);
-
-    //    protected override void OnAttachedTo(Entry entry)
-    //    {
-    //        entry.TextChanged += OnEntryTextChanged;
-    //        base.OnAttachedTo(entry);
-    //    }
-
-    //    protected override void OnDetachingFrom(Entry entry)
-    //    {
-    //        entry.TextChanged -= OnEntryTextChanged;
-    //        base.OnDetachingFrom(entry);
-    //    }
-
-    //    void OnEntryTextChanged(object sender, TextChangedEventArgs args)
-    //    {
-    //        double result;
-    //        //bool isValid = double.TryParse(args.NewTextValue, out result);
-    //        //((Entry)sender).TextColor = isValid ? Color.Default : Color.Red;
-    //        //Console.WriteLine(result);
-
-    //        //calc new percentage
-    //        Console.WriteLine(Portion.ReturnType);
-
-
-    //    }
-    //}
 
 }
 

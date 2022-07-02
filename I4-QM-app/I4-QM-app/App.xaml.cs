@@ -72,6 +72,5 @@ namespace I4_QM_app
         public static INotificationService NotificationService => DependencyService.Get<INotificationService>();
 
         public static IConnectionService ConnectionService => DependencyService.Get<IConnectionService>();
-
     }
 }

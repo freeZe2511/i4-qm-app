@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.HistoryDetailPage"               
-             Title="{Binding Id}">
+             Title="Order">
 
     <!--del () icon-->
     <ContentPage.ToolbarItems>
@@ -13,10 +13,10 @@
     <StackLayout Spacing="20" Padding="15">
         
         <Frame CornerRadius="10" BackgroundColor="#c0c9cf" Padding="5">
-            <Label Text="{Binding Id, StringFormat='#{0}'}" FontSize="Title" FontAttributes="Bold" HorizontalTextAlignment="End" TextColor="White"/>
+            <Label Text="{Binding Id, StringFormat='{0}'}" FontSize="Subtitle" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="White"/>
         </Frame>
 
-        <Frame CornerRadius="10" Padding="20, 7, 20, 7" Margin="0, -10, 0, -15" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
+        <Frame CornerRadius="10" Padding="15, 7, 15, 7" Margin="0, -10, 0, -15" HorizontalOptions="Center" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
                             BorderColor="{StaticResource Secondary}">
             <Label x:Name="status" Text="{Binding Status}"                                                
                             TextColor="White"></Label>
@@ -37,11 +37,11 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Grid.Column="0" Text="Received" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Column="1" Text="{Binding Received}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Column="1" Text="{Binding Received, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small"/>
             <Label Grid.Row="1" Grid.Column="0" Text="Due" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Row="1" Grid.Column="1" x:Name="due" Text="{Binding Due}" TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Due, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small"/>
             <Label Grid.Row="2" Grid.Column="0" Text="Done" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Row="2" Grid.Column="1" Text="{Binding Done}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Row="2" Grid.Column="1" Text="{Binding Done, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small"/>
         </Grid>
         
 
@@ -58,9 +58,9 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Text="Weight" HorizontalOptions="Start" FontSize="Small"/>
-            <Label Grid.Column="1" Text="{Binding Weight, StringFormat='{0} g'}" HorizontalOptions="End" FontSize="Small"/>
-            <Label Grid.Row="1" Grid.Column="0" Text="Qty" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Column="0" Text="Weight (g)" HorizontalOptions="Start" FontSize="Small"/>
+            <Label Grid.Column="1" Text="{Binding Weight}" HorizontalOptions="End" FontSize="Small"/>
+            <Label Grid.Row="1" Grid.Column="0" Text="Quantity" HorizontalOptions="Start" FontSize="Small"/>
             <Label Grid.Row="1" Grid.Column="1" Text="{Binding Amount}" HorizontalOptions="End" FontSize="Small"/>
         </Grid>
 
@@ -83,16 +83,17 @@
 
         <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
-                SelectionMode="None">
+                SelectionMode="None" BackgroundColor="AliceBlue">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
+                    <StackLayout>
                     <Grid Padding="10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="4*" />
+                            <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
                             <ColumnDefinition Width="1*" />
@@ -100,55 +101,74 @@
                         </Grid.ColumnDefinitions>                        
                         <Label Grid.Column="0" 
                        Text="{Binding Name}"
-                       FontAttributes="Bold" />
+                       FontAttributes="Bold" HorizontalOptions="Start"/>
                         <Label
                        Grid.Column="1"
                        Text="{Binding Amount, StringFormat='{0} g'}"
                        FontAttributes="Italic"
-                       VerticalOptions="Center" />
+                       VerticalOptions="Center" HorizontalOptions="Center"/>
                         <Label
                        Grid.Column="2"
                        Text="{Binding ActualPortion, StringFormat='{0} %'}"
                        FontAttributes="Italic"
-                       VerticalOptions="Center" />
+                       VerticalOptions="Center" HorizontalOptions="Center"/>
                         <Label
                        Grid.Column="3"
                        Text="{Binding Portion, StringFormat='({0} %)'}"
                        FontAttributes="Italic"
-                       VerticalOptions="Center" />
+                       VerticalOptions="Center" HorizontalOptions="Center"/>
 
                     </Grid>
+                        <BoxView   HorizontalOptions="Fill"
+                   HeightRequest="1" 
+                   Color="LightGray" Margin="10, 0, 10, 0"/>
+                    </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Grid IsVisible="{Binding FeedbackEnabled, Converter={StaticResource InvertedBoolConverter}}">
+        <BoxView   HorizontalOptions="Fill"
+                   HeightRequest="1" 
+                   Color="LightGray"  IsVisible="{Binding FeedbackEnabled, Converter={StaticResource InvertedBoolConverter}}"/>
+
+        <Grid IsVisible="{Binding FeedbackEnabled, Converter={StaticResource InvertedBoolConverter}}" Padding="20, 0, 20, 0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
 
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-               
-
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Rating.Form, StringFormat='Form: {0}'}"/>
-            <Label Grid.Row="0" Grid.Column="1" Text="{Binding Rating.Color, StringFormat='Color: {0}'}"/>
-            <Label Grid.Row="0" Grid.Column="2" Text="{Binding Rating.Ridge, StringFormat='Ridge: {0}'}" />
-            <Label Grid.Row="0" Grid.Column="3" Text="{Binding Rating.Surface, StringFormat='Surface: {0}'}"/>
-            <Label Grid.Row="0" Grid.Column="4" Text="{Binding Rating.Bindings, StringFormat='Bindings: {0}'}"/>
-            <Label Grid.Row="1" Grid.Column="0" Text="{Binding Rating.Sprue, StringFormat='Sprue: {0}'}"/>
-            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Rating.DropIn, StringFormat='Drop In: {0}'}"/>
-            <Label Grid.Row="1" Grid.Column="2" Text="{Binding Rating.Demolding, StringFormat='Demolding: {0}'}"/>
-            <Label Grid.Row="1" Grid.Column="3" Text="{Binding Rating.AirInclusion, StringFormat='Air Inclusion: {0}'}"/>
-            <Label Grid.Row="1" Grid.Column="4" Text="{Binding Rating.Overall, StringFormat='Overall: {0}'}"/>
-            <Label Grid.Row="2" Grid.ColumnSpan="5" Text="{Binding Rating.Feedback, StringFormat='Feedback: {0}'}"/>
+            
+            <Label Grid.Row="0" Grid.Column="0" Text="Form" HorizontalOptions="Start"/>
+            <Label Grid.Row="0" Grid.Column="1" Text="{Binding Rating.Form}" HorizontalOptions="Center"/>
+            <Label Grid.Row="0" Grid.Column="2" Text="Color" HorizontalOptions="Start"/>
+            <Label Grid.Row="0" Grid.Column="3" Text="{Binding Rating.Color}" HorizontalOptions="Center"/>
+            <Label Grid.Row="1" Grid.Column="0" Text="Ridge" HorizontalOptions="Start"/>
+            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Rating.Ridge}" HorizontalOptions="Center"/>
+            <Label Grid.Row="1" Grid.Column="2" Text="Surface" HorizontalOptions="Start"/>
+            <Label Grid.Row="1" Grid.Column="3" Text="{Binding Rating.Surface}" HorizontalOptions="Center"/>
+            <Label Grid.Row="2" Grid.Column="0" Text="Bindings" HorizontalOptions="Start"/>
+            <Label Grid.Row="2" Grid.Column="1" Text="{Binding Rating.Bindings}" HorizontalOptions="Center"/>
+            <Label Grid.Row="2" Grid.Column="2" Text="Sprue" HorizontalOptions="Start"/>
+            <Label Grid.Row="2" Grid.Column="3" Text="{Binding Rating.Sprue}" HorizontalOptions="Center"/>
+            <Label Grid.Row="3" Grid.Column="0" Text="Drop In" HorizontalOptions="Start"/>
+            <Label Grid.Row="3" Grid.Column="1" Text="{Binding Rating.DropIn}" HorizontalOptions="Center"/>
+            <Label Grid.Row="3" Grid.Column="2" Text="Demolding" HorizontalOptions="Start"/>
+            <Label Grid.Row="3" Grid.Column="3" Text="{Binding Rating.Demolding}" HorizontalOptions="Center"/>
+            <Label Grid.Row="4" Grid.Column="0" Text="Air Inclusion" HorizontalOptions="Start"/>
+            <Label Grid.Row="4" Grid.Column="1" Text="{Binding Rating.AirInclusion}" HorizontalOptions="Center"/>
+            <Label Grid.Row="4" Grid.Column="2" Text="Overall" HorizontalOptions="Start"/>
+            <Label Grid.Row="4" Grid.Column="3" Text="{Binding Rating.Overall}" HorizontalOptions="Center"/>
+            <Label Grid.Row="5" Grid.ColumnSpan="4" Text="{Binding Rating.Feedback, StringFormat='{0}'}" FontAttributes="Italic"/>
         </Grid>             
 
         <!--Submit-->

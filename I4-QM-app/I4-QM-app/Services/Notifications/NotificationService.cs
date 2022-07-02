@@ -28,9 +28,10 @@ namespace I4_QM_app.Services
 
         public async Task<bool> ShowSimpleDisplayAlert(string title, string message, string accept, string cancel)
         {
-            return await Shell.Current.DisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
+            return await Shell.Current.DisplayAlert(title, message, accept, cancel);
         }
 
+        // TODO
         private void LoadPageFromNotification(NotificationEventArgs e)
         {
             var data = e.Request.ReturningData;

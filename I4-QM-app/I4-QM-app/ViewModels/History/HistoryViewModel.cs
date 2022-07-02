@@ -124,9 +124,9 @@ namespace I4_QM_app.ViewModels
         async void OnOrderSelected(Order item)
         {
             if (item == null)
+            {
                 return;
-
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
+            }
 
             // This will push the ItemDetailPage onto the navigation stack
             await Shell.Current.GoToAsync($"{nameof(HistoryDetailPage)}?{nameof(HistoryDetailViewModel.OrderId)}={item.Id}");

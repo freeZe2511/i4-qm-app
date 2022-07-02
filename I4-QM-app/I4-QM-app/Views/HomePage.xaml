@@ -49,12 +49,12 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
                     <Label Grid.Column="0" Text="Next Order" HorizontalOptions="Start" FontSize="Small"/>
-                    <Label Grid.Column="1" Text="{Binding NextOrder, StringFormat='{0:MM/dd/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small" x:Name="next"
+                    <Label Grid.Column="1" Text="{Binding NextOrder, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small" x:Name="next"
                            TextColor="{Binding Source={x:Reference next},Path=Text,Converter={StaticResource timeColorConverter}}"/>
                     <Label Grid.Row="1" Grid.Column="0" Text="Latest Order" HorizontalOptions="Start" FontSize="Small"/>
-                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding LatestOrder, StringFormat='{0:MM/dd/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small"/>
+                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding LatestOrder, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small"/>
                     <Label Grid.Row="2" Grid.Column="0" Text="Oldest Order" HorizontalOptions="Start" FontSize="Small"/>
-                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding OldestOrder, StringFormat='{0:MM/dd/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small"/>
+                    <Label Grid.Row="2" Grid.Column="1" Text="{Binding OldestOrder, StringFormat='{0:dd/MM/yyyy HH:mm:ss}'}" HorizontalOptions="End" FontSize="Small"/>
                 </Grid>
 
                 <BoxView   HorizontalOptions="Fill"

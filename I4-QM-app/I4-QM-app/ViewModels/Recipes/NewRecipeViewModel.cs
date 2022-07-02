@@ -139,6 +139,8 @@ namespace I4_QM_app.ViewModels
 
             if (answer)
             {
+                Additives.ToList().ForEach(i => i.Image = null);
+
                 Recipe newRecipe = new Recipe()
                 {
                     Id = Guid.NewGuid().ToString(),

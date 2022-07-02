@@ -84,6 +84,7 @@
                 SelectionMode="None" Margin="20, 0, 20, 0" BackgroundColor="AliceBlue">
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
+                            <StackLayout>
                             <Grid Padding="0, 20, 0, 0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="*" />
@@ -130,8 +131,9 @@
                                         EventName="CheckedChanged" />
                                     </CheckBox.Behaviors>
                                 </CheckBox>
-
                             </Grid>
+                            <BoxView HeightRequest="1" Color="LightGray" Margin ="10, 0, 10, 0"/>
+                            </StackLayout>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

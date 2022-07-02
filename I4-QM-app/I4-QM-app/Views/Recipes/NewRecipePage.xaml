@@ -34,7 +34,7 @@
                 <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
                 SelectionMode="None" 
-                BackgroundColor="AliceBlue" Margin="5, 10, 5, 10">
+                BackgroundColor="AliceBlue" Margin="15, 10, 15, 10">
                         <CollectionView.ItemTemplate>
 
                         <DataTemplate>

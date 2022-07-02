@@ -109,7 +109,13 @@
                 </Entry>             
 
             </Grid>
-            <Editor TextColor="{StaticResource Secondary}" AutoSize="TextChanges" Placeholder="Feedback" Text="{Binding Rating.Feedback}" MaxLength="300"></Editor>
+            <Editor TextColor="{StaticResource Secondary}" AutoSize="TextChanges" Placeholder="Feedback" Text="{Binding Rating.Feedback}" MaxLength="300">
+                <Editor.Behaviors>
+                    <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
+                                        EventName="TextChanged"/>
+                </Editor.Behaviors>
+            </Editor>
             <StackLayout Orientation="Horizontal" Padding="10" VerticalOptions="EndAndExpand">                
                 <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource AccentRed}"></Button>
                 <Button Text="Rate" Command="{Binding SendFeedbackCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource Primary}"></Button>

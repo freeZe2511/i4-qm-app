@@ -5,10 +5,18 @@ namespace I4_QM_app.Views
 {
     public partial class NewRecipePage : ContentPage
     {
+        NewRecipeViewModel _viewModel;
+
         public NewRecipePage()
         {
             InitializeComponent();
-            BindingContext = new NewRecipeViewModel();
+            BindingContext = _viewModel = new NewRecipeViewModel();
+        }
+
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            _viewModel.OnAppearing();
         }
     }
 }

@@ -62,7 +62,7 @@ namespace I4_QM_app.Services
         private async void SyncDataAsync()
         {
             await HandlePublishMessage("backup/orders/sync", string.Empty);
-            await HandlePublishMessage("backup/addditives/sync", string.Empty);
+            await HandlePublishMessage("backup/additives/sync", string.Empty);
         }
 
         public bool IsConnected { get => managedMqttClient.IsConnected; }

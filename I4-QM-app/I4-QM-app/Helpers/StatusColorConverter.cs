@@ -4,29 +4,53 @@ using Xamarin.Forms;
 
 namespace I4_QM_app.Helpers
 {
+    /// <summary>
+    /// Status-Color-Conversion.
+    /// </summary>
     public class StatusColorConverter : IValueConverter
     {
-
+        /// <summary>
+        /// Converts a status into a color.
+        /// </summary>
+        /// <param name="value">Status.</param>
+        /// <param name="targetType">targetType.</param>
+        /// <param name="parameter">parameter.</param>
+        /// <param name="culture">culture.</param>
+        /// <returns>Associated Color.</returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             switch (value)
             {
-                case "open":
+                case "Open":
                     return TryGetColor("AccentRed", Color.Red);
-                case "mixed":
+                case "Mixed":
                     return TryGetColor("AccentYellow", Color.Yellow);
-                case "rated":
+                case "Rated":
                     return TryGetColor("Primary", Color.LightGreen);
                 default: return Color.Black;
             }
-
         }
 
+        /// <summary>
+        /// Not implemented, only for interface.
+        /// </summary>
+        /// <param name="value">value.</param>
+        /// <param name="targetType">targetType.</param>
+        /// <param name="parameter">parameter.</param>
+        /// <param name="culture">culture.</param>
+        /// <returns>Not Implemented Exception.</returns>
+        /// <exception cref="NotImplementedException">NotImplementedException.</exception>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Get color with key from ressources.
+        /// </summary>
+        /// <param name="key">Color key.</param>
+        /// <param name="fallback">Fallback color.</param>
+        /// <returns>Either found color or fallback.</returns>
         internal static Color TryGetColor(string key, Color fallback)
         {
             Application.Current.Resources.TryGetValue(key, out var color);

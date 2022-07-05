@@ -167,7 +167,7 @@ namespace I4_QM_app.ViewModels
                 }
 
                 // update
-                Order.Status = Status.mixed;
+                Order.Status = Status.Mixed;
                 Order.Done = DateTime.Now;
                 Order.UserId = UserId;
 

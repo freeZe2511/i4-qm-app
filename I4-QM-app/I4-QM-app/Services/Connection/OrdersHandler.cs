@@ -33,7 +33,7 @@ namespace I4_QM_app.Services.Connection
 
                 if (order.Weight > 0 && order.Amount > 0 && order.Additives.Count > 0 && order.Due > DateTime.Now && await App.OrdersDataService.GetItemAsync(order.Id) == null)
                 {
-                    order.Status = Status.open;
+                    order.Status = Status.Open;
                     order.Received = DateTime.Now;
 
                     var additives = await App.AdditivesDataService.GetItemsAsync();

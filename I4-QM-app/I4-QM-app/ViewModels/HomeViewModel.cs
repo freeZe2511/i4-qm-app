@@ -103,11 +103,11 @@ namespace I4_QM_app.ViewModels
 
                 UserId = Preferences.Get("UserID", string.Empty);
 
-                OpenOrdersCount = orders.Count(x => x.Status == Status.open);
-                MixedOrdersCount = orders.Count(x => x.Status == Status.mixed);
-                RatedOrdersCount = orders.Count(x => x.Status == Status.rated);
+                OpenOrdersCount = orders.Count(x => x.Status == Status.Open);
+                MixedOrdersCount = orders.Count(x => x.Status == Status.Mixed);
+                RatedOrdersCount = orders.Count(x => x.Status == Status.Rated);
 
-                var openOrders = orders.Where(x => x.Status == Status.open);
+                var openOrders = orders.Where(x => x.Status == Status.Open);
                 NextOrder = openOrders.Any() ? openOrders.Min(x => x.Due) : DateTime.MinValue;
                 LatestOrder = openOrders.Any() ? openOrders.Max(x => x.Received) : DateTime.MinValue;
                 OldestOrder = openOrders.Any() ? openOrders.Min(x => x.Received) : DateTime.MinValue;

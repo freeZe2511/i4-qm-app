@@ -157,7 +157,7 @@ namespace I4_QM_app.ViewModels.Recipes
                     Amount = Amount,
                     Weight = Weight,
                     Additives = Additives,
-                    Status = Status.open,
+                    Status = Status.Open,
                     Received = DateTime.Now,
                     Due = Date.Date.Add(Time),
                 };

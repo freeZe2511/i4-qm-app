@@ -105,7 +105,7 @@ namespace I4_QM_app.ViewModels
             if (answer)
             {
                 // update                
-                Order.Status = Status.rated;
+                Order.Status = Status.Rated;
                 Order.Rating = Rating;
                 await App.OrdersDataService.UpdateItemAsync(Order);
 

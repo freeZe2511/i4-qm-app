@@ -139,7 +139,7 @@ namespace I4_QM_app.ViewModels
                 Due = order.Due;
                 Done = order.Done;
                 Rating = order.Rating;
-                FeedbackEnabled = order.Status == Status.mixed;
+                FeedbackEnabled = order.Status == Status.Mixed;
 
             }
             catch (Exception)

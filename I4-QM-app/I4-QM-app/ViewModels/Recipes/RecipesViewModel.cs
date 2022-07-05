@@ -87,7 +87,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 Recipes.Clear();
-                var recipes = await App.RecipesDataService.GetItemsAsync(true);
+                var recipes = await App.RecipesDataService.GetItemsAsync();
 
                 foreach (var recipe in recipes)
                 {

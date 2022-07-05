@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace I4_QM_app.Services
 {
+    /// <summary>
+    /// Implementation of IConnectionService for MQTT Connection.
+    /// </summary>
     public class ConnectionService : IConnectionService
     {
         private static string serverURL = "broker.hivemq.com";
@@ -18,6 +21,9 @@ namespace I4_QM_app.Services
         private readonly IMessageHandler ordersHandler;
         private readonly IMessageHandler additivesHandler;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConnectionService"/> class.
+        /// </summary>
         public ConnectionService()
         {
             managedMqttClient = new MqttFactory().CreateManagedMqttClient();
@@ -25,6 +31,15 @@ namespace I4_QM_app.Services
             additivesHandler = new AdditivesHandler();
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the mqtt client is connected.
+        /// </summary>
+        public bool IsConnected { get => managedMqttClient.IsConnected; }
+
+        /// <summary>
+        /// Connect MQTT Client to broker.
+        /// </summary>
+        /// <returns>Task.</returns>
         public async Task ConnectClient()
         {
             var mqttClientOptions = new MqttClientOptionsBuilder()
@@ -51,42 +66,18 @@ namespace I4_QM_app.Services
             await managedMqttClient.SubscribeAsync(topics);
             await managedMqttClient.StartAsync(managedMqttClientOptions);
 
-            SyncDataAsync();
-
             managedMqttClient.ApplicationMessageReceivedAsync += HandleReceivedMessage;
 
+            await SyncDataAsync();
+
             SpinWait.SpinUntil(() => managedMqttClient.PendingApplicationMessagesCount == 0, 10000);
-
         }
 
-        private async void SyncDataAsync()
-        {
-            await HandlePublishMessage("backup/orders/sync", string.Empty);
-            await HandlePublishMessage("backup/additives/sync", string.Empty);
-        }
-
-        public bool IsConnected { get => managedMqttClient.IsConnected; }
-
-        public async void ToggleMqttClient()
-        {
-            //    Console.WriteLine(managedMqttClient.IsConnected);
-            //    Console.WriteLine(IsConnected);
-
-            //    if (managedMqttClient.IsConnected)
-            //    {
-            //        await managedMqttClient.StopAsync();
-            //    }
-            //    else
-            //    {
-            //        
-            //    }
-        }
-
-        public void UpdateBrokerURL(string newURL)
-        {
-            serverURL = newURL;
-        }
-
+        /// <summary>
+        /// Handler for received mqtt messages.
+        /// </summary>
+        /// <param name="eventArgs">Event args.</param>
+        /// <returns>Task.</returns>
         public async Task<Task> HandleReceivedMessage(object eventArgs)
         {
             var message = ((MqttApplicationMessageReceivedEventArgs)eventArgs).ApplicationMessage;
@@ -114,11 +105,25 @@ namespace I4_QM_app.Services
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// Handler to publish messages to broker.
+        /// </summary>
+        /// <param name="topic">Topic.</param>
+        /// <param name="message">Message.</param>
+        /// <returns>Task.</returns>
         public async Task HandlePublishMessage(string topic, string message)
         {
             await managedMqttClient.EnqueueAsync(baseTopicURL + topic, message, MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce);
         }
 
+        /// <summary>
+        /// Initial MQTT message to sync data from broker.
+        /// </summary>
+        /// <returns>Task.</returns>
+        private async Task SyncDataAsync()
+        {
+            await HandlePublishMessage("backup/orders/sync", string.Empty);
+            await HandlePublishMessage("backup/additives/sync", string.Empty);
+        }
     }
-
 }

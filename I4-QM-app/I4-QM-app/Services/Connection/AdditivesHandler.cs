@@ -12,8 +12,16 @@ using System.Threading.Tasks;
 
 namespace I4_QM_app.Services.Connection
 {
+    /// <summary>
+    /// Implementation of IMessageHandler for Additives.
+    /// </summary>
     public class AdditivesHandler : IMessageHandler
     {
+        /// <summary>
+        /// Handles add topic/route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <returns>Task.</returns>
         public async Task HandleAddRoute(MqttApplicationMessage message)
         {
             Console.WriteLine($"+ Add Additives");
@@ -36,7 +44,7 @@ namespace I4_QM_app.Services.Connection
 
                 var fs = App.DB.GetStorage<string>("myImages");
 
-                if (!String.IsNullOrEmpty(additive.ImageBase64))
+                if (!string.IsNullOrEmpty(additive.ImageBase64))
                 {
                     try
                     {
@@ -45,8 +53,8 @@ namespace I4_QM_app.Services.Connection
                     catch (Exception ex)
                     {
                         Debug.WriteLine("Failed to save image");
+                        Debug.WriteLine(ex.Message);
                     }
-
                 }
 
                 additive.ImageBase64 = null;
@@ -59,9 +67,13 @@ namespace I4_QM_app.Services.Connection
             {
                 App.NotificationService.ShowSimplePushNotification(1, additivesCount + " Additive(s) added", "Update Additives", 2, string.Empty);
             }
-
         }
 
+        /// <summary>
+        /// Handles delete topic/route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <returns>Task.</returns>
         public async Task HandleDelRoute(MqttApplicationMessage message)
         {
             string delAdditives = Encoding.UTF8.GetString(message.Payload);
@@ -83,6 +95,11 @@ namespace I4_QM_app.Services.Connection
             }
         }
 
+        /// <summary>
+        /// Handles get topic/route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <returns>Task.</returns>
         public async Task HandleGetRoute(MqttApplicationMessage message)
         {
             var getAdditives = await App.AdditivesDataService.GetItemsAsync();
@@ -96,6 +113,12 @@ namespace I4_QM_app.Services.Connection
             await App.ConnectionService.HandlePublishMessage("backup/additives", additivesList);
         }
 
+        /// <summary>
+        /// Handler to redirect to specific method per route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <param name="baseTopicURL">mqtt base url.</param>
+        /// <returns>Task.</returns>
         public async Task HandleRoutes(MqttApplicationMessage message, string baseTopicURL)
         {
             var topic = message.Topic;
@@ -122,11 +145,15 @@ namespace I4_QM_app.Services.Connection
             }
         }
 
+        /// <summary>
+        /// Handles update topic/route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <returns>Task.</returns>
         public async Task HandleUpdateRoute(MqttApplicationMessage message)
         {
             await App.AdditivesDataService.DeleteAllItemsAsync();
             await HandleAddRoute(message);
         }
-
     }
 }

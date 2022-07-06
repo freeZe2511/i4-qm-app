@@ -8,18 +8,14 @@ using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
 {
+    /// <summary>
+    /// ViewModel for AdditivesListPage.
+    /// </summary>
     public class AdditivesViewModel : BaseViewModel
     {
-        public SortableObservableCollection<Additive> Additives { get; }
-
-        public Command LoadAdditivesCommand { get; }
-
-        public Command DisableCommand { get; }
-
-        public Command SortByCommand { get; }
-
-        public bool Descending { get; set; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AdditivesViewModel"/> class.
+        /// </summary>
         public AdditivesViewModel()
         {
             Title = "Additives";
@@ -34,11 +30,18 @@ namespace I4_QM_app.ViewModels
                     arg = arg.Trim();
 
                     // works
-                    if (arg == "Id") await SortBy(i => i.Id);
-                    if (arg == "Name") await SortBy(i => i.Name);
+                    if (arg == "Id")
+                    {
+                        await SortBy(i => i.Id);
+                    }
+
+                    if (arg == "Name")
+                    {
+                        await SortBy(i => i.Name);
+                    }
 
                     // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
-                    // only works with id?! Specified cast is not valid
+                    // only works with id?! "Specified cast is not valid"
                     //if (typeof(Order).GetProperty(arg) != null)
                     //{
                     //    ParameterExpression parameter = Expression.Parameter(typeof(Order), "i");
@@ -51,24 +54,54 @@ namespace I4_QM_app.ViewModels
                     //}
 
                     // https://stackoverflow.com/questions/10655761/convert-string-into-func
-                    // compiler error
+                    // "compiler error"
                     //var str = "i => i." + arg;
                     //Console.WriteLine(str);
                     //var func = await CSharpScript.EvaluateAsync<Func<Order, object>>(str);
                     //await SortBy(func);
-
-
                 });
 
             DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
         }
 
+        /// <summary>
+        /// Gets Additives Collection (sortable).
+        /// </summary>
+        public SortableObservableCollection<Additive> Additives { get; }
+
+        /// <summary>
+        /// Gets command to load additives from db.
+        /// </summary>
+        public Command LoadAdditivesCommand { get; }
+
+        /// <summary>
+        /// Gets command to disable.
+        /// </summary>
+        public Command DisableCommand { get; }
+
+        /// <summary>
+        /// Gets command to sort collection.
+        /// </summary>
+        public Command SortByCommand { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether collection is sorted descending or ascending.
+        /// </summary>
+        public bool Descending { get; set; }
+
+        /// <summary>
+        /// Sets IsBusy when onAppearing.
+        /// </summary>
         public void OnAppearing()
         {
             IsBusy = true;
-            //SelectedOrder = null;
         }
 
+        /// <summary>
+        /// Sort collection from predicate.
+        /// </summary>
+        /// <param name="predicate">Predicate.</param>
+        /// <returns>Task.</returns>
         private async Task SortBy(Func<Additive, object> predicate)
         {
             Additives.SortingSelector = predicate;
@@ -77,6 +110,10 @@ namespace I4_QM_app.ViewModels
             await ExecuteLoadAdditivesCommand();
         }
 
+        /// <summary>
+        /// Load additives from db.
+        /// </summary>
+        /// <returns>Task.</returns>
         private async Task ExecuteLoadAdditivesCommand()
         {
             IsBusy = true;
@@ -101,10 +138,7 @@ namespace I4_QM_app.ViewModels
                     {
                         additive.Image = ImageSource.FromFile("no_image.png");
                     }
-
                 }
-
-
             }
             catch (Exception ex)
             {

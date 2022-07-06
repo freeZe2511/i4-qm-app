@@ -4,10 +4,14 @@ using System;
 using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
 {
+    /// <summary>
+    /// ViewModel for Feedback Page.
+    /// </summary>
     [QueryProperty(nameof(OrderId), nameof(OrderId))]
     public class FeedbackViewModel : BaseViewModel
     {
@@ -15,59 +19,52 @@ namespace I4_QM_app.ViewModels
         private string orderId;
         private Rating rating;
 
-        public Command SendFeedbackCommand { get; }
-
-        public Command ResetFeedbackCommand { get; }
-
-        public Command CancelCommand { get; }
-
-        public Command UpdateCommand { get; }
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FeedbackViewModel"/> class.
+        /// </summary>
         public FeedbackViewModel()
         {
             Title = "Feedback (1 - 9)";
-            SendFeedbackCommand = new Command(RateFeedbackAsync, Validate);
+            SendFeedbackCommand = new Command(async () => await RateFeedbackAsync(), Validate);
             ResetFeedbackCommand = new Command(ResetFeedback);
             CancelCommand = new Command(OnCancel);
             UpdateCommand = new Command(OnUpdate);
             rating = new Rating();
             rating.RatingId = Guid.NewGuid().ToString();
-
         }
 
-        private async void OnCancel()
-        {
-            // This will pop the current page off the navigation stack
-            await Shell.Current.GoToAsync("..");
-        }
+        /// <summary>
+        /// Gets command to send feedback.
+        /// </summary>
+        public Command SendFeedbackCommand { get; }
 
-        private bool Validate()
-        {
-            return Rating.Form > 0 && Rating.Color > 0 && Rating.Ridge > 0 && Rating.Surface > 0 && Rating.Surface > 0
-                && Rating.Bindings > 0 && Rating.Sprue > 0 && Rating.DropIn > 0 && Rating.Demolding > 0 &&
-                Rating.AirInclusion > 0 && Rating.Overall > 0 && Rating.Feedback.Length > 0;
-        }
+        /// <summary>
+        /// Gets command to clear feedback form.
+        /// </summary>
+        public Command ResetFeedbackCommand { get; }
 
-        private void OnUpdate(object sender)
-        {
-            try
-            {
-                Console.WriteLine(sender);
-                SendFeedbackCommand.ChangeCanExecute();
+        /// <summary>
+        /// Gets command to cancel feedback process.
+        /// </summary>
+        public Command CancelCommand { get; }
 
-            }
-            catch (Exception ex)
-            {
+        /// <summary>
+        /// Gets command to update UI.
+        /// </summary>
+        public Command UpdateCommand { get; }
 
-            }
-
-        }
-
+        /// <summary>
+        /// Gets or sets the order to feedback.
+        /// </summary>
         public Order Order
         {
             get => order;
             set => SetProperty(ref order, value);
         }
+
+        /// <summary>
+        /// Gets or sets the order id.
+        /// </summary>
         public string OrderId
         {
             get => orderId;
@@ -77,19 +74,26 @@ namespace I4_QM_app.ViewModels
                 LoadOrderId(value);
             }
         }
+
+        /// <summary>
+        /// Gets or sets the order rating.
+        /// </summary>
         public Rating Rating
         {
             get => rating;
             set => SetProperty(ref rating, value);
         }
 
-        public async void LoadOrderId(string orderId)
+        /// <summary>
+        /// Load order from db with id.
+        /// </summary>
+        /// <param name="orderId">orderId.</param>
+        /// <returns>Task.</returns>
+        public async Task LoadOrderId(string orderId)
         {
             try
             {
-                var order = await App.OrdersDataService.GetItemAsync(orderId);
-                Order = order;
-
+                Order = await App.OrdersDataService.GetItemAsync(orderId);
             }
             catch (Exception)
             {
@@ -97,14 +101,18 @@ namespace I4_QM_app.ViewModels
             }
         }
 
-        private async void RateFeedbackAsync()
+        /// <summary>
+        /// Send rating to server after confirmation.
+        /// </summary>
+        /// <returns>Task.</returns>
+        private async Task RateFeedbackAsync()
         {
             bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Send feedback?", "Yes", "No");
 
             // TODO parameter
             if (answer)
             {
-                // update                
+                // update
                 Order.Status = Status.Rated;
                 Order.Rating = Rating;
                 await App.OrdersDataService.UpdateItemAsync(Order);
@@ -112,7 +120,7 @@ namespace I4_QM_app.ViewModels
                 // send mqtt
                 JsonSerializerOptions options = new JsonSerializerOptions()
                 {
-                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
                 };
 
                 string res = JsonSerializer.Serialize<Order>(Order, options);
@@ -123,11 +131,54 @@ namespace I4_QM_app.ViewModels
             }
         }
 
+        /// <summary>
+        /// Reset feedback form.
+        /// </summary>
         private void ResetFeedback()
         {
-            Rating = new Rating();
-            Rating.RatingId = Guid.NewGuid().ToString();
+            Rating = new Rating
+            {
+                RatingId = Guid.NewGuid().ToString(),
+            };
             Order.Rating = Rating;
+        }
+
+        /// <summary>
+        /// Navigate back.
+        /// </summary>
+        private async void OnCancel()
+        {
+            // This will pop the current page off the navigation stack
+            await Shell.Current.GoToAsync("..");
+        }
+
+        /// <summary>
+        /// Validate feedback form.
+        /// </summary>
+        /// <returns>bool.</returns>
+        private bool Validate()
+        {
+            return Rating.Form > 0 && Rating.Color > 0 && Rating.Ridge > 0 && Rating.Surface > 0 && Rating.Surface > 0
+                && Rating.Bindings > 0 && Rating.Sprue > 0 && Rating.DropIn > 0 && Rating.Demolding > 0 &&
+                Rating.AirInclusion > 0 && Rating.Overall > 0 && Rating.Feedback.Length > 0;
+        }
+
+        /// <summary>
+        /// Called to update UI.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        private void OnUpdate(object sender)
+        {
+            try
+            {
+                Console.WriteLine(sender);
+                SendFeedbackCommand.ChangeCanExecute();
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
         }
     }
 }

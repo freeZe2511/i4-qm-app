@@ -5,16 +5,26 @@ using System.Runtime.CompilerServices;
 
 namespace I4_QM_app.ViewModels
 {
+    /// <summary>
+    /// ViewModel Base for every other viewModel that has changing properties.
+    /// </summary>
     public class BaseViewModel : INotifyPropertyChanged
     {
-        bool isBusy = false;
+        private bool isBusy = false;
+        private string title = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the viewmodel is busy.
+        /// </summary>
         public bool IsBusy
         {
             get { return isBusy; }
             set { SetProperty(ref isBusy, value); }
         }
 
-        string title = string.Empty;
+        /// <summary>
+        /// Gets or sets a title.
+        /// </summary>
         public string Title
         {
             get { return title; }
@@ -26,7 +36,9 @@ namespace I4_QM_app.ViewModels
             Action onChanged = null)
         {
             if (EqualityComparer<T>.Default.Equals(backingStore, value))
+            {
                 return false;
+            }
 
             backingStore = value;
             onChanged?.Invoke();
@@ -36,6 +48,7 @@ namespace I4_QM_app.ViewModels
 
         #region INotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
+
         protected void OnPropertyChanged([CallerMemberName] string propertyName = "")
         {
             var changed = PropertyChanged;

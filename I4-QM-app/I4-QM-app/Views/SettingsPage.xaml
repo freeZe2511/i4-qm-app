@@ -1,17 +1,80 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"              
              x:Class="I4_QM_app.Views.SettingsPage"
+             x:Name="SettingsPage1"
              Title="{Binding Title}">
     
     <ContentPage.Content>
-        <StackLayout>
-            <Image Source="wifi48_400.png" IsVisible="{Binding IsConnected}" xct:IconTintColorEffect.TintColor="{StaticResource Primary}"></Image>
-            <Image Source="wifi_off48_400.png" IsVisible="{Binding IsConnected, Converter={StaticResource InvertedBoolConverter}}" xct:IconTintColorEffect.TintColor="{StaticResource AccentRed}"></Image>
-            <Label Text="connected" IsVisible="{Binding IsConnected}"/>
-            <Label Text="disconnected" IsVisible="{Binding IsConnected, Converter={StaticResource InvertedBoolConverter}}"/>
-            <Button Text="Toggle" Command="{Binding ToggleConnectionCommand}" IsEnabled="False"></Button>
+        <StackLayout Padding="10">            
+            <Grid Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>                    
+                    <RowDefinition Height="Auto"/>                    
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Text="Connected" VerticalOptions="Center" FontSize="Small"/>
+                <Image Grid.Column="1" Source="wifi48_400.png" xct:IconTintColorEffect.TintColor="{StaticResource Primary}" HorizontalOptions="End"></Image>
+                <Label Grid.Row="1" Grid.Column="0" Text="Connect" VerticalOptions="Center" FontSize="Small"/>
+                <Switch Grid.Row="1" Grid.Column="1" Background="{StaticResource Primary}">
+                    <Switch.Behaviors>
+                        <xct:EventToCommandBehavior
+                            Command="{Binding BindingContext.ToggleConnectionCommand, Source={x:Reference SettingsPage1}}"                             
+                            EventName="Toggled">
+                        </xct:EventToCommandBehavior>
+                    </Switch.Behaviors>
+                </Switch>
+            </Grid>
+
+            <BoxView   HorizontalOptions="Fill"
+                   HeightRequest="1"
+                   Margin="0, 10, 0, 0"
+                   Color="LightGray"/>
+
+            <Grid Padding="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <Label Grid.Row="0" Grid.Column="0" Text="Push Notifications" VerticalOptions="Center" FontSize="Small"/>
+                <Switch Grid.Row="0" Grid.Column="1">
+                    <Switch.Behaviors>
+                        <xct:EventToCommandBehavior
+                            Command="{Binding BindingContext.TogglePushNotificationsCommand, Source={x:Reference SettingsPage1}}"                             
+                            EventName="Toggled">
+                        </xct:EventToCommandBehavior>
+                    </Switch.Behaviors>
+                </Switch>
+                <Label Grid.Row="1" Grid.Column="0" Text="Broker URL" VerticalOptions="Center" FontSize="Small"/>
+                <Entry Grid.Row="1" Grid.Column="1">
+                    <Entry.Behaviors>
+                        <xct:EventToCommandBehavior 
+                            Command="{Binding BindingContext.ChangeBrokerURLCommand, Source={x:Reference SettingsPage1}}"                            
+                            EventName="Completed">                            
+                        </xct:EventToCommandBehavior>
+                    </Entry.Behaviors>
+                </Entry>
+                <Label Grid.Row="2" Grid.Column="0" Text="Reset Database" VerticalOptions="Center" FontSize="Small"/>
+                <Button Grid.Row="2" Grid.Column="1" Text="Reset" Command="{Binding ResetDatabaseCommand}"></Button>
+                <Label Grid.Row="3" Grid.Column="0" Text="Manual Sync" VerticalOptions="Center" FontSize="Small"/>
+                <Button Grid.Row="3" Grid.Column="1" Text="Sync" Command="{Binding ManualSyncCommand}"></Button>
+            </Grid>
+
+            <BoxView   HorizontalOptions="Fill"
+                   HeightRequest="1"
+                   Margin="0, 10, 0, 0"
+                   Color="LightGray"/>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

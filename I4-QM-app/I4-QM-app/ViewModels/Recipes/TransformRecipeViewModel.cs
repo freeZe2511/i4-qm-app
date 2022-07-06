@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels.Recipes
@@ -12,31 +11,43 @@ namespace I4_QM_app.ViewModels.Recipes
     {
         private string recipeId;
         private Recipe recipe;
-        private string id;
-        private string creatorId;
         private List<Additive> additives;
         private string name;
         private string description;
-        private int used;
         private int amount;
         private int weight;
         private DateTime date;
         private TimeSpan time;
 
         public Command OrderCommand { get; }
+
         public Command CancelCommand { get; }
+
         public Command ClearCommand { get; }
+
+        public Command UpdateCommand { get; }
 
         public TransformRecipeViewModel()
         {
             Title = "Transform";
-            OrderCommand = new Command(async () => await TransformRecipe());
+            OrderCommand = new Command(TransformRecipe, Validate);
             CancelCommand = new Command(OnCancel);
             ClearCommand = new Command(OnClear);
-            Date = DateTime.Now;
+            UpdateCommand = new Command(OnUpdate);
+            Date = DateTime.Now.AddDays(1);
             Time = DateTime.Now.TimeOfDay;
             Weight = 0;
             Amount = 0;
+        }
+
+        private void OnUpdate()
+        {
+            OrderCommand.ChangeCanExecute();
+        }
+
+        private bool Validate()
+        {
+            return Weight > 0 && Amount > 0 && Date.Date.Add(Time) >= DateTime.Now;
         }
 
         public string RecipeId
@@ -105,18 +116,17 @@ namespace I4_QM_app.ViewModels.Recipes
 
         private void OnClear()
         {
-            Date = DateTime.Now;
+            Date = DateTime.Now.AddDays(1);
             Time = DateTime.Now.TimeOfDay;
             Weight = 0;
             Amount = 0;
         }
 
-
         private async void LoadRecipeId(string recipeId)
         {
             try
             {
-                var recipe = await App.RecipesDataStore.GetItemAsync(recipeId);
+                var recipe = await App.RecipesDataService.GetItemAsync(recipeId);
 
                 Recipe = recipe;
                 Additives = recipe.Additives;
@@ -130,9 +140,14 @@ namespace I4_QM_app.ViewModels.Recipes
             }
         }
 
-        private async Task TransformRecipe()
+        private async void TransformRecipe()
         {
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Transform into Order?", "Yes", "No");
+            if (!(Amount > 0 && Weight > 0 && Date.Date.Add(Time) > DateTime.Now))
+            {
+                return;
+            }
+
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Transform into Order?", "Yes", "No");
 
             if (answer)
             {
@@ -143,20 +158,16 @@ namespace I4_QM_app.ViewModels.Recipes
                     Weight = Weight,
                     Additives = Additives,
                     Status = Status.open,
-                    Created = DateTime.Now,
-                    Due = Date.Date.Add(Time)
+                    Received = DateTime.Now,
+                    Due = Date.Date.Add(Time),
                 };
 
                 //insert order
-                await App.OrdersDataStore.AddItemAsync(newOrder);
-
-                //debug
-                //string test = JsonSerializer.Serialize<Order>(newOrder);
-                //await MqttConnectionService.HandlePublishMessage("thm/sfm/sg/test", test);
+                await App.OrdersDataService.AddItemAsync(newOrder);
 
                 // update use
                 Recipe.Used = Recipe.Used + 1;
-                await App.RecipesDataStore.UpdateItemAsync(Recipe);
+                await App.RecipesDataService.UpdateItemAsync(Recipe);
 
                 // navigate
                 await Shell.Current.Navigation.PopToRootAsync();

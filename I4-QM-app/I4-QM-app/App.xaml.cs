@@ -1,8 +1,6 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Services;
 using LiteDB;
-using Plugin.LocalNotification;
-using Plugin.LocalNotification.EventArgs;
 using System;
 using System.IO;
 using System.Threading;
@@ -13,6 +11,7 @@ namespace I4_QM_app
 {
     public partial class App : Application
     {
+        public User CurrentUser;
 
         public App()
         {
@@ -22,16 +21,16 @@ namespace I4_QM_app
             DependencyService.Register<OrderService>();
             DependencyService.Register<RecipeService>();
             DependencyService.Register<AdditiveService>();
-
-            NotificationCenter.Current.NotificationTapped += LoadPageFromNotification;
+            DependencyService.Register<NotificationService>();
+            DependencyService.Register<ConnectionService>();
 
             MainPage = new AppShell();
-            //MainPage = new LoginPage();
+
+            Task.Run(async () => await App.ConnectionService.ConnectClient());
         }
 
         protected override void OnStart()
         {
-            Task.Run(async () => { await MqttConnectionService.ConnectClient(); });
         }
 
         protected override void OnSleep()
@@ -57,40 +56,21 @@ namespace I4_QM_app
             };
 
             var db = new LiteDatabase(connection);
-            var orders = db.GetCollection<Order>("orders");
-            var recipes = db.GetCollection<Order>("recipes");
-            var additives = db.GetCollection<Order>("additives");
 
             return db;
         }
 
-        // Eigenschaft für den Zugriff
+
         public static ILiteDatabase DB => _db.Value;
 
-        public static IDataStore<Order> OrdersDataStore => DependencyService.Get<IDataStore<Order>>();
-        public static IDataStore<Recipe> RecipesDataStore => DependencyService.Get<IDataStore<Recipe>>();
-        public static IDataStore<Additive> AdditivesDataStore => DependencyService.Get<IDataStore<Additive>>();
+        public static IDataService<Order> OrdersDataService => DependencyService.Get<IDataService<Order>>();
 
-        private void LoadPageFromNotification(NotificationEventArgs e)
-        {
-            var data = e.Request.ReturningData;
+        public static IDataService<Recipe> RecipesDataService => DependencyService.Get<IDataService<Recipe>>();
 
-            if (string.IsNullOrWhiteSpace(data))
-            {
-                return;
-            }
+        public static IDataService<Additive> AdditivesDataService => DependencyService.Get<IDataService<Additive>>();
 
-            // TODO
-            Page page = null;
-            if (data == "OrdersPage") page = new Views.OrdersPage();
+        public static INotificationService NotificationService => DependencyService.Get<INotificationService>();
 
-            Shell.Current.Navigation.PushAsync(page);
-
-            //await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
-
-
-        }
-
-
+        public static IConnectionService ConnectionService => DependencyService.Get<IConnectionService>();
     }
 }

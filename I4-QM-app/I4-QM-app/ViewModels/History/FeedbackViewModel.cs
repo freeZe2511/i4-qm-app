@@ -1,5 +1,4 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
@@ -17,14 +16,50 @@ namespace I4_QM_app.ViewModels
         private Rating rating;
 
         public Command SendFeedbackCommand { get; }
+
         public Command ResetFeedbackCommand { get; }
+
+        public Command CancelCommand { get; }
+
+        public Command UpdateCommand { get; }
+
         public FeedbackViewModel()
         {
             Title = "Feedback (1 - 9)";
-            SendFeedbackCommand = new Command(RateFeedbackAsync);
+            SendFeedbackCommand = new Command(RateFeedbackAsync, Validate);
             ResetFeedbackCommand = new Command(ResetFeedback);
+            CancelCommand = new Command(OnCancel);
+            UpdateCommand = new Command(OnUpdate);
             rating = new Rating();
             rating.RatingId = Guid.NewGuid().ToString();
+
+        }
+
+        private async void OnCancel()
+        {
+            // This will pop the current page off the navigation stack
+            await Shell.Current.GoToAsync("..");
+        }
+
+        private bool Validate()
+        {
+            return Rating.Form > 0 && Rating.Color > 0 && Rating.Ridge > 0 && Rating.Surface > 0 && Rating.Surface > 0
+                && Rating.Bindings > 0 && Rating.Sprue > 0 && Rating.DropIn > 0 && Rating.Demolding > 0 &&
+                Rating.AirInclusion > 0 && Rating.Overall > 0 && Rating.Feedback.Length > 0;
+        }
+
+        private void OnUpdate(object sender)
+        {
+            try
+            {
+                Console.WriteLine(sender);
+                SendFeedbackCommand.ChangeCanExecute();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
 
         }
 
@@ -52,7 +87,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var order = await App.OrdersDataStore.GetItemAsync(orderId);
+                var order = await App.OrdersDataService.GetItemAsync(orderId);
                 Order = order;
 
             }
@@ -64,8 +99,7 @@ namespace I4_QM_app.ViewModels
 
         private async void RateFeedbackAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Send feedback?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Send feedback?", "Yes", "No");
 
             // TODO parameter
             if (answer)
@@ -73,7 +107,7 @@ namespace I4_QM_app.ViewModels
                 // update                
                 Order.Status = Status.rated;
                 Order.Rating = Rating;
-                await App.OrdersDataStore.UpdateItemAsync(Order);
+                await App.OrdersDataService.UpdateItemAsync(Order);
 
                 // send mqtt
                 JsonSerializerOptions options = new JsonSerializerOptions()
@@ -83,7 +117,7 @@ namespace I4_QM_app.ViewModels
 
                 string res = JsonSerializer.Serialize<Order>(Order, options);
 
-                await MqttConnectionService.HandlePublishMessage("orders/rated", res);
+                await App.ConnectionService.HandlePublishMessage("prod/orders/rated", res);
 
                 await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
             }

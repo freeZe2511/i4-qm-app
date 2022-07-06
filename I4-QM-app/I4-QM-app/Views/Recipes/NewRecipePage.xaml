@@ -1,58 +1,98 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" xmlns:b="http://xamarin.com/schemas/2020/toolkit"
              x:Class="I4_QM_app.Views.NewRecipePage"             
-             Title="New Recipe">
-
-    <!--Shell.PresentationMode="ModalAnimated"-->
-
+             Title="New Recipe"
+             x:Name="NewRecipePage1">
+   
     <ContentPage.ToolbarItems>
         <ToolbarItem IconImageSource="undo48_400.png" Command="{Binding ClearCommand}"></ToolbarItem>
     </ContentPage.ToolbarItems>
+    
+        <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
+            <ScrollView Orientation="Neither">
+                <StackLayout Spacing="3" Padding="15">
+                <Label Text="Name" FontSize="Small"/>
+                <Entry Text="{Binding Name, Mode=TwoWay}" FontSize="Medium" Margin="5">
+                        <Entry.Behaviors>
+                            <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference NewRecipePage1}}"                                        
+                                        EventName="TextChanged" />
+                        </Entry.Behaviors>
+                    </Entry>
+                <Label Text="Description" FontSize="Small" />
+                    <Editor Text="{Binding Description, Mode=TwoWay}" AutoSize="TextChanges" FontSize="Medium" Margin="5">
+                        <Editor.Behaviors>
+                            <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference NewRecipePage1}}"                                        
+                                        EventName="TextChanged" />
+                        </Editor.Behaviors>
+                    </Editor>
 
-    <ContentPage.Content>
-        <StackLayout Spacing="3" Padding="15">
-            <Label Text="Name" FontSize="Medium" />
-            <Entry Text="{Binding Name, Mode=TwoWay}" FontSize="Medium" />
-            <Label Text="Description" FontSize="Medium" />
-            <Editor Text="{Binding Description, Mode=TwoWay}" AutoSize="TextChanges" FontSize="Medium" Margin="0" />
-            
+                <Label Text="Additives" FontSize="Small" />
 
-            <CollectionView x:Name="AdditivesListView"
+                <CollectionView x:Name="AdditivesListView"
                 ItemsSource="{Binding Additives}"
                 SelectionMode="None" 
-                Header="Additives" >
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Padding="10">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="4*" />
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
-                                <ColumnDefinition Width="1*" />
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Column="0" Text="{Binding Name}" FontAttributes="Bold" />
-                            <Entry Grid.Column="1" Text="{Binding Portion}" Keyboard="Numeric"></Entry>
-                            <CheckBox Grid.Column="2" Color="{StaticResource AccentRed}" Opacity="0.75" IsChecked="{Binding Checked}" ></CheckBox>
+                BackgroundColor="AliceBlue" Margin="15, 10, 15, 10">
+                        <CollectionView.ItemTemplate>
 
-                            <BoxView Grid.Row="2" Grid.ColumnSpan="4" HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
-                        </Grid>
+                        <DataTemplate>
+                            <StackLayout>
+                            <Grid Padding="0, 20, 0, 0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="*" />
 
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition Width="1*" />
+
+                                </Grid.ColumnDefinitions>
+                                <Image Grid.RowSpan="2" Grid.Column="0"
+                       Source="{Binding Image}"
+                       Aspect="AspectFill"
+                       HeightRequest="50"
+                       WidthRequest="50" Margin="10, 5, 5, 5"/>
+                                <Label Grid.Column="1" Grid.Row="0"
+                       Text="{Binding Name}"
+                       FontAttributes="Bold"/>                                
+                                <Entry Grid.Row="1" Grid.Column="1" x:Name="Entry" Keyboard="Numeric" Text="{Binding Portion}">
+                                    <Entry.Behaviors>
+                                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference NewRecipePage1}}"                                        
+                                        EventName="TextChanged" />
+                                    </Entry.Behaviors>
+                                </Entry>
+                                <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding Checked}" Color="{StaticResource AccentRed}">
+                                    <CheckBox.Behaviors>
+                                        <b:EventToCommandBehavior
+                                        Command="{Binding BindingContext.UpdateCommand, Source={x:Reference NewRecipePage1}}"                                        
+                                        EventName="CheckedChanged" />
+                                    </CheckBox.Behaviors>
+                                </CheckBox>
+                            </Grid>
+
+                            <BoxView HeightRequest="1" Color="LightGray" Margin ="10, 0, 10, 0"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
 
-            <StackLayout Orientation="Horizontal">
-                <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource AccentRed}" Opacity="0.75"></Button>
-                <Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
-            </StackLayout>
 
-        </StackLayout>
-    </ContentPage.Content>
-    
+
+                
+
+
+                    <StackLayout Orientation="Horizontal" Padding="10">
+                        <Button Text="Cancel" Command="{Binding CancelCommand}" HorizontalOptions="FillAndExpand" BackgroundColor="{StaticResource AccentRed}"></Button>
+                        <Button Text="Save" Command="{Binding SaveCommand}" HorizontalOptions="FillAndExpand"></Button>
+                    </StackLayout>
+
+                </StackLayout>
+            </ScrollView>
+        </RefreshView>                
 </ContentPage>

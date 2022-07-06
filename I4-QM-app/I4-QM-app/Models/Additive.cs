@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using Xamarin.Forms;
 
 namespace I4_QM_app.Models
 {
@@ -8,17 +9,23 @@ namespace I4_QM_app.Models
 
         public string Name { get; set; }
 
-        public float Portion { get; set; }
+        public double Portion { get; set; }
 
-        public float ActualPortion { get; set; }
+        public double ActualPortion { get; set; }
 
-        public int Amount { get; set; }
+        public double Amount { get; set; }
+
+        [JsonIgnore]
+        public bool Available { get; set; }
 
         [JsonIgnore]
         public bool Checked { get; set; }
 
         [JsonIgnore]
-        public string ImageId { get; set; }
+        public string ImageBase64 { get; set; }
+
+        [JsonIgnore]
+        public ImageSource Image { get; set; }
 
     }
 }

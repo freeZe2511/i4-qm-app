@@ -5,6 +5,7 @@ using I4_QM_app.Views.Recipes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -21,20 +22,27 @@ namespace I4_QM_app.ViewModels
         private string name;
         private string description;
         private int used;
+        private bool available;
 
         public Command OrderCommand { get; }
+
         public Command DeleteCommand { get; }
+
+        public Command EditCommand { get; }
+
+        public Command RefreshCommand { get; }
 
         public RecipeDetailViewModel()
         {
-            OrderCommand = new Command(async () => await TransformRecipeAsync());
+            Available = true;
+            OrderCommand = new Command(async () => await TransformRecipeAsync(), Validate);
             DeleteCommand = new Command(async () => await DeleteRecipeAsync());
+            RefreshCommand = new Command(async () => await LoadRecipeId(RecipeId));
         }
 
         private async Task TransformRecipeAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Transform recipe?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Transform recipe?", "Yes", "No");
 
             if (answer)
             {
@@ -44,14 +52,18 @@ namespace I4_QM_app.ViewModels
 
         private async Task DeleteRecipeAsync()
         {
-            // TODO abstract dialog_service
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Delete recipe?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete recipe?", "Yes", "No");
 
             if (answer)
             {
-                await App.RecipesDataStore.DeleteItemAsync(Id);
+                await App.RecipesDataService.DeleteItemAsync(Id);
                 await Shell.Current.GoToAsync($"//{nameof(RecipesPage)}");
             }
+        }
+
+        private bool Validate()
+        {
+            return Available;
         }
 
         public string RecipeId
@@ -106,24 +118,55 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref used, value);
         }
 
-        public async void LoadRecipeId(string recipeId)
+        public bool Available
         {
+            get => available;
+            set => SetProperty(ref available, value);
+        }
+
+        public async Task LoadRecipeId(string recipeId)
+        {
+            IsBusy = true;
+
             try
             {
-                var recipe = await App.RecipesDataStore.GetItemAsync(recipeId);
+                var recipe = await App.RecipesDataService.GetItemAsync(recipeId);
+                var additives = await App.AdditivesDataService.GetItemsAsync();
 
                 Id = recipe.Id;
-                CreatorId = null;
+                CreatorId = recipe.CreatorId;
                 Additives = recipe.Additives;
                 Name = recipe.Name;
                 Description = recipe.Description;
                 Used = recipe.Used;
+
+                foreach (var additive in Additives)
+                {
+                    Additive item = additives.FirstOrDefault(x => x.Id == additive.Id);
+
+                    if (item == null)
+                    {
+                        additive.Available = false;
+
+                        Available = false;
+                        OrderCommand.ChangeCanExecute();
+                        continue;
+                    }
+
+                    additive.Name = item.Name;
+                    additive.Available = true;
+                    Available = true;
+
+                }
+
+                OrderCommand.ChangeCanExecute();
 
             }
             catch (Exception)
             {
                 Debug.WriteLine("Failed to Load Item");
             }
+            finally { IsBusy = false; }
         }
     }
 }

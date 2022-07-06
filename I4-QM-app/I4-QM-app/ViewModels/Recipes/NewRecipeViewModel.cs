@@ -1,10 +1,12 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
+using LiteDB;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -13,44 +15,98 @@ namespace I4_QM_app.ViewModels
     {
         private string name;
         private string description;
-        private List<Additive> additives;
+        private ObservableCollection<Additive> additives;
+        private ObservableCollection<Additive> oldAdditives;
 
         public Command SaveCommand { get; }
+
         public Command CancelCommand { get; }
+
         public Command ClearCommand { get; }
+
+        public Command UpdateCommand { get; }
+
+        public Command RefreshCommand { get; }
 
         public NewRecipeViewModel()
         {
-
-            SaveCommand = new Command(OnSave, ValidateSave);
+            Additives = new ObservableCollection<Additive>();
+            oldAdditives = new ObservableCollection<Additive>();
+            SaveCommand = new Command(OnSave, Validate);
             CancelCommand = new Command(OnCancel);
             ClearCommand = new Command(OnClear);
-
-            additives = new List<Additive>();
-
-            _ = Task.Run(async () => await GetAdditives());
-
-            this.PropertyChanged +=
-                (_, __) => SaveCommand.ChangeCanExecute();
+            UpdateCommand = new Command(OnUpdate);
+            RefreshCommand = new Command(async () => await LoadRefreshCommand());
         }
 
-        private async Task GetAdditives()
+        public void OnAppearing()
         {
-            Additives.Clear();
-
-            var list = await App.AdditivesDataStore.GetItemsAsync();
-            foreach (Additive item in list)
-            {
-                Additives.Add(item);
-            }
+            IsBusy = true;
         }
 
+        private async Task LoadRefreshCommand()
+        {
+            IsBusy = true;
 
-        private bool ValidateSave()
+            try
+            {
+                var fs = App.DB.GetStorage<string>("myImages");
+                var list = await App.AdditivesDataService.GetItemsAsync();
+
+                if (!list.Any())
+                {
+                    Additives.Clear();
+                }
+
+                foreach (var item in list)
+                {
+                    var oldItem = Additives.FirstOrDefault(x => x.Id == item.Id);
+
+                    if (oldItem != null)
+                    {
+                        item.Portion = oldItem.Portion;
+                        item.Checked = oldItem.Checked;
+                        Additives.Remove(oldItem);
+                    }
+
+                    LiteFileInfo<string> file = fs.FindById(item.Id);
+
+                    if (file != null)
+                    {
+                        item.Image = ImageSource.FromStream(() => file.OpenRead());
+                    }
+                    else
+                    {
+                        item.Image = ImageSource.FromFile("no_image.png");
+                    }
+
+                    Additives.Add(item);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+
+        }
+
+        private void OnUpdate()
+        {
+            SaveCommand.ChangeCanExecute();
+        }
+
+        private bool Validate()
         {
             return !String.IsNullOrWhiteSpace(Name)
-                && !String.IsNullOrWhiteSpace(Description);
-            //&& Additives.FindAll(i => i.Checked == true).Count > 0;
+                && !String.IsNullOrWhiteSpace(Description)
+                && Additives.Count(i => (i.Checked && i.Portion > 0)) >= 1
+                && !Additives.Any(i => !i.Checked && i.Portion > 0)
+                && !Additives.Any(i => i.Checked && i.Portion <= 0);
         }
 
         public string Name
@@ -65,7 +121,7 @@ namespace I4_QM_app.ViewModels
             set => SetProperty(ref description, value);
         }
 
-        public List<Additive> Additives
+        public ObservableCollection<Additive> Additives
         {
             get => additives;
             set => SetProperty(ref additives, value);
@@ -79,7 +135,7 @@ namespace I4_QM_app.ViewModels
 
         private async void OnSave()
         {
-            bool answer = await Shell.Current.DisplayAlert("Confirmation", "Save?", "Yes", "No");
+            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Save?", "Yes", "No");
 
             if (answer)
             {
@@ -88,19 +144,19 @@ namespace I4_QM_app.ViewModels
                     Id = Guid.NewGuid().ToString(),
                     Name = Name,
                     Description = Description,
-                    //CreatorId = UserId,
-                    Additives = Additives.FindAll(i => i.Checked == true)
+                    CreatorId = Preferences.Get("UserID", string.Empty),
+                    Additives = Additives.Where(i => i.Checked).ToList(),
                 };
 
-                await App.RecipesDataStore.AddItemAsync(newRecipe);
+                await App.RecipesDataService.AddItemAsync(newRecipe);
 
                 JsonSerializerOptions options = new JsonSerializerOptions()
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
                 };
 
-                string res = JsonSerializer.Serialize<Recipe>(newRecipe, options);
-                await MqttConnectionService.HandlePublishMessage("recipes/new", res);
+                string res = System.Text.Json.JsonSerializer.Serialize<Recipe>(newRecipe, options);
+                await App.ConnectionService.HandlePublishMessage("recipes/new", res);
 
                 await Shell.Current.GoToAsync("..");
             }
@@ -110,20 +166,10 @@ namespace I4_QM_app.ViewModels
 
         private async void OnClear()
         {
-            Name = "";
-            Description = "";
-
-            // TODO reset additives?
-
-            //await GetAdditives();
-
-            //foreach (Additive additive in Additives)
-            //{
-            //    Console.WriteLine(additive.Name);
-            //    additive.Checked = false;
-            //    additive.Portion = 0;
-            //}
-
+            Name = string.Empty;
+            Description = string.Empty;
+            Additives.Clear();
+            await LoadRefreshCommand();
         }
     }
 }

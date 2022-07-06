@@ -1,6 +1,7 @@
 ﻿using I4_QM_app.Views;
 using I4_QM_app.Views.Recipes;
 using System;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app
@@ -16,12 +17,17 @@ namespace I4_QM_app
             Routing.RegisterRoute(nameof(FeedbackPage), typeof(FeedbackPage));
             Routing.RegisterRoute(nameof(NewRecipePage), typeof(NewRecipePage));
             Routing.RegisterRoute(nameof(TransformRecipePage), typeof(TransformRecipePage));
-            //Routing.RegisterRoute(nameof(NewItemPage), typeof(NewItemPage));
         }
 
         private async void OnLogoutItemClicked(object sender, EventArgs e)
         {
+            string userId = Preferences.Get("UserID", string.Empty);
+
+            await App.ConnectionService.HandlePublishMessage("disconnected", userId);
             await Shell.Current.GoToAsync("//LoginPage");
+
+            Preferences.Clear();
+
         }
     }
 

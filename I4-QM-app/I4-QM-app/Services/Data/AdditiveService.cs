@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace I4_QM_app.Services
 {
-    public class AdditiveService : IDataStore<Additive>
+    public class AdditiveService : IDataService<Additive>
     {
         private readonly ILiteCollection<Additive> additivesCollection;
         public AdditiveService()
@@ -32,10 +32,11 @@ namespace I4_QM_app.Services
             return await Task.FromResult(true);
         }
 
-        public async Task<bool> DeleteManyItemsAsync()
+        public async Task<bool> DeleteManyItemsAsync(System.Func<Additive, bool> predicate)
         {
-            // TODO
-            additivesCollection.DeleteMany(x => x.Id != "1");
+            // TODO Func predicate -> BsonExpression ???
+            var list = additivesCollection.FindAll().Where(predicate).ToList();
+            list.ForEach(i => additivesCollection.Delete(i.Id));
             return await Task.FromResult(true);
         }
 

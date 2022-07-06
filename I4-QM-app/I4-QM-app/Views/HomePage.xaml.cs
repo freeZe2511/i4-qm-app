@@ -3,19 +3,29 @@ using Xamarin.Forms;
 
 namespace I4_QM_app.Views
 {
+    /// <summary>
+    /// Page for HomePage.
+    /// </summary>
     public partial class HomePage : ContentPage
     {
-        HomeViewModel _viewModel;
+        private readonly HomeViewModel viewModel;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HomePage"/> class.
+        /// </summary>
         public HomePage()
         {
             InitializeComponent();
-            BindingContext = _viewModel = new HomeViewModel();
+            BindingContext = viewModel = new HomeViewModel();
         }
 
+        /// <summary>
+        /// Sets base and viewmodel.
+        /// </summary>
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            _viewModel.OnAppearing();
+            viewModel.OnAppearing();
         }
     }
 }

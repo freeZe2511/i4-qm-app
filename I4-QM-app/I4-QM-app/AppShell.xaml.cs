@@ -6,8 +6,14 @@ using Xamarin.Forms;
 
 namespace I4_QM_app
 {
+    /// <summary>
+    /// Main App Shell.
+    /// </summary>
     public partial class AppShell : Xamarin.Forms.Shell
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AppShell"/> class.
+        /// </summary>
         public AppShell()
         {
             InitializeComponent();
@@ -19,6 +25,11 @@ namespace I4_QM_app
             Routing.RegisterRoute(nameof(TransformRecipePage), typeof(TransformRecipePage));
         }
 
+        /// <summary>
+        /// Handles log out.
+        /// </summary>
+        /// <param name="sender">Sender.</param>
+        /// <param name="e">EventArgs.</param>
         private async void OnLogoutItemClicked(object sender, EventArgs e)
         {
             string userId = Preferences.Get("UserID", string.Empty);
@@ -27,11 +38,10 @@ namespace I4_QM_app
             await Shell.Current.GoToAsync("//LoginPage");
 
             Preferences.Clear();
-
         }
     }
 
-    // TODO better place?
+    // TODO better place
     namespace Controls
     {
         public class FlyoutItemIconFont : FlyoutItem

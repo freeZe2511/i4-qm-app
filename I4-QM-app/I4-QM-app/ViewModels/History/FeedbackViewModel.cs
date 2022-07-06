@@ -173,7 +173,6 @@ namespace I4_QM_app.ViewModels
             {
                 Console.WriteLine(sender);
                 SendFeedbackCommand.ChangeCanExecute();
-
             }
             catch (Exception ex)
             {

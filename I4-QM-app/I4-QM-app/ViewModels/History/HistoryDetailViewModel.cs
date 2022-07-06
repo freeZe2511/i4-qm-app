@@ -215,7 +215,6 @@ namespace I4_QM_app.ViewModels
         {
             bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete item from history?", "Yes", "No");
 
-            // TODO parameter
             if (answer)
             {
                 await App.OrdersDataService.DeleteItemAsync(Id);

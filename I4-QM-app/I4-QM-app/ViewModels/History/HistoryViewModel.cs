@@ -26,7 +26,6 @@ namespace I4_QM_app.ViewModels
             Descending = true;
             History = new SortableObservableCollection<Order>() { SortingSelector = i => i.Status, Descending = Descending };
 
-            // TODO maybe overloading main thread
             LoadHistoryCommand = new Command(async () => await ExecuteLoadHistoryCommand());
             OrderTapped = new Command<Order>(OnOrderSelected);
             DeleteAllItemsCommand = new Command(async () => await DeleteAllHistoryItems());
@@ -37,7 +36,7 @@ namespace I4_QM_app.ViewModels
                 {
                     arg = arg.Trim();
 
-                    // works
+                    // works for now
                     if (arg == "Id")
                     {
                         await SortBy(i => i.Id);
@@ -171,7 +170,7 @@ namespace I4_QM_app.ViewModels
         }
 
         /// <summary>
-        /// Navigate to selected order detail page.
+        /// Navigate to selected order history detail page.
         /// </summary>
         /// <param name="item">Order.</param>
         private async void OnOrderSelected(Order item)

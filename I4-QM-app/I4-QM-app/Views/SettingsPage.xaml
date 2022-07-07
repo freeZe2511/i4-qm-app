@@ -4,6 +4,7 @@
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"              
              x:Class="I4_QM_app.Views.SettingsPage"
              x:Name="SettingsPage1"
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels"
              Title="{Binding Title}">
     
     <ContentPage.Content>
@@ -66,7 +67,7 @@
                     </Entry.Behaviors>
                 </Entry>
                 <Label Grid.Row="2" Grid.Column="0" Text="Reset Database" VerticalOptions="Center" FontSize="Small"/>
-                <Button Grid.Row="2" Grid.Column="1" Text="Reset" Command="{Binding ResetDatabaseCommand}"></Button>
+                <Button Grid.Row="2" Grid.Column="1" Text="Reset" Command="{Binding ToggleConnectionCommand}"></Button>
                 <Label Grid.Row="3" Grid.Column="0" Text="Manual Sync" VerticalOptions="Center" FontSize="Small"/>
                 <Button Grid.Row="3" Grid.Column="1" Text="Sync" Command="{Binding ManualSyncCommand}"></Button>
             </Grid>

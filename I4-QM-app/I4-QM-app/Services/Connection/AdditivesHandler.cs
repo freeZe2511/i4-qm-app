@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using LiteDB;
 using MQTTnet;
 using Newtonsoft.Json;
 using System;
@@ -29,6 +30,7 @@ namespace I4_QM_app.Services.Connection
             string addAdditives = Encoding.UTF8.GetString(message.Payload);
             List<Additive> additives = JsonConvert.DeserializeObject<List<Additive>>(addAdditives);
             int additivesCount = 0;
+            var fs = App.DB.GetStorage<string>("myImages");
 
             foreach (var additive in additives)
             {
@@ -42,21 +44,7 @@ namespace I4_QM_app.Services.Connection
                 additive.Portion = 0;
                 additive.Checked = false;
 
-                var fs = App.DB.GetStorage<string>("myImages");
-
-                if (!string.IsNullOrEmpty(additive.ImageBase64))
-                {
-                    try
-                    {
-                        fs.Upload(additive.Id, additive.Name, new MemoryStream(Convert.FromBase64String(additive.ImageBase64)));
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine("Failed to save image");
-                        Debug.WriteLine(ex.Message);
-                    }
-                }
-
+                TryUploadAdditiveImage(fs, additive);
                 additive.ImageBase64 = null;
 
                 await App.AdditivesDataService.AddItemAsync(additive);
@@ -154,6 +142,27 @@ namespace I4_QM_app.Services.Connection
         {
             await App.AdditivesDataService.DeleteAllItemsAsync();
             await HandleAddRoute(message);
+        }
+
+        /// <summary>
+        /// Additives image upload handler.
+        /// </summary>
+        /// <param name="fs">Filestorage.</param>
+        /// <param name="additive">Additive.</param>
+        private void TryUploadAdditiveImage(ILiteStorage<string> fs, Additive additive)
+        {
+            if (!string.IsNullOrEmpty(additive.ImageBase64))
+            {
+                try
+                {
+                    fs.Upload(additive.Id, additive.Name, new MemoryStream(Convert.FromBase64String(additive.ImageBase64)));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Failed to save image");
+                    Debug.WriteLine(ex.Message);
+                }
+            }
         }
     }
 }

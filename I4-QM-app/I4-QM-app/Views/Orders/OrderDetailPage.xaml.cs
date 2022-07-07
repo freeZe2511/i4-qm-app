@@ -3,8 +3,14 @@ using Xamarin.Forms;
 
 namespace I4_QM_app.Views
 {
+    /// <summary>
+    /// Page for Order Details.
+    /// </summary>
     public partial class OrderDetailPage : ContentPage
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OrderDetailPage"/> class.
+        /// </summary>
         public OrderDetailPage()
         {
             InitializeComponent();

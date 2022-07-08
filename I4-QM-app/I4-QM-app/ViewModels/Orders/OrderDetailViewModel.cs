@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
 using I4_QM_app.Views;
 using LiteDB;
 using System;
@@ -19,6 +20,11 @@ namespace I4_QM_app.ViewModels
     [QueryProperty(nameof(OrderId), nameof(OrderId))]
     public class OrderDetailViewModel : BaseViewModel
     {
+        private readonly IDataService<Order> ordersService;
+        private readonly INotificationService notificationService;
+        private readonly IConnectionService connectionService;
+        private readonly IDataService<Additive> additivesService;
+
         private Order order;
         private string orderId;
         private string id;
@@ -34,8 +40,17 @@ namespace I4_QM_app.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="OrderDetailViewModel"/> class.
         /// </summary>
-        public OrderDetailViewModel()
+        /// <param name="ordersService">Orders Service.</param>
+        /// <param name="notificationService">Notifications Service.</param>
+        /// <param name="connectionService">Connection Service.</param>
+        /// <param name="additivesService">Additives Service.</param>
+        public OrderDetailViewModel(IDataService<Order> ordersService, INotificationService notificationService, IConnectionService connectionService, IDataService<Additive> additivesService)
         {
+            this.ordersService = ordersService;
+            this.notificationService = notificationService;
+            this.connectionService = connectionService;
+            this.additivesService = additivesService;
+
             additives = new ObservableCollection<Additive>();
             DoneCommand = new Command(OnDoneClicked, Validate);
             CancelCommand = new Command(OnCancel);
@@ -183,7 +198,7 @@ namespace I4_QM_app.ViewModels
                 return;
             }
 
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Done?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Done?", "Yes", "No");
 
             if (answer)
             {
@@ -198,7 +213,7 @@ namespace I4_QM_app.ViewModels
                 Order.Done = DateTime.Now;
                 Order.UserId = UserId;
 
-                await App.OrdersDataService.UpdateItemAsync(Order);
+                await ordersService.UpdateItemAsync(Order);
 
                 // send mqtt
                 JsonSerializerOptions options = new JsonSerializerOptions()
@@ -208,7 +223,7 @@ namespace I4_QM_app.ViewModels
 
                 string res = System.Text.Json.JsonSerializer.Serialize<Order>(Order, options);
 
-                await App.ConnectionService.HandlePublishMessage("prod/orders/mixed", res);
+                await connectionService.HandlePublishMessage("prod/orders/mixed", res);
                 await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");
             }
         }
@@ -224,8 +239,8 @@ namespace I4_QM_app.ViewModels
 
             try
             {
-                var orderTemp = await App.OrdersDataService.GetItemAsync(orderId);
-                var additivesTemp = await App.AdditivesDataService.GetItemsAsync();
+                var orderTemp = await ordersService.GetItemAsync(orderId);
+                var additivesTemp = await additivesService.GetItemsAsync();
                 var fs = App.DB.GetStorage<string>("myImages");
 
                 Order = orderTemp;

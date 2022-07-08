@@ -17,7 +17,7 @@ namespace I4_QM_app.Views.Recipes
         public TransformRecipePage()
         {
             InitializeComponent();
-            BindingContext = new TransformRecipeViewModel();
+            BindingContext = new TransformRecipeViewModel(App.OrdersDataService, App.NotificationService, App.RecipesDataService);
         }
     }
 }

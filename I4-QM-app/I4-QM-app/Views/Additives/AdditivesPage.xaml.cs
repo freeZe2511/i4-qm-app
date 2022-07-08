@@ -18,7 +18,7 @@ namespace I4_QM_app.Views
         public AdditivesPage()
         {
             InitializeComponent();
-            BindingContext = viewModel = new AdditivesViewModel();
+            BindingContext = viewModel = new AdditivesViewModel(App.AdditivesDataService);
         }
 
         /// <summary>

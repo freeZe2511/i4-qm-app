@@ -1,5 +1,6 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
+using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
@@ -13,13 +14,21 @@ namespace I4_QM_app.ViewModels
     /// </summary>
     public class RecipesViewModel : BaseViewModel
     {
+        private readonly IDataService<Recipe> recipesService;
+        private readonly INotificationService notificationService;
+
         private Recipe selectedRecipe;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RecipesViewModel"/> class.
         /// </summary>
-        public RecipesViewModel()
+        /// <param name="recipesService">Recipes Service.</param>
+        /// <param name="notificationService">Notifications Service.</param>
+        public RecipesViewModel(IDataService<Recipe> recipesService, INotificationService notificationService)
         {
+            this.recipesService = recipesService;
+            this.notificationService = notificationService;
+
             Title = "Recipes";
             Descending = true;
             Recipes = new SortableObservableCollection<Recipe>() { SortingSelector = i => i.Id, Descending = Descending };
@@ -165,7 +174,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 Recipes.Clear();
-                var recipes = await App.RecipesDataService.GetItemsAsync();
+                var recipes = await recipesService.GetItemsAsync();
 
                 foreach (var recipe in recipes)
                 {
@@ -203,7 +212,7 @@ namespace I4_QM_app.ViewModels
         /// <returns>Task.</returns>
         private async Task AddNewItemAsync()
         {
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Add new Recipe?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Add new Recipe?", "Yes", "No");
 
             // This will push the ItemDetailPage onto the navigation stack
             if (answer)
@@ -218,11 +227,11 @@ namespace I4_QM_app.ViewModels
         /// <returns>Task.</returns>
         private async Task DeleteAllItemAsync()
         {
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete all recipes?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Delete all recipes?", "Yes", "No");
 
             if (answer)
             {
-                await App.RecipesDataService.DeleteAllItemsAsync();
+                await recipesService.DeleteAllItemsAsync();
             }
 
             await ExecuteLoadRecipesCommand();

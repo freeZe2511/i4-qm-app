@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
 using I4_QM_app.ViewModels.Recipes;
 using I4_QM_app.Views;
 using I4_QM_app.Views.Recipes;
@@ -17,6 +18,10 @@ namespace I4_QM_app.ViewModels
     [QueryProperty(nameof(RecipeId), nameof(RecipeId))]
     public class RecipeDetailViewModel : BaseViewModel
     {
+        private readonly IDataService<Recipe> recipesService;
+        private readonly INotificationService notificationService;
+        private readonly IDataService<Additive> additivesService;
+
         private string recipeId;
         private Recipe recipe;
         private string id;
@@ -30,8 +35,15 @@ namespace I4_QM_app.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="RecipeDetailViewModel"/> class.
         /// </summary>
-        public RecipeDetailViewModel()
+        /// <param name="recipesService">Recipes Service.</param>
+        /// <param name="notificationService">Notifications Service.</param>
+        /// <param name="additivesService">Additives Service.</param>
+        public RecipeDetailViewModel(IDataService<Recipe> recipesService, INotificationService notificationService, IDataService<Additive> additivesService)
         {
+            this.recipesService = recipesService;
+            this.notificationService = notificationService;
+            this.additivesService = additivesService;
+
             Available = true;
             OrderCommand = new Command(async () => await TransformRecipeAsync(), Validate);
             DeleteCommand = new Command(async () => await DeleteRecipeAsync());
@@ -154,8 +166,8 @@ namespace I4_QM_app.ViewModels
 
             try
             {
-                var recipeTemp = await App.RecipesDataService.GetItemAsync(recipeId);
-                var additivesTemp = await App.AdditivesDataService.GetItemsAsync();
+                var recipeTemp = await recipesService.GetItemAsync(recipeId);
+                var additivesTemp = await additivesService.GetItemsAsync();
 
                 Id = recipeTemp.Id;
                 CreatorId = recipeTemp.CreatorId;
@@ -200,7 +212,7 @@ namespace I4_QM_app.ViewModels
         /// <returns>Task.</returns>
         private async Task TransformRecipeAsync()
         {
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Transform recipe?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Transform recipe?", "Yes", "No");
 
             if (answer)
             {
@@ -214,11 +226,11 @@ namespace I4_QM_app.ViewModels
         /// <returns>Task.</returns>
         private async Task DeleteRecipeAsync()
         {
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete recipe?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Delete recipe?", "Yes", "No");
 
             if (answer)
             {
-                await App.RecipesDataService.DeleteItemAsync(Id);
+                await recipesService.DeleteItemAsync(Id);
                 await Shell.Current.GoToAsync($"//{nameof(RecipesPage)}");
             }
         }

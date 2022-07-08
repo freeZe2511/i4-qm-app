@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,6 +14,10 @@ namespace I4_QM_app.ViewModels.Recipes
     [QueryProperty(nameof(RecipeId), nameof(RecipeId))]
     public class TransformRecipeViewModel : BaseViewModel
     {
+        private readonly IDataService<Order> ordersService;
+        private readonly INotificationService notificationService;
+        private readonly IDataService<Recipe> recipesService;
+
         private string recipeId;
         private Recipe recipe;
         private List<Additive> additives;
@@ -26,8 +31,15 @@ namespace I4_QM_app.ViewModels.Recipes
         /// <summary>
         /// Initializes a new instance of the <see cref="TransformRecipeViewModel"/> class.
         /// </summary>
-        public TransformRecipeViewModel()
+        /// <param name="ordersService">Orders Service.</param>
+        /// <param name="notificationService">Notifications Service.</param>
+        /// <param name="recipesService">Recipes Service.</param>
+        public TransformRecipeViewModel(IDataService<Order> ordersService, INotificationService notificationService, IDataService<Recipe> recipesService)
         {
+            this.ordersService = ordersService;
+            this.notificationService = notificationService;
+            this.recipesService = recipesService;
+
             Title = "Transform";
             OrderCommand = new Command(async () => await TransformRecipe(), Validate);
             CancelCommand = new Command(OnCancel);
@@ -190,7 +202,7 @@ namespace I4_QM_app.ViewModels.Recipes
         {
             try
             {
-                var recipeTemp = await App.RecipesDataService.GetItemAsync(recipeId);
+                var recipeTemp = await recipesService.GetItemAsync(recipeId);
 
                 Recipe = recipeTemp;
                 Additives = recipeTemp.Additives;
@@ -214,7 +226,7 @@ namespace I4_QM_app.ViewModels.Recipes
                 return;
             }
 
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Transform into Order?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Transform into Order?", "Yes", "No");
 
             if (answer)
             {
@@ -230,11 +242,11 @@ namespace I4_QM_app.ViewModels.Recipes
                 };
 
                 // insert order
-                await App.OrdersDataService.AddItemAsync(newOrder);
+                await ordersService.AddItemAsync(newOrder);
 
                 // update use
                 Recipe.Used = Recipe.Used + 1;
-                await App.RecipesDataService.UpdateItemAsync(Recipe);
+                await recipesService.UpdateItemAsync(Recipe);
 
                 // navigate
                 await Shell.Current.Navigation.PopToRootAsync();

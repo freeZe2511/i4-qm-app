@@ -17,7 +17,7 @@ namespace I4_QM_app.Views
         public HistoryPage()
         {
             InitializeComponent();
-            BindingContext = viewModel = new HistoryViewModel();
+            BindingContext = viewModel = new HistoryViewModel(App.OrdersDataService, App.NotificationService, App.ConnectionService);
         }
 
         /// <summary>

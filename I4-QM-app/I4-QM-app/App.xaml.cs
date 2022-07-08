@@ -101,7 +101,6 @@ namespace I4_QM_app
         /// <returns>Database.</returns>
         private static ILiteDatabase CreateDatabase()
         {
-            // Datenbank initialisieren
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "mydb.db");
             var connection = new ConnectionString
             {

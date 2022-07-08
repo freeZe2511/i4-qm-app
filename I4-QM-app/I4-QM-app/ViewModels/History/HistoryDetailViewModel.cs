@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,9 @@ namespace I4_QM_app.ViewModels
     [QueryProperty(nameof(OrderId), nameof(OrderId))]
     public class HistoryDetailViewModel : BaseViewModel
     {
+        private readonly IDataService<Order> ordersService;
+        private readonly INotificationService notificationService;
+
         private Order order;
         private string orderId;
         private string id;
@@ -31,8 +35,12 @@ namespace I4_QM_app.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="HistoryDetailViewModel"/> class.
         /// </summary>
-        public HistoryDetailViewModel()
+        /// <param name="ordersService">Orders Service.</param>
+        /// <param name="notificationService">Notifications Service.</param>
+        public HistoryDetailViewModel(IDataService<Order> ordersService, INotificationService notificationService)
         {
+            this.ordersService = ordersService;
+            this.notificationService = notificationService;
             FeedbackCommand = new Command(OnFeedbackClicked);
             DeleteItemCommand = new Command(async () => await DeleteItem());
         }
@@ -186,7 +194,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                var orderTemp = await App.OrdersDataService.GetItemAsync(orderId);
+                var orderTemp = await ordersService.GetItemAsync(orderId);
                 Order = orderTemp;
                 Id = orderTemp.Id;
                 UserId = orderTemp.UserId;
@@ -199,7 +207,6 @@ namespace I4_QM_app.ViewModels
                 Done = orderTemp.Done;
                 Rating = orderTemp.Rating;
                 FeedbackEnabled = orderTemp.Status == Status.Mixed;
-
             }
             catch (Exception)
             {
@@ -213,11 +220,11 @@ namespace I4_QM_app.ViewModels
         /// <returns>Task.</returns>
         private async Task DeleteItem()
         {
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete item from history?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Delete item from history?", "Yes", "No");
 
             if (answer)
             {
-                await App.OrdersDataService.DeleteItemAsync(Id);
+                await ordersService.DeleteItemAsync(Id);
                 await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
             }
         }

@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
 using LiteDB;
 using System;
 using System.Collections.ObjectModel;
@@ -16,6 +17,11 @@ namespace I4_QM_app.ViewModels
     /// </summary>
     public class NewRecipeViewModel : BaseViewModel
     {
+        private readonly IDataService<Recipe> recipesService;
+        private readonly INotificationService notificationService;
+        private readonly IConnectionService connectionService;
+        private readonly IDataService<Additive> additivesService;
+
         private string name;
         private string description;
         private ObservableCollection<Additive> additives;
@@ -23,8 +29,17 @@ namespace I4_QM_app.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="NewRecipeViewModel"/> class.
         /// </summary>
-        public NewRecipeViewModel()
+        /// <param name="notificationService">Notifications Service.</param>
+        /// <param name="connectionService">Connection Service.</param>
+        /// <param name="additivesService">Additives Service.</param>
+        /// <param name="recipesService">Recipes Service.</param>
+        public NewRecipeViewModel(INotificationService notificationService, IConnectionService connectionService, IDataService<Additive> additivesService, IDataService<Recipe> recipesService)
         {
+            this.recipesService = recipesService;
+            this.notificationService = notificationService;
+            this.connectionService = connectionService;
+            this.additivesService = additivesService;
+
             Additives = new ObservableCollection<Additive>();
             SaveCommand = new Command(OnSave, Validate);
             CancelCommand = new Command(OnCancel);
@@ -107,7 +122,7 @@ namespace I4_QM_app.ViewModels
         /// </summary>
         private async void OnSave()
         {
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Save?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Save?", "Yes", "No");
 
             if (answer)
             {
@@ -122,7 +137,7 @@ namespace I4_QM_app.ViewModels
                     Additives = Additives.Where(i => i.Checked).ToList(),
                 };
 
-                await App.RecipesDataService.AddItemAsync(newRecipe);
+                await recipesService.AddItemAsync(newRecipe);
 
                 JsonSerializerOptions options = new JsonSerializerOptions()
                 {
@@ -130,7 +145,7 @@ namespace I4_QM_app.ViewModels
                 };
 
                 string res = System.Text.Json.JsonSerializer.Serialize<Recipe>(newRecipe, options);
-                await App.ConnectionService.HandlePublishMessage("recipes/new", res);
+                await connectionService.HandlePublishMessage("recipes/new", res);
 
                 await Shell.Current.GoToAsync("..");
             }
@@ -147,7 +162,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 var fs = App.DB.GetStorage<string>("myImages");
-                var list = await App.AdditivesDataService.GetItemsAsync();
+                var list = await additivesService.GetItemsAsync();
 
                 if (!list.Any())
                 {

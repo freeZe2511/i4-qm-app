@@ -10,6 +10,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "I4_QM_app", "I4-QM-app\I4-QM-app\I4_QM_app.csproj", "{6B8D56E0-4AED-4CAB-A55D-E29F8BF9BE87}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "I4-QM-app.NUnitTests", "I4-QM-app.NUnitTests\I4-QM-app.NUnitTests.csproj", "{38CD7850-4F5C-4E3D-B181-89E8BADEAB4C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6B8D56E0-4AED-4CAB-A55D-E29F8BF9BE87} = {6B8D56E0-4AED-4CAB-A55D-E29F8BF9BE87}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "I4-QM-app.UITests", "I4-QM-app.UITests\I4-QM-app.UITests.csproj", "{85E10527-02FB-4119-98AB-BDEEACF7A4B7}"
 EndProject

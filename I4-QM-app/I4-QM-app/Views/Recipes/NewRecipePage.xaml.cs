@@ -16,7 +16,7 @@ namespace I4_QM_app.Views
         public NewRecipePage()
         {
             InitializeComponent();
-            BindingContext = viewModel = new NewRecipeViewModel();
+            BindingContext = viewModel = new NewRecipeViewModel(App.NotificationService, App.ConnectionService, App.AdditivesDataService, App.RecipesDataService);
         }
 
         /// <summary>

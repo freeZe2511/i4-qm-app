@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services;
 using I4_QM_app.Views;
 using System.Threading.Tasks;
 using Xamarin.Essentials;
@@ -11,6 +12,8 @@ namespace I4_QM_app.ViewModels
     /// </summary>
     public class LoginViewModel : BaseViewModel
     {
+        private readonly IConnectionService connectionService;
+
         private string entryValue;
 
         /// <summary>
@@ -21,17 +24,19 @@ namespace I4_QM_app.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="LoginViewModel"/> class.
         /// </summary>
-        public LoginViewModel()
+        /// <param name="connectionService">Connection Service.</param>
+        public LoginViewModel(IConnectionService connectionService)
         {
-            LoginCommand = new Command(OnLoginClicked, Validate);
+            this.connectionService = connectionService;
 
+            LoginCommand = new Command(OnLoginClicked, Validate);
             string userId = Preferences.Get("UserID", string.Empty);
 
             if (userId != string.Empty)
             {
                 Task.Run(async () =>
                 {
-                    await App.ConnectionService.HandlePublishMessage("connected", userId);
+                    await connectionService.HandlePublishMessage("connected", userId);
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                 });
             }
@@ -87,7 +92,7 @@ namespace I4_QM_app.ViewModels
             ((App)App.Current).CurrentUser = new User(EntryValue);
             Preferences.Set("UserID", EntryValue);
 
-            await App.ConnectionService.HandlePublishMessage("connected", EntryValue);
+            await connectionService.HandlePublishMessage("connected", EntryValue);
 
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             EntryValue = string.Empty;

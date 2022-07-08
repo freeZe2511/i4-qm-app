@@ -19,6 +19,38 @@ namespace I4_QM_app.Services.Connection
     public class AdditivesHandler : IMessageHandler
     {
         /// <summary>
+        /// Handler to redirect to specific method per route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <param name="baseTopicURL">mqtt base url.</param>
+        /// <returns>Task.</returns>
+        public async Task HandleRoutes(MqttApplicationMessage message, string baseTopicURL)
+        {
+            var topic = message.Topic;
+
+            // maybe not ideal
+            if (topic == baseTopicURL + "prod/additives/add")
+            {
+                await HandleAddRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/additives/del")
+            {
+                await HandleDelRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/additives/get")
+            {
+                await HandleGetRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/additives/sync")
+            {
+                await HandleUpdateRoute(message);
+            }
+        }
+
+        /// <summary>
         /// Handles add topic/route.
         /// </summary>
         /// <param name="message">Mqtt message.</param>
@@ -99,38 +131,6 @@ namespace I4_QM_app.Services.Connection
 
             string additivesList = System.Text.Json.JsonSerializer.Serialize(getAdditives, options);
             await App.ConnectionService.HandlePublishMessage("backup/additives", additivesList);
-        }
-
-        /// <summary>
-        /// Handler to redirect to specific method per route.
-        /// </summary>
-        /// <param name="message">Mqtt message.</param>
-        /// <param name="baseTopicURL">mqtt base url.</param>
-        /// <returns>Task.</returns>
-        public async Task HandleRoutes(MqttApplicationMessage message, string baseTopicURL)
-        {
-            var topic = message.Topic;
-
-            // maybe not ideal
-            if (topic == baseTopicURL + "prod/additives/add")
-            {
-                await HandleAddRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/additives/del")
-            {
-                await HandleDelRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/additives/get")
-            {
-                await HandleGetRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/additives/sync")
-            {
-                await HandleUpdateRoute(message);
-            }
         }
 
         /// <summary>

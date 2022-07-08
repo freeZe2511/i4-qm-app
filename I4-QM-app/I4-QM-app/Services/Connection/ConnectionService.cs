@@ -17,18 +17,29 @@ namespace I4_QM_app.Services
     {
         private static string serverURL = "broker.hivemq.com";
         private static string baseTopicURL = "thm/sfm/sg/";
+
         private readonly IManagedMqttClient managedMqttClient;
         private readonly IMessageHandler ordersHandler;
         private readonly IMessageHandler additivesHandler;
 
+        //public ConnectionService(IMessageHandler additivesHandler, IMessageHandler ordersHandler)
+        //{
+        //    managedMqttClient = new MqttFactory().CreateManagedMqttClient();
+        //    this.additivesHandler = additivesHandler;
+        //    this.ordersHandler = ordersHandler;
+        //}
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectionService"/> class.
         /// </summary>
+        /// <param name="ordersHandler">Orders Handler.</param>
+        /// <param name="additivesHandler">Additives Handler.</param>
         public ConnectionService()
         {
             managedMqttClient = new MqttFactory().CreateManagedMqttClient();
-            ordersHandler = new OrdersHandler();
-            additivesHandler = new AdditivesHandler();
+            this.ordersHandler = new OrdersHandler();
+            this.additivesHandler = new AdditivesHandler();
         }
 
         /// <summary>

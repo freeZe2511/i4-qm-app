@@ -1,17 +1,18 @@
 ﻿using NUnit.Framework;
 using System.Linq;
 using Xamarin.UITest;
+using Xamarin.UITest.Queries;
 
 namespace I4_QM_app.UITests
 {
     [TestFixture(Platform.Android)]
     //[TestFixture(Platform.iOS)]
-    public class Tests
+    public class TestsLoginPage
     {
         IApp app;
         Platform platform;
 
-        public Tests(Platform platform)
+        public TestsLoginPage(Platform platform)
         {
             this.platform = platform;
         }
@@ -38,9 +39,9 @@ namespace I4_QM_app.UITests
         {
             app.WaitForElement(c => c.Marked("LoginEntry"));
             app.EnterText(c => c.Marked("LoginEntry"), "1234");
-
             app.Tap("LoginButton");
-
+            AppResult[] res = app.WaitForElement(x => x.Marked("HomeWelcome"));
+            Assert.IsTrue(res.Any());
         }
     }
 }

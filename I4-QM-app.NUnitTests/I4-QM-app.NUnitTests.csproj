@@ -20,4 +20,9 @@
     <ProjectReference Include="..\I4-QM-app\I4-QM-app\I4_QM_app.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Tests\Recipes\" />
+    <Folder Include="Tests\Orders\" />
+  </ItemGroup>
+
 </Project>

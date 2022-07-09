@@ -31,6 +31,7 @@ namespace I4_QM_app.NUnitTests.Tests
         {
             var home = new HomeViewModel(ordersService, recipesService, additivesService, abstractService);
             Assert.IsNotNull(home);
+            Assert.AreEqual(home.Title, "Home");
 
             home.OnAppearing();
             Assert.IsTrue(home.IsBusy);

@@ -1,5 +1,4 @@
-﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
+﻿using I4_QM_app.Services;
 using I4_QM_app.Services.Abstract;
 using I4_QM_app.Views;
 using System.Threading.Tasks;
@@ -87,11 +86,8 @@ namespace I4_QM_app.ViewModels
                 return;
             }
 
-            ((App)App.Current).CurrentUser = new User(EntryValue);
             this.abstractService.SetPreferences("UserID", EntryValue);
-
             await connectionService.HandlePublishMessage("connected", EntryValue);
-
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             EntryValue = string.Empty;
         }

@@ -24,14 +24,11 @@ namespace I4_QM_app.NUnitTests.Tests
             var login = new LoginViewModel(connectionService, abstractService);
             Assert.IsNull(login.EntryValue);
             Assert.IsEmpty(abstractService.GetPreferences("UserID", string.Empty));
-            bool a = login.LoginCommand.CanExecute(null);
-            Assert.IsFalse(a);
+            Assert.IsFalse(login.LoginCommand.CanExecute(null));
             login.EntryValue = "1234";
-            bool b = login.LoginCommand.CanExecute(null);
-            Assert.IsTrue(b);
-            // TODO
-            //login.LoginCommand.Execute(null);
-            //Assert.AreEqual(login.EntryValue, abstractService.GetPreferences("UserID", string.Empty));
+            Assert.IsTrue(login.LoginCommand.CanExecute(null));
+            login.LoginCommand.Execute(null);
+            Assert.AreEqual(login.EntryValue, abstractService.GetPreferences("UserID", string.Empty));
         }
 
         [Test]
@@ -39,9 +36,18 @@ namespace I4_QM_app.NUnitTests.Tests
         {
             var login = new LoginViewModel(connectionService, abstractService);
             Assert.IsNull(login.EntryValue);
-            login.EntryValue = "abc123";
+            login.EntryValue = "0000";
             bool a = login.LoginCommand.CanExecute(null);
             Assert.IsFalse(a);
+            login.LoginCommand.Execute(null);
+        }
+
+        [Test]
+        public void LoginAlreadyLoggedIn()
+        {
+            abstractService.SetPreferences("UserID", "1234");
+            var login = new LoginViewModel(connectionService, abstractService);
+            // TODO
         }
 
 

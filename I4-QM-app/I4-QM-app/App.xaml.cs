@@ -1,5 +1,6 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Services;
+using I4_QM_app.Services.Abstract;
 using LiteDB;
 using System;
 using System.IO;
@@ -26,6 +27,7 @@ namespace I4_QM_app
             DependencyService.Register<AdditiveService>();
             DependencyService.Register<NotificationService>();
             DependencyService.Register<ConnectionService>();
+            DependencyService.Register<AbstractService>();
 
             MainPage = new AppShell();
 
@@ -70,6 +72,11 @@ namespace I4_QM_app
         /// Gets connection service.
         /// </summary>
         public static IConnectionService ConnectionService => DependencyService.Get<IConnectionService>();
+
+        /// <summary>
+        /// Gets abstract service.
+        /// </summary>
+        public static IAbstractService AbstractService => DependencyService.Get<IAbstractService>();
 
         /// <summary>
         /// On Start.

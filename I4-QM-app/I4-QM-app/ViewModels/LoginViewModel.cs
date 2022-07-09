@@ -1,8 +1,8 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Services;
+using I4_QM_app.Services.Abstract;
 using I4_QM_app.Views;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -13,6 +13,7 @@ namespace I4_QM_app.ViewModels
     public class LoginViewModel : BaseViewModel
     {
         private readonly IConnectionService connectionService;
+        private readonly IAbstractService abstractService;
 
         private string entryValue;
 
@@ -25,12 +26,14 @@ namespace I4_QM_app.ViewModels
         /// Initializes a new instance of the <see cref="LoginViewModel"/> class.
         /// </summary>
         /// <param name="connectionService">Connection Service.</param>
-        public LoginViewModel(IConnectionService connectionService)
+        /// <param name="abstractService">Abstract Service.</param>
+        public LoginViewModel(IConnectionService connectionService, IAbstractService abstractService)
         {
             this.connectionService = connectionService;
+            this.abstractService = abstractService;
 
             LoginCommand = new Command(OnLoginClicked, Validate);
-            string userId = Preferences.Get("UserID", string.Empty);
+            string userId = this.abstractService.GetPreferences("UserID", string.Empty);
 
             if (userId != string.Empty)
             {
@@ -44,11 +47,6 @@ namespace I4_QM_app.ViewModels
             this.PropertyChanged +=
                 (_, __) => LoginCommand.ChangeCanExecute();
         }
-
-        /// <summary>
-        /// Gets or sets the User id.
-        /// </summary>
-        public int UID { get; set; }
 
         /// <summary>
         /// Gets command to login.
@@ -90,7 +88,7 @@ namespace I4_QM_app.ViewModels
             }
 
             ((App)App.Current).CurrentUser = new User(EntryValue);
-            Preferences.Set("UserID", EntryValue);
+            this.abstractService.SetPreferences("UserID", EntryValue);
 
             await connectionService.HandlePublishMessage("connected", EntryValue);
 

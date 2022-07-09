@@ -2,50 +2,67 @@
 using I4_QM_app.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace I4_QM_app.NUnitTests.MockServices
 {
     internal class MockOrderService : IDataService<Order>
     {
-        public Task<bool> AddItemAsync(Order item)
+        private readonly List<Order> orders;
+
+        public MockOrderService()
         {
-            throw new NotImplementedException();
+            this.orders = new List<Order>();
         }
 
-        public Task<bool> DeleteAllItemsAsync()
+        public async Task<bool> AddItemAsync(Order item)
         {
-            throw new NotImplementedException();
+            orders.Add(item);
+            return await Task.FromResult(true);
         }
 
-        public Task<bool> DeleteItemAsync(string id)
+        public async Task<bool> DeleteAllItemsAsync()
         {
-            throw new NotImplementedException();
+            orders.Clear();
+            return await Task.FromResult(true);
         }
 
-        public Task<bool> DeleteManyItemsAsync(Func<Order, bool> predicate)
+        public async Task<bool> DeleteItemAsync(string id)
         {
-            throw new NotImplementedException();
+            var oldOrder = orders.Where((Order arg) => arg.Id == id).FirstOrDefault();
+            orders.Remove(oldOrder);
+            return await Task.FromResult(true);
         }
 
-        public Task<Order> GetItemAsync(string id)
+        public async Task<bool> DeleteManyItemsAsync(Func<Order, bool> predicate)
         {
-            throw new NotImplementedException();
+            var list = orders.Where(predicate).ToList();
+            list.ForEach(i => orders.Remove(i));
+            return await Task.FromResult(true);
         }
 
-        public Task<IEnumerable<Order>> GetItemsAsync()
+        public async Task<Order> GetItemAsync(string id)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(orders.FirstOrDefault(s => s.Id == id));
         }
 
-        public Task<IEnumerable<Order>> GetItemsFilteredAsync(Func<Order, bool> predicate)
+        public async Task<IEnumerable<Order>> GetItemsAsync()
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(orders);
         }
 
-        public Task<bool> UpdateItemAsync(Order item)
+        public async Task<IEnumerable<Order>> GetItemsFilteredAsync(Func<Order, bool> predicate)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(orders.Where(predicate).ToList());
+        }
+
+        public async Task<bool> UpdateItemAsync(Order item)
+        {
+            var oldOrder = orders.Where((Order arg) => arg.Id == item.Id).FirstOrDefault();
+            orders.Remove(oldOrder);
+            orders.Add(item);
+            return await Task.FromResult(true);
         }
     }
 }

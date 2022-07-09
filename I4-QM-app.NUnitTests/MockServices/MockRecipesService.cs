@@ -2,50 +2,67 @@
 using I4_QM_app.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace I4_QM_app.NUnitTests.MockServices
 {
     public class MockRecipesService : IDataService<Recipe>
     {
-        public Task<bool> AddItemAsync(Recipe item)
+        private readonly List<Recipe> recipes;
+
+        public MockRecipesService()
         {
-            throw new NotImplementedException();
+            this.recipes = new List<Recipe>();
         }
 
-        public Task<bool> DeleteAllItemsAsync()
+        public async Task<bool> AddItemAsync(Recipe item)
         {
-            throw new NotImplementedException();
+            recipes.Add(item);
+            return await Task.FromResult(true);
         }
 
-        public Task<bool> DeleteItemAsync(string id)
+        public async Task<bool> DeleteAllItemsAsync()
         {
-            throw new NotImplementedException();
+            recipes.Clear();
+            return await Task.FromResult(true);
         }
 
-        public Task<bool> DeleteManyItemsAsync(Func<Recipe, bool> predicate)
+        public async Task<bool> DeleteItemAsync(string id)
         {
-            throw new NotImplementedException();
+            var oldRecipe = recipes.Where((Recipe arg) => arg.Id == id).FirstOrDefault();
+            recipes.Remove(oldRecipe);
+            return await Task.FromResult(true);
         }
 
-        public Task<Recipe> GetItemAsync(string id)
+        public async Task<bool> DeleteManyItemsAsync(Func<Recipe, bool> predicate)
         {
-            throw new NotImplementedException();
+            var list = recipes.Where(predicate).ToList();
+            list.ForEach(i => recipes.Remove(i));
+            return await Task.FromResult(true);
         }
 
-        public Task<IEnumerable<Recipe>> GetItemsAsync()
+        public async Task<Recipe> GetItemAsync(string id)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(recipes.FirstOrDefault(s => s.Id == id));
         }
 
-        public Task<IEnumerable<Recipe>> GetItemsFilteredAsync(Func<Recipe, bool> predicate)
+        public async Task<IEnumerable<Recipe>> GetItemsAsync()
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(recipes);
         }
 
-        public Task<bool> UpdateItemAsync(Recipe item)
+        public async Task<IEnumerable<Recipe>> GetItemsFilteredAsync(Func<Recipe, bool> predicate)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(recipes.Where(predicate).ToList());
+        }
+
+        public async Task<bool> UpdateItemAsync(Recipe item)
+        {
+            var oldRecipe = recipes.Where((Recipe arg) => arg.Id == item.Id).FirstOrDefault();
+            recipes.Remove(oldRecipe);
+            recipes.Add(item);
+            return await Task.FromResult(true);
         }
     }
 }

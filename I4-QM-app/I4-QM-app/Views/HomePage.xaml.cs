@@ -16,7 +16,7 @@ namespace I4_QM_app.Views
         public HomePage()
         {
             InitializeComponent();
-            BindingContext = viewModel = new HomeViewModel(App.OrdersDataService, App.RecipesDataService, App.AdditivesDataService);
+            BindingContext = viewModel = new HomeViewModel(App.OrdersDataService, App.RecipesDataService, App.AdditivesDataService, App.AbstractService);
         }
 
         /// <summary>

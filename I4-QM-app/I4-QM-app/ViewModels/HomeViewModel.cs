@@ -1,10 +1,10 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Services;
+using I4_QM_app.Services.Abstract;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -17,6 +17,7 @@ namespace I4_QM_app.ViewModels
         private readonly IDataService<Order> ordersService;
         private readonly IDataService<Recipe> recipesService;
         private readonly IDataService<Additive> additivesService;
+        private readonly IAbstractService abstractService;
 
         private string userId;
         private int openOrdersCount;
@@ -36,11 +37,12 @@ namespace I4_QM_app.ViewModels
         /// <param name="ordersService">Orders Service.</param>
         /// <param name="recipesService">Recipes Service.</param>
         /// <param name="additivesService">Additives Service.</param>
-        public HomeViewModel(IDataService<Order> ordersService, IDataService<Recipe> recipesService, IDataService<Additive> additivesService)
+        public HomeViewModel(IDataService<Order> ordersService, IDataService<Recipe> recipesService, IDataService<Additive> additivesService, IAbstractService abstractService)
         {
             this.ordersService = ordersService;
             this.recipesService = recipesService;
             this.additivesService = additivesService;
+            this.abstractService = abstractService;
 
             Title = "Home";
             RefreshCommand = new Command(async () => await LoadRefreshCommand());
@@ -154,7 +156,7 @@ namespace I4_QM_app.ViewModels
                 var additives = await additivesService.GetItemsAsync();
                 var recipes = await recipesService.GetItemsAsync();
 
-                UserId = Preferences.Get("UserID", string.Empty);
+                UserId = abstractService.GetPreferences("UserID", string.Empty);
 
                 OpenOrdersCount = orders.Count(x => x.Status == Status.Open);
                 MixedOrdersCount = orders.Count(x => x.Status == Status.Mixed);

@@ -2,50 +2,67 @@
 using I4_QM_app.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace I4_QM_app.NUnitTests.MockServices
 {
     public class MockAdditivesService : IDataService<Additive>
     {
-        public Task<bool> AddItemAsync(Additive item)
+        private readonly List<Additive> additives;
+
+        public MockAdditivesService()
         {
-            throw new NotImplementedException();
+            this.additives = new List<Additive>();
         }
 
-        public Task<bool> DeleteAllItemsAsync()
+        public async Task<bool> AddItemAsync(Additive item)
         {
-            throw new NotImplementedException();
+            additives.Add(item);
+            return await Task.FromResult(true);
         }
 
-        public Task<bool> DeleteItemAsync(string id)
+        public async Task<bool> DeleteAllItemsAsync()
         {
-            throw new NotImplementedException();
+            additives.Clear();
+            return await Task.FromResult(true);
         }
 
-        public Task<bool> DeleteManyItemsAsync(Func<Additive, bool> predicate)
+        public async Task<bool> DeleteItemAsync(string id)
         {
-            throw new NotImplementedException();
+            var oldAdditive = additives.Where((Additive arg) => arg.Id == id).FirstOrDefault();
+            additives.Remove(oldAdditive);
+            return await Task.FromResult(true);
         }
 
-        public Task<Additive> GetItemAsync(string id)
+        public async Task<bool> DeleteManyItemsAsync(Func<Additive, bool> predicate)
         {
-            throw new NotImplementedException();
+            var list = additives.Where(predicate).ToList();
+            list.ForEach(i => additives.Remove(i));
+            return await Task.FromResult(true);
         }
 
-        public Task<IEnumerable<Additive>> GetItemsAsync()
+        public async Task<Additive> GetItemAsync(string id)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(additives.FirstOrDefault(s => s.Id == id));
         }
 
-        public Task<IEnumerable<Additive>> GetItemsFilteredAsync(Func<Additive, bool> predicate)
+        public async Task<IEnumerable<Additive>> GetItemsAsync()
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(additives);
         }
 
-        public Task<bool> UpdateItemAsync(Additive item)
+        public async Task<IEnumerable<Additive>> GetItemsFilteredAsync(Func<Additive, bool> predicate)
         {
-            throw new NotImplementedException();
+            return await Task.FromResult(additives.Where(predicate).ToList());
+        }
+
+        public async Task<bool> UpdateItemAsync(Additive item)
+        {
+            var oldAdditive = additives.Where((Additive arg) => arg.Id == item.Id).FirstOrDefault();
+            additives.Remove(oldAdditive);
+            additives.Add(item);
+            return await Task.FromResult(true);
         }
     }
 }

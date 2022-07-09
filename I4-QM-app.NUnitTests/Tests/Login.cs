@@ -4,9 +4,9 @@ using I4_QM_app.Services.Abstract;
 using I4_QM_app.ViewModels;
 using NUnit.Framework;
 
-namespace I4_QM_app.NUnitTests
+namespace I4_QM_app.NUnitTests.Tests
 {
-    public class Login
+    internal class Login
     {
         private IConnectionService connectionService;
         private IAbstractService abstractService;

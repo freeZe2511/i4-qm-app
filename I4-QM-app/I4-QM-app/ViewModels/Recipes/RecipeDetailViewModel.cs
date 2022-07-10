@@ -23,7 +23,6 @@ namespace I4_QM_app.ViewModels
         private readonly IDataService<Additive> additivesService;
 
         private string recipeId;
-        private Recipe recipe;
         private string id;
         private string creatorId;
         private List<Additive> additives;
@@ -81,15 +80,6 @@ namespace I4_QM_app.ViewModels
                 recipeId = value;
                 LoadRecipeId(value);
             }
-        }
-
-        /// <summary>
-        /// Gets or sets the recipe.
-        /// </summary>
-        public Recipe Recipe
-        {
-            get => recipe;
-            set => SetProperty(ref recipe, value);
         }
 
         /// <summary>

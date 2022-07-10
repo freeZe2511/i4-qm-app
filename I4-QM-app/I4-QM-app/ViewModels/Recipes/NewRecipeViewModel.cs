@@ -1,5 +1,6 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Services;
+using I4_QM_app.Services.Abstract;
 using LiteDB;
 using System;
 using System.Collections.ObjectModel;
@@ -7,7 +8,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -21,6 +21,7 @@ namespace I4_QM_app.ViewModels
         private readonly INotificationService notificationService;
         private readonly IConnectionService connectionService;
         private readonly IDataService<Additive> additivesService;
+        private readonly IAbstractService abstractService;
 
         private string name;
         private string description;
@@ -33,12 +34,13 @@ namespace I4_QM_app.ViewModels
         /// <param name="connectionService">Connection Service.</param>
         /// <param name="additivesService">Additives Service.</param>
         /// <param name="recipesService">Recipes Service.</param>
-        public NewRecipeViewModel(INotificationService notificationService, IConnectionService connectionService, IDataService<Additive> additivesService, IDataService<Recipe> recipesService)
+        public NewRecipeViewModel(INotificationService notificationService, IConnectionService connectionService, IDataService<Additive> additivesService, IDataService<Recipe> recipesService, IAbstractService abstractService)
         {
             this.recipesService = recipesService;
             this.notificationService = notificationService;
             this.connectionService = connectionService;
             this.additivesService = additivesService;
+            this.abstractService = abstractService;
 
             Additives = new ObservableCollection<Additive>();
             SaveCommand = new Command(OnSave, Validate);
@@ -133,7 +135,7 @@ namespace I4_QM_app.ViewModels
                     Id = Guid.NewGuid().ToString(),
                     Name = Name,
                     Description = Description,
-                    CreatorId = Preferences.Get("UserID", string.Empty),
+                    CreatorId = abstractService.GetPreferences("UserID", string.Empty),
                     Additives = Additives.Where(i => i.Checked).ToList(),
                 };
 

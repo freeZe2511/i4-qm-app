@@ -14,7 +14,7 @@ namespace I4_QM_app.Views
         public OrderDetailPage()
         {
             InitializeComponent();
-            BindingContext = new OrderDetailViewModel(App.OrdersDataService, App.NotificationService, App.ConnectionService, App.AdditivesDataService);
+            BindingContext = new OrderDetailViewModel(App.OrdersDataService, App.NotificationService, App.ConnectionService, App.AdditivesDataService, App.AbstractService);
         }
 
     }

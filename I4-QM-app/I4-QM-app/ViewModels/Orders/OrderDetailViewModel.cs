@@ -1,5 +1,6 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.Services;
+using I4_QM_app.Services.Abstract;
 using I4_QM_app.Views;
 using LiteDB;
 using System;
@@ -9,7 +10,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -24,6 +24,7 @@ namespace I4_QM_app.ViewModels
         private readonly INotificationService notificationService;
         private readonly IConnectionService connectionService;
         private readonly IDataService<Additive> additivesService;
+        private readonly IAbstractService abstractService;
 
         private Order order;
         private string orderId;
@@ -44,12 +45,13 @@ namespace I4_QM_app.ViewModels
         /// <param name="notificationService">Notifications Service.</param>
         /// <param name="connectionService">Connection Service.</param>
         /// <param name="additivesService">Additives Service.</param>
-        public OrderDetailViewModel(IDataService<Order> ordersService, INotificationService notificationService, IConnectionService connectionService, IDataService<Additive> additivesService)
+        public OrderDetailViewModel(IDataService<Order> ordersService, INotificationService notificationService, IConnectionService connectionService, IDataService<Additive> additivesService, IAbstractService abstractService)
         {
             this.ordersService = ordersService;
             this.notificationService = notificationService;
             this.connectionService = connectionService;
             this.additivesService = additivesService;
+            this.abstractService = abstractService;
 
             additives = new ObservableCollection<Additive>();
             DoneCommand = new Command(OnDoneClicked, Validate);
@@ -245,7 +247,7 @@ namespace I4_QM_app.ViewModels
 
                 Order = orderTemp;
                 Id = orderTemp.Id;
-                UserId = Preferences.Get("UserID", string.Empty);
+                UserId = abstractService.GetPreferences("UserID", string.Empty);
                 Amount = orderTemp.Amount;
                 Weight = orderTemp.Weight;
                 Status = orderTemp.Status;

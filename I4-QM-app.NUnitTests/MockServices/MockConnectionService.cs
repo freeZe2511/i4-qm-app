@@ -7,17 +7,17 @@ namespace I4_QM_app.NUnitTests
     {
         public Task ConnectClient()
         {
-            throw new System.NotImplementedException();
+            return Task.CompletedTask;
         }
 
         public Task HandlePublishMessage(string topic, string message)
         {
-            throw new System.NotImplementedException();
+            return Task.CompletedTask;
         }
 
-        public Task<Task> HandleReceivedMessage(object eventArgs)
+        public async Task<Task> HandleReceivedMessage(object eventArgs)
         {
-            throw new System.NotImplementedException();
+            return Task.CompletedTask;
         }
     }
 }

@@ -17,13 +17,13 @@ namespace I4_QM_app.UITests
             this.platform = platform;
         }
 
-        [SetUp]
+        //[SetUp]
         public void BeforeEachTest()
         {
             app = AppInitializer.StartApp(platform);
         }
 
-        [Test]
+        //[Test]
         public void LoginDisabled()
         {
             app.WaitForElement(c => c.Marked("LoginEntry"));
@@ -34,7 +34,7 @@ namespace I4_QM_app.UITests
 
         }
 
-        [Test]
+        //[Test]
         public void SuccessfulLogin()
         {
             app.WaitForElement(c => c.Marked("LoginEntry"));

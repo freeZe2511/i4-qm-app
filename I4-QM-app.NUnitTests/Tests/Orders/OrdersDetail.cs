@@ -89,7 +89,8 @@ namespace I4_QM_app.NUnitTests.Tests.Orders
             {
                 Id = "2",
                 Portion = 100,
-                Name = "test2"
+                Name = "test2",
+                ImageBase64 = "..."
             };
 
             additives.Add(a);

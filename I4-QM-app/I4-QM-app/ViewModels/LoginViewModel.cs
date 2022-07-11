@@ -1,5 +1,5 @@
-﻿using I4_QM_app.Services;
-using I4_QM_app.Services.Abstract;
+﻿using I4_QM_app.Services.Abstract;
+using I4_QM_app.Services.Connection;
 using I4_QM_app.Views;
 using System.Threading.Tasks;
 using Xamarin.Forms;

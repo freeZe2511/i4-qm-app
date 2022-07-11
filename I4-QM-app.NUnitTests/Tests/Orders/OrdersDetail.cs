@@ -1,8 +1,10 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.NUnitTests.MockServices;
-using I4_QM_app.Services;
 using I4_QM_app.Services.Abstract;
-using I4_QM_app.ViewModels;
+using I4_QM_app.Services.Connection;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
+using I4_QM_app.ViewModels.Orders;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;

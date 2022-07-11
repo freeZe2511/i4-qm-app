@@ -3,7 +3,7 @@ using Plugin.LocalNotification.EventArgs;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.Services
+namespace I4_QM_app.Services.Notifications
 {
     /// <summary>
     /// Implementation of INotificationService.

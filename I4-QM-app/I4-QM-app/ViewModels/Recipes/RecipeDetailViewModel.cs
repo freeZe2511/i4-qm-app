@@ -1,6 +1,6 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
-using I4_QM_app.ViewModels.Recipes;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
 using I4_QM_app.Views;
 using I4_QM_app.Views.Recipes;
 using System;
@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.Recipes
 {
     /// <summary>
     /// ViewModel for the Recipe DetailsPage.

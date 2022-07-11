@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.AdditivesPage"
               Title="{Binding Additives.Count, StringFormat='Additives ({0})'}"
-             xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels.Additives"  
              xmlns:model="clr-namespace:I4_QM_app.Models">
 
     <ContentPage.ToolbarItems>

@@ -1,5 +1,6 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

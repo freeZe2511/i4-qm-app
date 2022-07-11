@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace I4_QM_app.Services
+namespace I4_QM_app.Services.Connection
 {
     /// <summary>
     /// Interface for connection services.

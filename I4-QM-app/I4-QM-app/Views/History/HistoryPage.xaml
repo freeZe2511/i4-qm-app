@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.HistoryPage"
-             xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels.History"  
              xmlns:model="clr-namespace:I4_QM_app.Models"
              x:Name="BrowseHistoryPage"
              Title="{Binding History.Count, StringFormat='History ({0})'}">

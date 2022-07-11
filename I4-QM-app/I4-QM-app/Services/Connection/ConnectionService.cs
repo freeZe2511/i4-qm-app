@@ -1,5 +1,4 @@
-﻿using I4_QM_app.Services.Connection;
-using MQTTnet;
+﻿using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Packets;
@@ -8,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace I4_QM_app.Services
+namespace I4_QM_app.Services.Connection
 {
     /// <summary>
     /// Implementation of IConnectionService for MQTT Connection.
@@ -38,8 +37,8 @@ namespace I4_QM_app.Services
         public ConnectionService()
         {
             managedMqttClient = new MqttFactory().CreateManagedMqttClient();
-            this.ordersHandler = new OrdersHandler();
-            this.additivesHandler = new AdditivesHandler();
+            ordersHandler = new OrdersHandler();
+            additivesHandler = new AdditivesHandler();
         }
 
         /// <summary>

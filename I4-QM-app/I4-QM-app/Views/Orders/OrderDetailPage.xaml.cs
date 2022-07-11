@@ -1,4 +1,4 @@
-﻿using I4_QM_app.ViewModels;
+﻿using I4_QM_app.ViewModels.Orders;
 using Xamarin.Forms;
 
 namespace I4_QM_app.Views

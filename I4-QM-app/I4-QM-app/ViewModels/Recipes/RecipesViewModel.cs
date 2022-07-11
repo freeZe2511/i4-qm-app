@@ -1,13 +1,14 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
-using I4_QM_app.Services;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.Recipes
 {
     /// <summary>
     /// ViewModel for the Recipes ListPage.
@@ -37,7 +38,7 @@ namespace I4_QM_app.ViewModels
             DeleteAllItemsCommand = new Command(async () => await DeleteAllItemAsync());
 
             SortByCommand = new Command<string>(
-                execute: async (string arg) =>
+                execute: async (arg) =>
                 {
                     arg = arg.Trim();
 

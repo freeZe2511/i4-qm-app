@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace I4_QM_app.Services
+namespace I4_QM_app.Services.Data
 {
     /// <summary>
     /// Implementation of IDataService for Recipes with LiteDB.

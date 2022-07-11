@@ -1,13 +1,13 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
-using I4_QM_app.Services;
+using I4_QM_app.Services.Data;
 using LiteDB;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.Additives
 {
     /// <summary>
     /// ViewModel for AdditivesListPage.
@@ -30,7 +30,7 @@ namespace I4_QM_app.ViewModels
             LoadAdditivesCommand = new Command(async () => await ExecuteLoadAdditivesCommand());
 
             SortByCommand = new Command<string>(
-                execute: async (string arg) =>
+                execute: async (arg) =>
                 {
                     arg = arg.Trim();
 

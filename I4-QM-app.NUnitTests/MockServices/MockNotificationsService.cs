@@ -1,4 +1,4 @@
-﻿using I4_QM_app.Services;
+﻿using I4_QM_app.Services.Notifications;
 using System;
 using System.Threading.Tasks;
 

@@ -1,4 +1,4 @@
-﻿using I4_QM_app.Services;
+﻿using I4_QM_app.Services.Connection;
 using System.Threading.Tasks;
 
 namespace I4_QM_app.NUnitTests

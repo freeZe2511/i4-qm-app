@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.OrdersPage"
              Title="{Binding Orders.Count, StringFormat='Orders ({0})'}"
-             xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels.Orders"  
              xmlns:model="clr-namespace:I4_QM_app.Models"            
              x:Name="BrowseOrdersPage">
 

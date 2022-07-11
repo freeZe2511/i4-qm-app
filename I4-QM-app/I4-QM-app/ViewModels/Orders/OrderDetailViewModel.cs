@@ -1,6 +1,8 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
 using I4_QM_app.Services.Abstract;
+using I4_QM_app.Services.Connection;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
 using I4_QM_app.Views;
 using LiteDB;
 using System;
@@ -12,7 +14,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.Orders
 {
     /// <summary>
     /// ViewModel for Orders DetailPage.
@@ -223,7 +225,7 @@ namespace I4_QM_app.ViewModels
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
                 };
 
-                string res = System.Text.Json.JsonSerializer.Serialize<Order>(Order, options);
+                string res = System.Text.Json.JsonSerializer.Serialize(Order, options);
 
                 await connectionService.HandlePublishMessage("prod/orders/mixed", res);
                 await Shell.Current.GoToAsync($"//{nameof(OrdersPage)}");

@@ -49,10 +49,10 @@
                             </Frame>
 
                             <Label Grid.Row="1"
-                                Text="{Binding Amount, StringFormat='Quantity: {0}'}" 
+                                Text="{Binding Amount, StringFormat='Quantity:  {0}'}" 
                                 LineBreakMode="NoWrap"
                                 Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="15"
+                                FontSize="14"
                                 TextColor="{StaticResource Secondary}"/>
 
                             <Label Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"

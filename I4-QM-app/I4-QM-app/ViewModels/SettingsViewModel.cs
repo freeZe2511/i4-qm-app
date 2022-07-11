@@ -6,7 +6,7 @@ namespace I4_QM_app.ViewModels
     /// <summary>
     /// ViewModel for Settings Page.
     /// </summary>
-    // TODO
+    // TODO !
     public class SettingsViewModel : BaseViewModel
     {
         /// <summary>

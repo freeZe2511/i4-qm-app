@@ -1,3 +1,4 @@
+using I4_QM_app.Models;
 using I4_QM_app.NUnitTests.MockServices;
 using I4_QM_app.Services;
 using I4_QM_app.Services.Abstract;
@@ -48,6 +49,8 @@ namespace I4_QM_app.NUnitTests.Tests
             abstractService.SetPreferences("UserID", "1234");
             var login = new LoginViewModel(connectionService, abstractService);
             // TODO
+            var user = new User("1234");
+            Assert.AreEqual("1234", user.UID);
         }
 
 

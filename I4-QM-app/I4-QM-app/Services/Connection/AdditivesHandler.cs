@@ -130,7 +130,7 @@ namespace I4_QM_app.Services.Connection
             };
 
             string additivesList = System.Text.Json.JsonSerializer.Serialize(getAdditives, options);
-            await App.ConnectionService.HandlePublishMessage("backup/additives", additivesList);
+            await App.ConnectionService.HandlePublishMessage("backup/additives/all", additivesList);
         }
 
         /// <summary>

@@ -159,7 +159,7 @@ namespace I4_QM_app.Services.Connection
         {
             var getOrders = await App.OrdersDataService.GetItemsAsync();
             string ordersList = JsonConvert.SerializeObject(getOrders);
-            await App.ConnectionService.HandlePublishMessage("backup/orders", ordersList);
+            await App.ConnectionService.HandlePublishMessage("backup/orders/all", ordersList);
         }
 
         /// <summary>

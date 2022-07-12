@@ -1,7 +1,7 @@
-﻿using I4_QM_app.Models;
+﻿using I4_QM_app.Services.Abstract;
+using I4_QM_app.Services.Connection;
 using I4_QM_app.Views;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -11,6 +11,9 @@ namespace I4_QM_app.ViewModels
     /// </summary>
     public class LoginViewModel : BaseViewModel
     {
+        private readonly IConnectionService connectionService;
+        private readonly IAbstractService abstractService;
+
         private string entryValue;
 
         /// <summary>
@@ -21,17 +24,21 @@ namespace I4_QM_app.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="LoginViewModel"/> class.
         /// </summary>
-        public LoginViewModel()
+        /// <param name="connectionService">Connection Service.</param>
+        /// <param name="abstractService">Abstract Service.</param>
+        public LoginViewModel(IConnectionService connectionService, IAbstractService abstractService)
         {
-            LoginCommand = new Command(OnLoginClicked, Validate);
+            this.connectionService = connectionService;
+            this.abstractService = abstractService;
 
-            string userId = Preferences.Get("UserID", string.Empty);
+            LoginCommand = new Command(OnLoginClicked, Validate);
+            string userId = this.abstractService.GetPreferences("UserID", string.Empty);
 
             if (userId != string.Empty)
             {
                 Task.Run(async () =>
                 {
-                    await App.ConnectionService.HandlePublishMessage("connected", userId);
+                    await connectionService.HandlePublishMessage("connected", userId);
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                 });
             }
@@ -39,11 +46,6 @@ namespace I4_QM_app.ViewModels
             this.PropertyChanged +=
                 (_, __) => LoginCommand.ChangeCanExecute();
         }
-
-        /// <summary>
-        /// Gets or sets the User id.
-        /// </summary>
-        public int UID { get; set; }
 
         /// <summary>
         /// Gets command to login.
@@ -84,11 +86,8 @@ namespace I4_QM_app.ViewModels
                 return;
             }
 
-            ((App)App.Current).CurrentUser = new User(EntryValue);
-            Preferences.Set("UserID", EntryValue);
-
-            await App.ConnectionService.HandlePublishMessage("connected", EntryValue);
-
+            this.abstractService.SetPreferences("UserID", EntryValue);
+            await connectionService.HandlePublishMessage("connected", EntryValue);
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
             EntryValue = string.Empty;
         }

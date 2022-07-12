@@ -1,4 +1,4 @@
-﻿using I4_QM_app.ViewModels;
+﻿using I4_QM_app.ViewModels.Orders;
 using Xamarin.Forms;
 
 namespace I4_QM_app.Views
@@ -17,7 +17,7 @@ namespace I4_QM_app.Views
         {
             InitializeComponent();
 
-            BindingContext = viewModel = new OrdersViewModel();
+            BindingContext = viewModel = new OrdersViewModel(App.OrdersDataService, App.NotificationService);
         }
 
         /// <summary>

@@ -1,25 +1,35 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.Orders
 {
     /// <summary>
     /// ViewModel for Orders ListPage.
     /// </summary>
     public class OrdersViewModel : BaseViewModel
     {
+        private readonly IDataService<Order> ordersService;
+        private readonly INotificationService notificationService;
+
         private Order selectedOrder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrdersViewModel"/> class.
         /// </summary>
-        public OrdersViewModel()
+        /// <param name="ordersService">Orders Service.</param>
+        /// <param name="notificationService">Notifications Service.</param>
+        public OrdersViewModel(IDataService<Order> ordersService, INotificationService notificationService)
         {
+            this.ordersService = ordersService;
+            this.notificationService = notificationService;
+
             Title = "Orders";
             Descending = true;
             Orders = new SortableObservableCollection<Order>() { SortingSelector = i => i.Due, Descending = Descending };
@@ -28,7 +38,7 @@ namespace I4_QM_app.ViewModels
             OrderTapped = new Command<Order>(OnOrderSelected);
 
             SortByCommand = new Command<string>(
-                execute: async (string arg) =>
+                execute: async (arg) =>
                 {
                     arg = arg.Trim();
 
@@ -140,7 +150,7 @@ namespace I4_QM_app.ViewModels
                 return;
             }
 
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Start mixing now?", "Yes", "No");
 
             // This will push the ItemDetailPage onto the navigation stack
             if (answer)
@@ -173,7 +183,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 Orders.Clear();
-                var orders = await App.OrdersDataService.GetItemsFilteredAsync(a => a.Status == Status.Open);
+                var orders = await ordersService.GetItemsFilteredAsync(a => a.Status == Status.Open);
 
                 foreach (var order in orders)
                 {

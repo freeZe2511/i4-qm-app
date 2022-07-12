@@ -1,4 +1,7 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services.Connection;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
@@ -7,7 +10,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.History
 {
     /// <summary>
     /// ViewModel for Feedback Page.
@@ -15,6 +18,10 @@ namespace I4_QM_app.ViewModels
     [QueryProperty(nameof(OrderId), nameof(OrderId))]
     public class FeedbackViewModel : BaseViewModel
     {
+        private readonly IDataService<Order> ordersService;
+        private readonly INotificationService notificationsService;
+        private readonly IConnectionService connectionService;
+
         private Order order;
         private string orderId;
         private Rating rating;
@@ -22,8 +29,15 @@ namespace I4_QM_app.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="FeedbackViewModel"/> class.
         /// </summary>
-        public FeedbackViewModel()
+        /// <param name="ordersService">Orders Service.</param>
+        /// <param name="notificationsService">Notifications Service.</param>
+        /// <param name="connectionService">Connection Service.</param>
+        public FeedbackViewModel(IDataService<Order> ordersService, INotificationService notificationsService, IConnectionService connectionService)
         {
+            this.ordersService = ordersService;
+            this.notificationsService = notificationsService;
+            this.connectionService = connectionService;
+
             Title = "Feedback (1 - 9)";
             SendFeedbackCommand = new Command(async () => await RateFeedbackAsync(), Validate);
             ResetFeedbackCommand = new Command(ResetFeedback);
@@ -93,7 +107,7 @@ namespace I4_QM_app.ViewModels
         {
             try
             {
-                Order = await App.OrdersDataService.GetItemAsync(orderId);
+                Order = await ordersService.GetItemAsync(orderId);
             }
             catch (Exception)
             {
@@ -107,15 +121,14 @@ namespace I4_QM_app.ViewModels
         /// <returns>Task.</returns>
         private async Task RateFeedbackAsync()
         {
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Send feedback?", "Yes", "No");
+            bool answer = await notificationsService.ShowSimpleDisplayAlert("Confirmation", "Send feedback?", "Yes", "No");
 
-            // TODO parameter
             if (answer)
             {
                 // update
                 Order.Status = Status.Rated;
                 Order.Rating = Rating;
-                await App.OrdersDataService.UpdateItemAsync(Order);
+                await ordersService.UpdateItemAsync(Order);
 
                 // send mqtt
                 JsonSerializerOptions options = new JsonSerializerOptions()
@@ -123,9 +136,9 @@ namespace I4_QM_app.ViewModels
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
                 };
 
-                string res = JsonSerializer.Serialize<Order>(Order, options);
+                string res = JsonSerializer.Serialize(Order, options);
 
-                await App.ConnectionService.HandlePublishMessage("prod/orders/rated", res);
+                await connectionService.HandlePublishMessage("prod/orders/rated", res);
 
                 await Shell.Current.GoToAsync($"//{nameof(HistoryPage)}");
             }

@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.HistoryPage"
-             xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels.History"  
              xmlns:model="clr-namespace:I4_QM_app.Models"
              x:Name="BrowseHistoryPage"
              Title="{Binding History.Count, StringFormat='History ({0})'}">
@@ -37,22 +37,22 @@
                                 <ColumnDefinition Width="0.5*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Frame Grid.Row="0" Grid.ColumnSpan="2" BorderColor="AntiqueWhite" CornerRadius="10" Padding="0" >
-                                <Label 
-                                Text="{Binding Id, StringFormat='#{0}'}"
-                                LineBreakMode="NoWrap"
-                                Padding="2"
-                                Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="20" 
-                                FontAttributes="Bold" 
-                                TextColor="{StaticResource Secondary}" />
+                            <Frame Grid.Row="0" Grid.ColumnSpan="2" 
+                                   BorderColor="LightGray" 
+                                   CornerRadius="10" Padding="0" >
+                                <Label Text="{Binding Id, StringFormat='{0}'}" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16"
+                            FontAttributes="Bold"
+                                       HorizontalTextAlignment="Center"/>
                             </Frame>
 
                             <Label Grid.Row="1"
-                                Text="{Binding Amount, StringFormat='Quantity: {0}'}" 
+                                Text="{Binding Amount, StringFormat='Quantity:  {0}'}" 
                                 LineBreakMode="NoWrap"
                                 Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="15"
+                                FontSize="14"
                                 TextColor="{StaticResource Secondary}"/>
 
                             <Label Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"
@@ -79,7 +79,7 @@
                             </Frame>
 
                             <Label Grid.Row="2"
-                            Text="{Binding Done, StringFormat='Done: {0}'}" 
+                            Text="{Binding Done, StringFormat='Done:        {0}'}" 
                             LineBreakMode="NoWrap"
                             Style="{DynamicResource ListItemDetailTextStyle}"
                             FontSize="14"

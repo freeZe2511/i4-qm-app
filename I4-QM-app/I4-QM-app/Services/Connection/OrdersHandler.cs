@@ -17,12 +17,45 @@ namespace I4_QM_app.Services.Connection
     public class OrdersHandler : IMessageHandler
     {
         /// <summary>
+        /// Handler to redirect to specific method per route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <param name="baseTopicURL">mqtt base url.</param>
+        /// <returns>Task.</returns>
+        public async Task HandleRoutes(MqttApplicationMessage message, string baseTopicURL)
+        {
+            var topic = message.Topic;
+
+            // maybe not ideal
+            if (topic == baseTopicURL + "prod/orders/add")
+            {
+                await HandleAddRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/orders/del")
+            {
+                await HandleDelRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/orders/get")
+            {
+                await HandleGetRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/orders/sync")
+            {
+                await HandleUpdateRoute(message);
+            }
+        }
+
+        /// <summary>
         /// Handles add topic/route.
         /// </summary>
         /// <param name="message">Mqtt message.</param>
         /// <returns>Task.</returns>
         public async Task HandleAddRoute(MqttApplicationMessage message)
         {
+
             string addOrders = Encoding.UTF8.GetString(message.Payload);
 
             Console.WriteLine($"+ Add");
@@ -126,39 +159,7 @@ namespace I4_QM_app.Services.Connection
         {
             var getOrders = await App.OrdersDataService.GetItemsAsync();
             string ordersList = JsonConvert.SerializeObject(getOrders);
-            await App.ConnectionService.HandlePublishMessage("backup/orders", ordersList);
-        }
-
-        /// <summary>
-        /// Handler to redirect to specific method per route.
-        /// </summary>
-        /// <param name="message">Mqtt message.</param>
-        /// <param name="baseTopicURL">mqtt base url.</param>
-        /// <returns>Task.</returns>
-        public async Task HandleRoutes(MqttApplicationMessage message, string baseTopicURL)
-        {
-            var topic = message.Topic;
-
-            // maybe not ideal
-            if (topic == baseTopicURL + "prod/orders/add")
-            {
-                await HandleAddRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/orders/del")
-            {
-                await HandleDelRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/orders/get")
-            {
-                await HandleGetRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/orders/sync")
-            {
-                await HandleUpdateRoute(message);
-            }
+            await App.ConnectionService.HandlePublishMessage("backup/orders/all", ordersList);
         }
 
         /// <summary>

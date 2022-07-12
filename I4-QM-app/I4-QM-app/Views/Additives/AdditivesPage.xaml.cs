@@ -1,4 +1,4 @@
-﻿using I4_QM_app.ViewModels;
+﻿using I4_QM_app.ViewModels.Additives;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -18,7 +18,7 @@ namespace I4_QM_app.Views
         public AdditivesPage()
         {
             InitializeComponent();
-            BindingContext = viewModel = new AdditivesViewModel();
+            BindingContext = viewModel = new AdditivesViewModel(App.AdditivesDataService);
         }
 
         /// <summary>

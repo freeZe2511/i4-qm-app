@@ -1,5 +1,4 @@
-﻿using I4_QM_app.ViewModels;
-
+﻿using I4_QM_app.ViewModels.History;
 using Xamarin.Forms;
 
 namespace I4_QM_app.Views
@@ -15,7 +14,7 @@ namespace I4_QM_app.Views
         public FeedbackPage()
         {
             InitializeComponent();
-            BindingContext = new FeedbackViewModel();
+            BindingContext = new FeedbackViewModel(App.OrdersDataService, App.NotificationService, App.ConnectionService);
         }
     }
 }

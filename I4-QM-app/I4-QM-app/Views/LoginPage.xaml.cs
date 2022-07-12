@@ -16,7 +16,7 @@ namespace I4_QM_app.Views
         public LoginPage()
         {
             InitializeComponent();
-            BindingContext = new LoginViewModel();
+            BindingContext = new LoginViewModel(App.ConnectionService, App.AbstractService);
         }
     }
 }

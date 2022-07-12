@@ -15,8 +15,8 @@
             <Image Source="SFM_Logo_new_v6.png"  Margin="0, 0, 0, 150"></Image>
             <Image Source="account48_400.png" HorizontalOptions="Center" xct:IconTintColorEffect.TintColor="{StaticResource Primary}" />
             <Label Text="Login" FontSize="Title" HorizontalOptions="Center"/>
-            <Entry x:Name="entry" Placeholder="UserID" Text="{Binding EntryValue}" ClearButtonVisibility="WhileEditing" Keyboard="Numeric" MaxLength="4"/>
-            <Button VerticalOptions="Center" Text="Login" Command="{Binding LoginCommand}" BackgroundColor="{StaticResource Primary}"/>            
+            <Entry x:Name="entry" AutomationId="LoginEntry" Placeholder="UserID" Text="{Binding EntryValue}" ClearButtonVisibility="WhileEditing" Keyboard="Numeric" MaxLength="4"/>
+            <Button VerticalOptions="Center" AutomationId="LoginButton" Text="Login" Command="{Binding LoginCommand}" BackgroundColor="{StaticResource Primary}"/>            
         </StackLayout>        
     </ContentPage.Content>
     

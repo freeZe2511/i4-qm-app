@@ -1,5 +1,4 @@
-﻿using I4_QM_app.Services.Connection;
-using MQTTnet;
+﻿using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Packets;
@@ -8,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace I4_QM_app.Services
+namespace I4_QM_app.Services.Connection
 {
     /// <summary>
     /// Implementation of IConnectionService for MQTT Connection.
@@ -17,13 +16,24 @@ namespace I4_QM_app.Services
     {
         private static string serverURL = "broker.hivemq.com";
         private static string baseTopicURL = "thm/sfm/sg/";
+
         private readonly IManagedMqttClient managedMqttClient;
         private readonly IMessageHandler ordersHandler;
         private readonly IMessageHandler additivesHandler;
 
+        //public ConnectionService(IMessageHandler additivesHandler, IMessageHandler ordersHandler)
+        //{
+        //    managedMqttClient = new MqttFactory().CreateManagedMqttClient();
+        //    this.additivesHandler = additivesHandler;
+        //    this.ordersHandler = ordersHandler;
+        //}
+
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ConnectionService"/> class.
         /// </summary>
+        /// <param name="ordersHandler">Orders Handler.</param>
+        /// <param name="additivesHandler">Additives Handler.</param>
         public ConnectionService()
         {
             managedMqttClient = new MqttFactory().CreateManagedMqttClient();

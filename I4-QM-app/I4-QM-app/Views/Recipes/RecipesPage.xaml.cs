@@ -1,4 +1,4 @@
-﻿using I4_QM_app.ViewModels;
+﻿using I4_QM_app.ViewModels.Recipes;
 using Xamarin.Forms;
 
 namespace I4_QM_app.Views
@@ -16,7 +16,7 @@ namespace I4_QM_app.Views
         public RecipesPage()
         {
             InitializeComponent();
-            BindingContext = viewModel = new RecipesViewModel();
+            BindingContext = viewModel = new RecipesViewModel(App.RecipesDataService, App.NotificationService);
         }
 
         /// <summary>

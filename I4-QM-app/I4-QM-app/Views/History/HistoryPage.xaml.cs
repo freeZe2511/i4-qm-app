@@ -1,5 +1,4 @@
-﻿
-using I4_QM_app.ViewModels;
+﻿using I4_QM_app.ViewModels.History;
 using Xamarin.Forms;
 
 namespace I4_QM_app.Views
@@ -17,7 +16,7 @@ namespace I4_QM_app.Views
         public HistoryPage()
         {
             InitializeComponent();
-            BindingContext = viewModel = new HistoryViewModel();
+            BindingContext = viewModel = new HistoryViewModel(App.OrdersDataService, App.NotificationService, App.ConnectionService);
         }
 
         /// <summary>

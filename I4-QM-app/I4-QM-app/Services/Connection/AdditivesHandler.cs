@@ -1,4 +1,5 @@
 ﻿using I4_QM_app.Models;
+using LiteDB;
 using MQTTnet;
 using Newtonsoft.Json;
 using System;
@@ -18,6 +19,38 @@ namespace I4_QM_app.Services.Connection
     public class AdditivesHandler : IMessageHandler
     {
         /// <summary>
+        /// Handler to redirect to specific method per route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <param name="baseTopicURL">mqtt base url.</param>
+        /// <returns>Task.</returns>
+        public async Task HandleRoutes(MqttApplicationMessage message, string baseTopicURL)
+        {
+            var topic = message.Topic;
+
+            // maybe not ideal
+            if (topic == baseTopicURL + "prod/additives/add")
+            {
+                await HandleAddRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/additives/del")
+            {
+                await HandleDelRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/additives/get")
+            {
+                await HandleGetRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/additives/sync")
+            {
+                await HandleUpdateRoute(message);
+            }
+        }
+
+        /// <summary>
         /// Handles add topic/route.
         /// </summary>
         /// <param name="message">Mqtt message.</param>
@@ -29,6 +62,7 @@ namespace I4_QM_app.Services.Connection
             string addAdditives = Encoding.UTF8.GetString(message.Payload);
             List<Additive> additives = JsonConvert.DeserializeObject<List<Additive>>(addAdditives);
             int additivesCount = 0;
+            var fs = App.DB.GetStorage<string>("myImages");
 
             foreach (var additive in additives)
             {
@@ -42,21 +76,7 @@ namespace I4_QM_app.Services.Connection
                 additive.Portion = 0;
                 additive.Checked = false;
 
-                var fs = App.DB.GetStorage<string>("myImages");
-
-                if (!string.IsNullOrEmpty(additive.ImageBase64))
-                {
-                    try
-                    {
-                        fs.Upload(additive.Id, additive.Name, new MemoryStream(Convert.FromBase64String(additive.ImageBase64)));
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine("Failed to save image");
-                        Debug.WriteLine(ex.Message);
-                    }
-                }
-
+                TryUploadAdditiveImage(fs, additive);
                 additive.ImageBase64 = null;
 
                 await App.AdditivesDataService.AddItemAsync(additive);
@@ -110,39 +130,7 @@ namespace I4_QM_app.Services.Connection
             };
 
             string additivesList = System.Text.Json.JsonSerializer.Serialize(getAdditives, options);
-            await App.ConnectionService.HandlePublishMessage("backup/additives", additivesList);
-        }
-
-        /// <summary>
-        /// Handler to redirect to specific method per route.
-        /// </summary>
-        /// <param name="message">Mqtt message.</param>
-        /// <param name="baseTopicURL">mqtt base url.</param>
-        /// <returns>Task.</returns>
-        public async Task HandleRoutes(MqttApplicationMessage message, string baseTopicURL)
-        {
-            var topic = message.Topic;
-
-            // maybe not ideal
-            if (topic == baseTopicURL + "prod/additives/add")
-            {
-                await HandleAddRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/additives/del")
-            {
-                await HandleDelRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/additives/get")
-            {
-                await HandleGetRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/additives/sync")
-            {
-                await HandleUpdateRoute(message);
-            }
+            await App.ConnectionService.HandlePublishMessage("backup/additives/all", additivesList);
         }
 
         /// <summary>
@@ -154,6 +142,27 @@ namespace I4_QM_app.Services.Connection
         {
             await App.AdditivesDataService.DeleteAllItemsAsync();
             await HandleAddRoute(message);
+        }
+
+        /// <summary>
+        /// Additives image upload handler.
+        /// </summary>
+        /// <param name="fs">Filestorage.</param>
+        /// <param name="additive">Additive.</param>
+        private void TryUploadAdditiveImage(ILiteStorage<string> fs, Additive additive)
+        {
+            if (!string.IsNullOrEmpty(additive.ImageBase64))
+            {
+                try
+                {
+                    fs.Upload(additive.Id, additive.Name, new MemoryStream(Convert.FromBase64String(additive.ImageBase64)));
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("Failed to save image");
+                    Debug.WriteLine(ex.Message);
+                }
+            }
         }
     }
 }

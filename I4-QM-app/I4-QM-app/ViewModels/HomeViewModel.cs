@@ -1,9 +1,10 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services.Abstract;
+using I4_QM_app.Services.Data;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
@@ -13,6 +14,11 @@ namespace I4_QM_app.ViewModels
     /// </summary>
     public class HomeViewModel : BaseViewModel
     {
+        private readonly IDataService<Order> ordersService;
+        private readonly IDataService<Recipe> recipesService;
+        private readonly IDataService<Additive> additivesService;
+        private readonly IAbstractService abstractService;
+
         private string userId;
         private int openOrdersCount;
         private int mixedOrdersCount;
@@ -28,8 +34,16 @@ namespace I4_QM_app.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="HomeViewModel"/> class.
         /// </summary>
-        public HomeViewModel()
+        /// <param name="ordersService">Orders Service.</param>
+        /// <param name="recipesService">Recipes Service.</param>
+        /// <param name="additivesService">Additives Service.</param>
+        public HomeViewModel(IDataService<Order> ordersService, IDataService<Recipe> recipesService, IDataService<Additive> additivesService, IAbstractService abstractService)
         {
+            this.ordersService = ordersService;
+            this.recipesService = recipesService;
+            this.additivesService = additivesService;
+            this.abstractService = abstractService;
+
             Title = "Home";
             RefreshCommand = new Command(async () => await LoadRefreshCommand());
         }
@@ -138,11 +152,11 @@ namespace I4_QM_app.ViewModels
 
             try
             {
-                var orders = await App.OrdersDataService.GetItemsAsync();
-                var additives = await App.AdditivesDataService.GetItemsAsync();
-                var recipes = await App.RecipesDataService.GetItemsAsync();
+                var orders = await ordersService.GetItemsAsync();
+                var additives = await additivesService.GetItemsAsync();
+                var recipes = await recipesService.GetItemsAsync();
 
-                UserId = Preferences.Get("UserID", string.Empty);
+                UserId = abstractService.GetPreferences("UserID", string.Empty);
 
                 OpenOrdersCount = orders.Count(x => x.Status == Status.Open);
                 MixedOrdersCount = orders.Count(x => x.Status == Status.Mixed);

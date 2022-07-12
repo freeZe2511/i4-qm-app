@@ -1,31 +1,36 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
+using I4_QM_app.Services.Data;
 using LiteDB;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.Additives
 {
     /// <summary>
     /// ViewModel for AdditivesListPage.
     /// </summary>
     public class AdditivesViewModel : BaseViewModel
     {
+        private readonly IDataService<Additive> additivesService;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AdditivesViewModel"/> class.
         /// </summary>
-        public AdditivesViewModel()
+        /// <param name="additivesService">Additives Service.</param>
+        public AdditivesViewModel(IDataService<Additive> additivesService)
         {
             Title = "Additives";
             Descending = true;
             Additives = new SortableObservableCollection<Additive>() { SortingSelector = i => i.Id, Descending = Descending };
+            this.additivesService = additivesService ?? throw new ArgumentNullException(nameof(additivesService));
 
             LoadAdditivesCommand = new Command(async () => await ExecuteLoadAdditivesCommand());
 
             SortByCommand = new Command<string>(
-                execute: async (string arg) =>
+                execute: async (arg) =>
                 {
                     arg = arg.Trim();
 
@@ -117,27 +122,17 @@ namespace I4_QM_app.ViewModels
         private async Task ExecuteLoadAdditivesCommand()
         {
             IsBusy = true;
+            var fs = App.DB.GetStorage<string>("myImages");
 
             try
             {
                 Additives.Clear();
-                var additives = await App.AdditivesDataService.GetItemsAsync();
+                var additives = await additivesService.GetItemsAsync();
 
                 foreach (var additive in additives)
                 {
                     Additives.Add(additive);
-
-                    var fs = App.DB.GetStorage<string>("myImages");
-                    LiteFileInfo<string> file = fs.FindById(additive.Id);
-
-                    if (file != null)
-                    {
-                        additive.Image = ImageSource.FromStream(() => file.OpenRead());
-                    }
-                    else
-                    {
-                        additive.Image = ImageSource.FromFile("no_image.png");
-                    }
+                    additive.Image = GetAdditiveImage(fs, additive.Id);
                 }
             }
             catch (Exception ex)
@@ -147,6 +142,26 @@ namespace I4_QM_app.ViewModels
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        /// <summary>
+        /// Returns saved image for additive in filestorage or no_image.
+        /// </summary>
+        /// <param name="fs">ILiteStorage.</param>
+        /// <param name="id">Id.</param>
+        /// <returns>ImageSource.</returns>
+        private ImageSource GetAdditiveImage(ILiteStorage<string> fs, string id)
+        {
+            LiteFileInfo<string> file = fs.FindById(id);
+
+            if (file != null)
+            {
+                return ImageSource.FromStream(() => file.OpenRead());
+            }
+            else
+            {
+                return ImageSource.FromFile("no_image.png");
             }
         }
     }

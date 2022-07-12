@@ -1,5 +1,8 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
+using I4_QM_app.Services.Connection;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
@@ -8,20 +11,31 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.History
 {
     /// <summary>
     /// ViewModel for History ListPage.
     /// </summary>
     public class HistoryViewModel : BaseViewModel
     {
+        private readonly IDataService<Order> ordersService;
+        private readonly INotificationService notificationService;
+        private readonly IConnectionService connectionService;
+
         private Order selectedOrder;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HistoryViewModel"/> class.
         /// </summary>
-        public HistoryViewModel()
+        /// <param name="ordersService">Orders Service.</param>
+        /// <param name="notificationService">Notifications Service.</param>
+        /// <param name="connectionService">Connection Service.</param>
+        public HistoryViewModel(IDataService<Order> ordersService, INotificationService notificationService, IConnectionService connectionService)
         {
+            this.ordersService = ordersService;
+            this.notificationService = notificationService;
+            this.connectionService = connectionService;
+
             Title = "History";
             Descending = true;
             History = new SortableObservableCollection<Order>() { SortingSelector = i => i.Status, Descending = Descending };
@@ -32,7 +46,7 @@ namespace I4_QM_app.ViewModels
             DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
 
             SortByCommand = new Command<string>(
-                execute: async (string arg) =>
+                execute: async (arg) =>
                 {
                     arg = arg.Trim();
 
@@ -152,7 +166,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 History.Clear();
-                var history = await App.OrdersDataService.GetItemsFilteredAsync(a => a.Status != Status.Open);
+                var history = await ordersService.GetItemsFilteredAsync(a => a.Status != Status.Open);
 
                 foreach (var order in history)
                 {
@@ -190,22 +204,22 @@ namespace I4_QM_app.ViewModels
         /// <returns>Task.</returns>
         private async Task DeleteAllHistoryItems()
         {
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
 
-            var orders = await App.OrdersDataService.GetItemsFilteredAsync(x => x.Status != Status.Open);
+            var orders = await ordersService.GetItemsFilteredAsync(x => x.Status != Status.Open);
 
             JsonSerializerOptions options = new JsonSerializerOptions()
             {
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
             };
 
-            string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
+            string ordersString = JsonSerializer.Serialize(orders, options);
 
-            await App.ConnectionService.HandlePublishMessage("backup/orders/history", ordersString);
+            await connectionService.HandlePublishMessage("backup/orders/history", ordersString);
 
             if (answer)
             {
-                await App.OrdersDataService.DeleteManyItemsAsync(x => x.Status != Status.Open);
+                await ordersService.DeleteManyItemsAsync(x => x.Status != Status.Open);
             }
 
             await ExecuteLoadHistoryCommand();

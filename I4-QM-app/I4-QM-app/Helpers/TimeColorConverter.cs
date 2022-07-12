@@ -48,11 +48,10 @@ namespace I4_QM_app.Helpers
         /// <param name="targetType">targetType.</param>
         /// <param name="parameter">parameter.</param>
         /// <param name="culture">culture.</param>
-        /// <returns>Not Implemented Exception.</returns>
-        /// <exception cref="NotImplementedException">NotImplementedException.</exception>
+        /// <returns>Value.</returns>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            return value;
         }
 
         /// <summary>
@@ -63,9 +62,17 @@ namespace I4_QM_app.Helpers
         /// <returns>Either found color or fallback.</returns>
         internal static Color TryGetColor(string key, Color fallback)
         {
-            Application.Current.Resources.TryGetValue(key, out var color);
+            try
+            {
+                Application.Current.Resources.TryGetValue(key, out var color);
+                return color as Color? ?? fallback;
+            }
+            catch (Exception)
+            {
+                // empty
+            }
 
-            return color as Color? ?? fallback;
+            return fallback;
         }
     }
 }

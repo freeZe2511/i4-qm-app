@@ -1,4 +1,8 @@
 ﻿using I4_QM_app.Models;
+using I4_QM_app.Services.Abstract;
+using I4_QM_app.Services.Connection;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
 using LiteDB;
 using System;
 using System.Collections.ObjectModel;
@@ -6,16 +10,21 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.Recipes
 {
     /// <summary>
     /// ViewModel for New Recipe Page.
     /// </summary>
     public class NewRecipeViewModel : BaseViewModel
     {
+        private readonly IDataService<Recipe> recipesService;
+        private readonly INotificationService notificationService;
+        private readonly IConnectionService connectionService;
+        private readonly IDataService<Additive> additivesService;
+        private readonly IAbstractService abstractService;
+
         private string name;
         private string description;
         private ObservableCollection<Additive> additives;
@@ -23,8 +32,18 @@ namespace I4_QM_app.ViewModels
         /// <summary>
         /// Initializes a new instance of the <see cref="NewRecipeViewModel"/> class.
         /// </summary>
-        public NewRecipeViewModel()
+        /// <param name="notificationService">Notifications Service.</param>
+        /// <param name="connectionService">Connection Service.</param>
+        /// <param name="additivesService">Additives Service.</param>
+        /// <param name="recipesService">Recipes Service.</param>
+        public NewRecipeViewModel(INotificationService notificationService, IConnectionService connectionService, IDataService<Additive> additivesService, IDataService<Recipe> recipesService, IAbstractService abstractService)
         {
+            this.recipesService = recipesService;
+            this.notificationService = notificationService;
+            this.connectionService = connectionService;
+            this.additivesService = additivesService;
+            this.abstractService = abstractService;
+
             Additives = new ObservableCollection<Additive>();
             SaveCommand = new Command(OnSave, Validate);
             CancelCommand = new Command(OnCancel);
@@ -107,7 +126,7 @@ namespace I4_QM_app.ViewModels
         /// </summary>
         private async void OnSave()
         {
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Save?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Save?", "Yes", "No");
 
             if (answer)
             {
@@ -118,19 +137,19 @@ namespace I4_QM_app.ViewModels
                     Id = Guid.NewGuid().ToString(),
                     Name = Name,
                     Description = Description,
-                    CreatorId = Preferences.Get("UserID", string.Empty),
+                    CreatorId = abstractService.GetPreferences("UserID", string.Empty),
                     Additives = Additives.Where(i => i.Checked).ToList(),
                 };
 
-                await App.RecipesDataService.AddItemAsync(newRecipe);
+                await recipesService.AddItemAsync(newRecipe);
 
                 JsonSerializerOptions options = new JsonSerializerOptions()
                 {
                     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
                 };
 
-                string res = System.Text.Json.JsonSerializer.Serialize<Recipe>(newRecipe, options);
-                await App.ConnectionService.HandlePublishMessage("recipes/new", res);
+                string res = System.Text.Json.JsonSerializer.Serialize(newRecipe, options);
+                await connectionService.HandlePublishMessage("recipes/new", res);
 
                 await Shell.Current.GoToAsync("..");
             }
@@ -147,7 +166,7 @@ namespace I4_QM_app.ViewModels
             try
             {
                 var fs = App.DB.GetStorage<string>("myImages");
-                var list = await App.AdditivesDataService.GetItemsAsync();
+                var list = await additivesService.GetItemsAsync();
 
                 if (!list.Any())
                 {
@@ -226,7 +245,7 @@ namespace I4_QM_app.ViewModels
         {
             return !string.IsNullOrWhiteSpace(Name)
                 && !string.IsNullOrWhiteSpace(Description)
-                && Additives.Any(i => (i.Checked && i.Portion > 0))
+                && Additives.Any(i => i.Checked && i.Portion > 0)
                 && !Additives.Any(i => !i.Checked && i.Portion > 0)
                 && !Additives.Any(i => i.Checked && i.Portion <= 0);
         }

@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.OrdersPage"
              Title="{Binding Orders.Count, StringFormat='Orders ({0})'}"
-             xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels.Orders"  
              xmlns:model="clr-namespace:I4_QM_app.Models"            
              x:Name="BrowseOrdersPage">
 
@@ -38,24 +38,22 @@
 
 
                             <Frame Grid.Row="0" Grid.ColumnSpan="2" 
-                                   BorderColor="AntiqueWhite" 
+                                   BorderColor="LightGray" 
                                    CornerRadius="10" Padding="0" >
-                                <Label 
-                                Text="{Binding Id, StringFormat='#{0}'}"
-                                LineBreakMode="NoWrap"
-                                Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="20" 
-                                Padding="2"
-                                FontAttributes="Bold" 
-                                TextColor="{StaticResource Secondary}" />
+                                <Label Text="{Binding Id, StringFormat='{0}'}" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16"
+                            FontAttributes="Bold"
+                                       HorizontalTextAlignment="Center"/>
                             </Frame>
 
 
                             <Label Grid.Row="1"
-                                Text="{Binding Amount, StringFormat='Quantity: {0}'}" 
+                                Text="{Binding Amount, StringFormat='Quantity:   {0}'}" 
                                 LineBreakMode="NoWrap"
                                 Style="{DynamicResource ListItemDetailTextStyle}"
-                                FontSize="15"
+                                FontSize="14"
                                 TextColor="{StaticResource Secondary}"/>
 
                             <Label Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"
@@ -90,7 +88,7 @@
                                    Text="Due: "
                                    LineBreakMode="NoWrap"
                                    Style="{DynamicResource ListItemDetailTextStyle}"
-                                   FontSize="16"
+                                   FontSize="14"
                                    TextColor="{StaticResource Secondary}"/>
 
                             <!--<Frame Grid.Row="3" 
@@ -104,7 +102,7 @@
                                     TextColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}"
                                     LineBreakMode="NoWrap"
                                     Style="{DynamicResource ListItemDetailTextStyle}"
-                                    FontSize="16"/>
+                                    FontSize="14"/>
                             <!--</Frame>-->
                             <!--<Frame CornerRadius="10" Padding="10" Margin="0, -45, 20, 0" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
                             BorderColor="{StaticResource Secondary}">

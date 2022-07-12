@@ -1,5 +1,8 @@
 ﻿using I4_QM_app.Models;
-using I4_QM_app.Services;
+using I4_QM_app.Services.Abstract;
+using I4_QM_app.Services.Connection;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
 using LiteDB;
 using System;
 using System.IO;
@@ -26,6 +29,7 @@ namespace I4_QM_app
             DependencyService.Register<AdditiveService>();
             DependencyService.Register<NotificationService>();
             DependencyService.Register<ConnectionService>();
+            DependencyService.Register<AbstractService>();
 
             MainPage = new AppShell();
 
@@ -72,6 +76,11 @@ namespace I4_QM_app
         public static IConnectionService ConnectionService => DependencyService.Get<IConnectionService>();
 
         /// <summary>
+        /// Gets abstract service.
+        /// </summary>
+        public static IAbstractService AbstractService => DependencyService.Get<IAbstractService>();
+
+        /// <summary>
         /// On Start.
         /// </summary>
         protected override void OnStart()
@@ -101,7 +110,6 @@ namespace I4_QM_app
         /// <returns>Database.</returns>
         private static ILiteDatabase CreateDatabase()
         {
-            // Datenbank initialisieren
             var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "mydb.db");
             var connection = new ConnectionString
             {

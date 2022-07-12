@@ -73,7 +73,7 @@ namespace I4_QM_app.Services.Connection
 
                 additive.ActualPortion = 0;
                 additive.Amount = 0;
-                additive.Portion = 0;
+                //additive.Portion = 0;
                 additive.Checked = false;
 
                 TryUploadAdditiveImage(fs, additive);

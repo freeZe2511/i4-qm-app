@@ -2,7 +2,7 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="I4_QM_app.Views.RecipesPage"
-             xmlns:local="clr-namespace:I4_QM_app.ViewModels"  
+             xmlns:local="clr-namespace:I4_QM_app.ViewModels.Recipes"  
              xmlns:model="clr-namespace:I4_QM_app.Models"
              x:Name="BrowseRecipesPage"
              Title="{Binding Recipes.Count, StringFormat='Recipes ({0})'}">
@@ -26,31 +26,103 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <StackLayout Padding="10" x:DataType="model:Recipe">
-                            <Label Text="{Binding Id, StringFormat='{0}'}" 
+                            <Grid Padding="10,0,10,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="1"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="10*"/>
+                                    <ColumnDefinition Width="0.5*"/>
+                                </Grid.ColumnDefinitions>
+
+
+                                <Frame Grid.Row="0" Grid.ColumnSpan="2" 
+                                   BorderColor="LightGray" 
+                                   CornerRadius="10" Padding="0" >
+                                    <Label Text="{Binding Id, StringFormat='{0}'}" 
                             LineBreakMode="NoWrap" 
                             Style="{DynamicResource ListItemTextStyle}" 
                             FontSize="16"
-                            FontAttributes="Bold"/>
-                            <Label Text="{Binding Name, StringFormat='Name: {0}'}" 
-                            LineBreakMode="NoWrap"
-                            Style="{DynamicResource ListItemDetailTextStyle}"
-                            FontSize="14" />
-                            <Label Text="{Binding Description, StringFormat='Description: {0}'}" 
-                            LineBreakMode="NoWrap"
-                            Style="{DynamicResource ListItemDetailTextStyle}"
-                            FontSize="14" />
-                            <Label Text="{Binding Used, StringFormat='Used: {0}'}" 
-                            LineBreakMode="NoWrap"
-                            Style="{DynamicResource ListItemDetailTextStyle}"
-                            FontSize="14" />
-                            <BoxView HeightRequest="1" Color="LightGray" Margin ="0, 0, 0, 0"/>
+                            FontAttributes="Bold"
+                                       HorizontalTextAlignment="Center"/>
+                                </Frame>
+
+
+                                <Label Grid.Row="1"
+                                Text="{Binding Name, StringFormat='Name:   {0}'}" 
+                                LineBreakMode="NoWrap"
+                                Style="{DynamicResource ListItemDetailTextStyle}"
+                                FontSize="14"
+                                TextColor="{StaticResource Secondary}"/>
+
+                                <Label Grid.Row="1" Grid.Column="1" Grid.RowSpan="2"
+                               Text=">"
+                               FontSize="25"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"
+                               HorizontalOptions="End">
+                                </Label>
+
+                                <!--<Frame Grid.Row="1" 
+                                   Grid.RowSpan="2"
+                                   CornerRadius="8" 
+                                   Padding="10" 
+                                   HorizontalOptions="End" 
+                                   VerticalOptions="Center"
+                                   BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}">
+                                <Label x:Name="status" 
+                                       Text="{Binding Status}" 
+                                       HorizontalTextAlignment="Center"
+                                       TextColor="White"></Label>
+                            </Frame>-->
+
+                                <Label Grid.Row="2"
+                                   Text="{Binding Description, StringFormat='Descr.:  {0}'}" 
+                                   LineBreakMode="NoWrap"
+                                   Style="{DynamicResource ListItemDetailTextStyle}"
+                                   FontSize="14"
+                                   TextColor="{StaticResource Secondary}"/>
+
+                                <Label Grid.Row="3"
+                                   Text="Used:  "
+                                   LineBreakMode="NoWrap"
+                                   Style="{DynamicResource ListItemDetailTextStyle}"
+                                   FontSize="14"
+                                   TextColor="{StaticResource Secondary}"/>
+
+                                <!--<Frame Grid.Row="3" 
+                                   CornerRadius="10" 
+                                   Padding="0"
+                                   HorizontalOptions="Center"
+                                   BorderColor="{Binding Source={x:Reference due},Path=Text,Converter={StaticResource timeColorConverter}}"  >-->
+                                <Label Grid.Row="3" x:Name="due" 
+                                    Text="{Binding Used}" 
+                                    Margin="47, 0, 0, 0"                                    
+                                    LineBreakMode="NoWrap" HorizontalOptions="Start"
+                                    Style="{DynamicResource ListItemDetailTextStyle}"
+                                    FontSize="14"
+                                    TextColor="{StaticResource Secondary}"/>
+                                <!--</Frame>-->
+                                <!--<Frame CornerRadius="10" Padding="10" Margin="0, -45, 20, 0" HorizontalOptions="End" BackgroundColor="{Binding Source={x:Reference status},Path=Text,Converter={StaticResource statusColorConverter}}"     
+                            BorderColor="{StaticResource Secondary}">
+                            <Label x:Name="status" Text="{Binding Status}"                                                
+                            TextColor="White"></Label>                                                      
+                            </Frame>-->
+
+                                <BoxView Color="LightGray" Grid.Row="4" Grid.ColumnSpan="2"/>
+
+                            </Grid>
                             <StackLayout.GestureRecognizers>
                                 <TapGestureRecognizer 
                                 NumberOfTapsRequired="1"
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type local:RecipesViewModel}}, Path=RecipeTapped}"		
                                 CommandParameter="{Binding .}">
                                 </TapGestureRecognizer>
-                            </StackLayout.GestureRecognizers>
+                            </StackLayout.GestureRecognizers>                                                                                  
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

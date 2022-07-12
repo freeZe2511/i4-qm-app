@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
-             xmlns:b="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:b="http://xamarin.com/schemas/2020/toolkit" xmlns:local="clr-namespace:I4_QM_app.Helpers"
              x:Class="I4_QM_app.Views.FeedbackPage"             
              Title="{Binding Title}"
              x:Name="FeedbackPage1">
@@ -33,6 +33,7 @@
                         <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
                                         EventName="TextChanged"/>
+                        <local:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="0" Grid.Column="2" Text="Color" VerticalOptions="Center"></Label>
@@ -41,6 +42,7 @@
                         <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
                                         EventName="TextChanged"/>
+                        <local:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="1" Grid.Column="0" Text="Ridge" VerticalOptions="Center"></Label>
@@ -49,6 +51,7 @@
                         <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
                                         EventName="TextChanged"/>
+                        <local:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="1" Grid.Column="2" Text="Surface" VerticalOptions="Center"></Label>
@@ -57,6 +60,7 @@
                         <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
                                         EventName="TextChanged"/>
+                        <local:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="2" Grid.Column="0" Text="Bindings" VerticalOptions="Center"></Label>
@@ -65,6 +69,7 @@
                         <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
                                         EventName="TextChanged"/>
+                        <local:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="2" Grid.Column="2" Text="Sprue" VerticalOptions="Center"></Label>
@@ -73,6 +78,7 @@
                         <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
                                         EventName="TextChanged"/>
+                        <local:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="3" Grid.Column="0" Text="Drop In" VerticalOptions="Center"></Label>
@@ -81,6 +87,7 @@
                         <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
                                         EventName="TextChanged"/>
+                        <local:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="3" Grid.Column="2" Text="Demolding" VerticalOptions="Center"></Label>
@@ -89,6 +96,7 @@
                         <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
                                         EventName="TextChanged"/>
+                        <local:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="4" Grid.Column="0" Text="Air Inclusion" VerticalOptions="Center"></Label>
@@ -97,6 +105,7 @@
                         <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
                                         EventName="TextChanged"/>
+                        <local:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
             <Label TextColor="{StaticResource Secondary}" Grid.Row="4" Grid.Column="2" Text="Overall" VerticalOptions="Center"></Label>
@@ -105,6 +114,7 @@
                         <b:EventToCommandBehavior
                                         Command="{Binding BindingContext.UpdateCommand, Source={x:Reference FeedbackPage1}}"
                                         EventName="TextChanged"/>
+                        <local:NumericValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>             
 

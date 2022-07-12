@@ -1,30 +1,44 @@
-﻿using I4_QM_app.Models;
+﻿using I4_QM_app.Services.Abstract;
+using I4_QM_app.Services.Connection;
 using I4_QM_app.Views;
-using System;
 using System.Threading.Tasks;
-using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace I4_QM_app.ViewModels
 {
+    /// <summary>
+    /// ViewModel for Login Page.
+    /// </summary>
     public class LoginViewModel : BaseViewModel
     {
+        private readonly IConnectionService connectionService;
+        private readonly IAbstractService abstractService;
+
         private string entryValue;
+
+        /// <summary>
+        /// User id max length.
+        /// </summary>
         public int IdLength = 4;
-        public int UID { get; set; }
-        public Command LoginCommand { get; }
 
-        public LoginViewModel()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoginViewModel"/> class.
+        /// </summary>
+        /// <param name="connectionService">Connection Service.</param>
+        /// <param name="abstractService">Abstract Service.</param>
+        public LoginViewModel(IConnectionService connectionService, IAbstractService abstractService)
         {
-            LoginCommand = new Command(OnLoginClicked, Validate);
+            this.connectionService = connectionService;
+            this.abstractService = abstractService;
 
-            string userId = Preferences.Get("UserID", string.Empty);
+            LoginCommand = new Command(OnLoginClicked, Validate);
+            string userId = this.abstractService.GetPreferences("UserID", string.Empty);
 
             if (userId != string.Empty)
             {
                 Task.Run(async () =>
                 {
-                    await App.ConnectionService.HandlePublishMessage("connected", userId);
+                    await connectionService.HandlePublishMessage("connected", userId);
                     await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
                 });
             }
@@ -33,59 +47,49 @@ namespace I4_QM_app.ViewModels
                 (_, __) => LoginCommand.ChangeCanExecute();
         }
 
+        /// <summary>
+        /// Gets command to login.
+        /// </summary>
+        public Command LoginCommand { get; }
 
+        /// <summary>
+        /// Gets or sets the login entry value.
+        /// </summary>
         public string EntryValue
         {
             get => entryValue;
             set => SetProperty(ref entryValue, value);
         }
 
+        /// <summary>
+        /// Validation of entry if user id is valid.
+        /// </summary>
+        /// <param name="arg">Arg.</param>
+        /// <returns>bool.</returns>
         private bool Validate(object arg)
         {
-            return !String.IsNullOrWhiteSpace(EntryValue)
-                && int.TryParse(EntryValue, out int UID)
-                && UID > 0
+            return !string.IsNullOrWhiteSpace(EntryValue)
+                && int.TryParse(EntryValue, out int uid)
+                && uid > 0
                 && EntryValue.Length == IdLength;
         }
 
-
+        /// <summary>
+        /// Handler to login.
+        /// </summary>
+        /// <param name="obj">Object.</param>
         private async void OnLoginClicked(object obj)
         {
-            if (!int.TryParse(EntryValue, out int UID) || String.IsNullOrWhiteSpace(EntryValue) || UID <= 0 || EntryValue.Length != IdLength)
+            if (!int.TryParse(EntryValue, out int uid) || string.IsNullOrWhiteSpace(EntryValue) || uid <= 0 || EntryValue.Length != IdLength)
             {
-                EntryValue = "";
+                EntryValue = string.Empty;
                 return;
             }
 
-            ((App)App.Current).CurrentUser = new User(EntryValue);
-            Preferences.Set("UserID", EntryValue);
-
-            await App.ConnectionService.HandlePublishMessage("connected", EntryValue);
-
+            this.abstractService.SetPreferences("UserID", EntryValue);
+            await connectionService.HandlePublishMessage("connected", EntryValue);
             await Shell.Current.GoToAsync($"//{nameof(HomePage)}");
-            EntryValue = "";
+            EntryValue = string.Empty;
         }
     }
-
-    // TODO
-    // https://stackoverflow.com/questions/50260271/xamarin-detecting-enter-key-mvvm
-
-    //public class EventToCommandBehavior : Behavior<Entry>
-    //{
-    //    public static readonly BindableProperty EventNameProperty =
-    //      BindableProperty.Create("EventName", typeof(string), typeof(EventToCommandBehavior), null, propertyChanged: OnEventNameChanged);
-    //    public static readonly BindableProperty CommandProperty =
-    //      BindableProperty.Create("Command", typeof(ICommand), typeof(EventToCommandBehavior), null);
-    //    public static readonly BindableProperty CommandParameterProperty =
-    //      BindableProperty.Create("CommandParameter", typeof(object), typeof(EventToCommandBehavior), null);
-    //    public static readonly BindableProperty InputConverterProperty =
-    //      BindableProperty.Create("Converter", typeof(IValueConverter), typeof(EventToCommandBehavior), null);
-
-    //    public string EventName { }
-    //    public ICommand Command { }
-    //    public object CommandParameter { }
-    //    public IValueConverter Converter { }
-
-    //}
-
 }

@@ -1,44 +1,52 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
+using I4_QM_app.Services.Data;
 using LiteDB;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.Additives
 {
+    /// <summary>
+    /// ViewModel for AdditivesListPage.
+    /// </summary>
     public class AdditivesViewModel : BaseViewModel
     {
-        public SortableObservableCollection<Additive> Additives { get; }
+        private readonly IDataService<Additive> additivesService;
 
-        public Command LoadAdditivesCommand { get; }
-
-        public Command DisableCommand { get; }
-
-        public Command SortByCommand { get; }
-
-        public bool Descending { get; set; }
-
-        public AdditivesViewModel()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AdditivesViewModel"/> class.
+        /// </summary>
+        /// <param name="additivesService">Additives Service.</param>
+        public AdditivesViewModel(IDataService<Additive> additivesService)
         {
             Title = "Additives";
             Descending = true;
             Additives = new SortableObservableCollection<Additive>() { SortingSelector = i => i.Id, Descending = Descending };
+            this.additivesService = additivesService ?? throw new ArgumentNullException(nameof(additivesService));
 
             LoadAdditivesCommand = new Command(async () => await ExecuteLoadAdditivesCommand());
 
             SortByCommand = new Command<string>(
-                execute: async (string arg) =>
+                execute: async (arg) =>
                 {
                     arg = arg.Trim();
 
                     // works
-                    if (arg == "Id") await SortBy(i => i.Id);
-                    if (arg == "Name") await SortBy(i => i.Name);
+                    if (arg == "Id")
+                    {
+                        await SortBy(i => i.Id);
+                    }
+
+                    if (arg == "Name")
+                    {
+                        await SortBy(i => i.Name);
+                    }
 
                     // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
-                    // only works with id?! Specified cast is not valid
+                    // only works with id?! "Specified cast is not valid"
                     //if (typeof(Order).GetProperty(arg) != null)
                     //{
                     //    ParameterExpression parameter = Expression.Parameter(typeof(Order), "i");
@@ -51,24 +59,54 @@ namespace I4_QM_app.ViewModels
                     //}
 
                     // https://stackoverflow.com/questions/10655761/convert-string-into-func
-                    // compiler error
+                    // "compiler error"
                     //var str = "i => i." + arg;
                     //Console.WriteLine(str);
                     //var func = await CSharpScript.EvaluateAsync<Func<Order, object>>(str);
                     //await SortBy(func);
-
-
                 });
 
             DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
         }
 
+        /// <summary>
+        /// Gets Additives Collection (sortable).
+        /// </summary>
+        public SortableObservableCollection<Additive> Additives { get; }
+
+        /// <summary>
+        /// Gets command to load additives from db.
+        /// </summary>
+        public Command LoadAdditivesCommand { get; }
+
+        /// <summary>
+        /// Gets command to disable.
+        /// </summary>
+        public Command DisableCommand { get; }
+
+        /// <summary>
+        /// Gets command to sort collection.
+        /// </summary>
+        public Command SortByCommand { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether collection is sorted descending or ascending.
+        /// </summary>
+        public bool Descending { get; set; }
+
+        /// <summary>
+        /// Sets IsBusy when onAppearing.
+        /// </summary>
         public void OnAppearing()
         {
             IsBusy = true;
-            //SelectedOrder = null;
         }
 
+        /// <summary>
+        /// Sort collection from predicate.
+        /// </summary>
+        /// <param name="predicate">Predicate.</param>
+        /// <returns>Task.</returns>
         private async Task SortBy(Func<Additive, object> predicate)
         {
             Additives.SortingSelector = predicate;
@@ -77,34 +115,25 @@ namespace I4_QM_app.ViewModels
             await ExecuteLoadAdditivesCommand();
         }
 
+        /// <summary>
+        /// Load additives from db.
+        /// </summary>
+        /// <returns>Task.</returns>
         private async Task ExecuteLoadAdditivesCommand()
         {
             IsBusy = true;
+            var fs = App.DB.GetStorage<string>("myImages");
 
             try
             {
                 Additives.Clear();
-                var additives = await App.AdditivesDataService.GetItemsAsync();
+                var additives = await additivesService.GetItemsAsync();
 
                 foreach (var additive in additives)
                 {
                     Additives.Add(additive);
-
-                    var fs = App.DB.GetStorage<string>("myImages");
-                    LiteFileInfo<string> file = fs.FindById(additive.Id);
-
-                    if (file != null)
-                    {
-                        additive.Image = ImageSource.FromStream(() => file.OpenRead());
-                    }
-                    else
-                    {
-                        additive.Image = ImageSource.FromFile("no_image.png");
-                    }
-
+                    additive.Image = GetAdditiveImage(fs, additive.Id);
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -113,6 +142,26 @@ namespace I4_QM_app.ViewModels
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        /// <summary>
+        /// Returns saved image for additive in filestorage or no_image.
+        /// </summary>
+        /// <param name="fs">ILiteStorage.</param>
+        /// <param name="id">Id.</param>
+        /// <returns>ImageSource.</returns>
+        private ImageSource GetAdditiveImage(ILiteStorage<string> fs, string id)
+        {
+            LiteFileInfo<string> file = fs.FindById(id);
+
+            if (file != null)
+            {
+                return ImageSource.FromStream(() => file.OpenRead());
+            }
+            else
+            {
+                return ImageSource.FromFile("no_image.png");
             }
         }
     }

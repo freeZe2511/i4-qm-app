@@ -2,7 +2,7 @@
 <Shell xmlns="http://xamarin.com/schemas/2014/forms" 
        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
        xmlns:local="clr-namespace:I4_QM_app.Views" 
-       xmlns:controls="clr-namespace:I4_QM_app.Controls"
+       xmlns:controls="clr-namespace:I4_QM_app.Helpers"
        xmlns:sys="clr-namespace:System;assembly=mscorlib"
        Title="I4_QM_app"
        x:Class="I4_QM_app.AppShell">

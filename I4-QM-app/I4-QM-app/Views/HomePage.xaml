@@ -8,7 +8,7 @@
     <RefreshView x:DataType="local:HomeViewModel" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy, Mode=TwoWay}">
         <ScrollView>
             <StackLayout Padding="10">
-                <Label Text="{Binding UserId, StringFormat='Welcome {0},'}" FontSize="Title" FontAttributes="Bold"></Label>
+                <Label AutomationId="HomeWelcome" Text="{Binding UserId, StringFormat='Welcome {0},'}" FontSize="Title" FontAttributes="Bold"></Label>
 
                 <BoxView   HorizontalOptions="Fill"
                    HeightRequest="1"

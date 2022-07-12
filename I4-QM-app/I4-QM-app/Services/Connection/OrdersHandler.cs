@@ -11,10 +11,51 @@ using System.Threading.Tasks;
 
 namespace I4_QM_app.Services.Connection
 {
+    /// <summary>
+    /// Implementation of IMessageHandler for Orders.
+    /// </summary>
     public class OrdersHandler : IMessageHandler
     {
+        /// <summary>
+        /// Handler to redirect to specific method per route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <param name="baseTopicURL">mqtt base url.</param>
+        /// <returns>Task.</returns>
+        public async Task HandleRoutes(MqttApplicationMessage message, string baseTopicURL)
+        {
+            var topic = message.Topic;
+
+            // maybe not ideal
+            if (topic == baseTopicURL + "prod/orders/add")
+            {
+                await HandleAddRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/orders/del")
+            {
+                await HandleDelRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/orders/get")
+            {
+                await HandleGetRoute(message);
+            }
+
+            if (topic == baseTopicURL + "prod/orders/sync")
+            {
+                await HandleUpdateRoute(message);
+            }
+        }
+
+        /// <summary>
+        /// Handles add topic/route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <returns>Task.</returns>
         public async Task HandleAddRoute(MqttApplicationMessage message)
         {
+
             string addOrders = Encoding.UTF8.GetString(message.Payload);
 
             Console.WriteLine($"+ Add");
@@ -33,7 +74,7 @@ namespace I4_QM_app.Services.Connection
 
                 if (order.Weight > 0 && order.Amount > 0 && order.Additives.Count > 0 && order.Due > DateTime.Now && await App.OrdersDataService.GetItemAsync(order.Id) == null)
                 {
-                    order.Status = Status.open;
+                    order.Status = Status.Open;
                     order.Received = DateTime.Now;
 
                     var additives = await App.AdditivesDataService.GetItemsAsync();
@@ -72,6 +113,11 @@ namespace I4_QM_app.Services.Connection
             }
         }
 
+        /// <summary>
+        /// Handles delete topic/route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <returns>Task.</returns>
         public async Task HandleDelRoute(MqttApplicationMessage message)
         {
             string delOrders = Encoding.UTF8.GetString(message.Payload);
@@ -104,39 +150,23 @@ namespace I4_QM_app.Services.Connection
             }
         }
 
+        /// <summary>
+        /// Handles get topic/route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <returns>Task.</returns>
         public async Task HandleGetRoute(MqttApplicationMessage message)
         {
             var getOrders = await App.OrdersDataService.GetItemsAsync();
             string ordersList = JsonConvert.SerializeObject(getOrders);
-            await App.ConnectionService.HandlePublishMessage("backup/orders", ordersList);
+            await App.ConnectionService.HandlePublishMessage("backup/orders/all", ordersList);
         }
 
-        public async Task HandleRoutes(MqttApplicationMessage message, string baseTopicURL)
-        {
-            var topic = message.Topic;
-
-            // maybe not ideal
-            if (topic == baseTopicURL + "prod/orders/add")
-            {
-                await HandleAddRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/orders/del")
-            {
-                await HandleDelRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/orders/get")
-            {
-                await HandleGetRoute(message);
-            }
-
-            if (topic == baseTopicURL + "prod/orders/sync")
-            {
-                await HandleUpdateRoute(message);
-            }
-        }
-
+        /// <summary>
+        /// Handles update topic/route.
+        /// </summary>
+        /// <param name="message">Mqtt message.</param>
+        /// <returns>Task.</returns>
         public async Task HandleUpdateRoute(MqttApplicationMessage message)
         {
             await App.OrdersDataService.DeleteAllItemsAsync();

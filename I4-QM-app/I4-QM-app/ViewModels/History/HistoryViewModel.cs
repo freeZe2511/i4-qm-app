@@ -1,5 +1,8 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
+using I4_QM_app.Services.Connection;
+using I4_QM_app.Services.Data;
+using I4_QM_app.Services.Notifications;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
@@ -8,44 +11,70 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
-namespace I4_QM_app.ViewModels
+namespace I4_QM_app.ViewModels.History
 {
+    /// <summary>
+    /// ViewModel for History ListPage.
+    /// </summary>
     public class HistoryViewModel : BaseViewModel
     {
-        private Order _selectedOrder;
-        public SortableObservableCollection<Order> History { get; }
-        public Command LoadHistoryCommand { get; }
-        public Command DeleteAllItemsCommand { get; }
-        public Command<Order> OrderTapped { get; }
-        public Command DisableCommand { get; }
-        public Command SortByCommand { get; }
+        private readonly IDataService<Order> ordersService;
+        private readonly INotificationService notificationService;
+        private readonly IConnectionService connectionService;
 
-        public bool Descending { get; set; }
-        public HistoryViewModel()
+        private Order selectedOrder;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HistoryViewModel"/> class.
+        /// </summary>
+        /// <param name="ordersService">Orders Service.</param>
+        /// <param name="notificationService">Notifications Service.</param>
+        /// <param name="connectionService">Connection Service.</param>
+        public HistoryViewModel(IDataService<Order> ordersService, INotificationService notificationService, IConnectionService connectionService)
         {
+            this.ordersService = ordersService;
+            this.notificationService = notificationService;
+            this.connectionService = connectionService;
+
             Title = "History";
             Descending = true;
             History = new SortableObservableCollection<Order>() { SortingSelector = i => i.Status, Descending = Descending };
 
-            // TODO maybe overloading main thread
             LoadHistoryCommand = new Command(async () => await ExecuteLoadHistoryCommand());
-
             OrderTapped = new Command<Order>(OnOrderSelected);
-            DeleteAllItemsCommand = new Command(DeleteAllHistoryItems);
+            DeleteAllItemsCommand = new Command(async () => await DeleteAllHistoryItems());
             DisableCommand = new Command(execute: () => { }, canExecute: () => { return false; });
 
             SortByCommand = new Command<string>(
-                execute: async (string arg) =>
+                execute: async (arg) =>
                 {
                     arg = arg.Trim();
 
-                    // works
-                    if (arg == "Id") await SortBy(i => i.Id);
-                    if (arg == "Status") await SortBy(i => i.Status);
-                    if (arg == "Done") await SortBy(i => i.Done);
-                    if (arg == "Amount") await SortBy(i => i.Amount);
-                    if (arg == "Received") await SortBy(i => i.Received);
+                    // works for now
+                    if (arg == "Id")
+                    {
+                        await SortBy(i => i.Id);
+                    }
 
+                    if (arg == "Status")
+                    {
+                        await SortBy(i => i.Status);
+                    }
+
+                    if (arg == "Done")
+                    {
+                        await SortBy(i => i.Done);
+                    }
+
+                    if (arg == "Amount")
+                    {
+                        await SortBy(i => i.Amount);
+                    }
+
+                    if (arg == "Received")
+                    {
+                        await SortBy(i => i.Received);
+                    }
 
                     // https://stackoverflow.com/questions/16213005/how-to-convert-a-lambdaexpression-to-typed-expressionfunct-t
                     // only works with id?! Specified cast is not valid
@@ -66,50 +95,83 @@ namespace I4_QM_app.ViewModels
                     //Console.WriteLine(str);
                     //var func = await CSharpScript.EvaluateAsync<Func<Order, object>>(str);
                     //await SortBy(func);
-
-
                 });
         }
 
+        /// <summary>
+        /// Gets history collection.
+        /// </summary>
+        public SortableObservableCollection<Order> History { get; }
 
-        private async Task SortBy(Func<Order, object> predicate)
-        {
-            History.SortingSelector = predicate;
-            History.Descending = Descending;
-            Descending = !Descending;
-            await ExecuteLoadHistoryCommand();
-        }
+        /// <summary>
+        /// Gets command to load orders from db.
+        /// </summary>
+        public Command LoadHistoryCommand { get; }
 
+        /// <summary>
+        /// Gets command to delete all items from history.
+        /// </summary>
+        public Command DeleteAllItemsCommand { get; }
+
+        /// <summary>
+        /// Gets command to determine the tapped order.
+        /// </summary>
+        public Command<Order> OrderTapped { get; }
+
+        /// <summary>
+        /// Gets command to disable.
+        /// </summary>
+        public Command DisableCommand { get; }
+
+        /// <summary>
+        /// Gets command to sort collection.
+        /// </summary>
+        public Command SortByCommand { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether collection is sorted descending or ascending.
+        /// </summary>
+        public bool Descending { get; set; }
+
+        /// <summary>
+        /// Gets or sets the selected order.
+        /// </summary>
         public Order SelectedOrder
         {
-            get => _selectedOrder;
+            get => selectedOrder;
             set
             {
-                SetProperty(ref _selectedOrder, value);
+                SetProperty(ref selectedOrder, value);
                 OnOrderSelected(value);
             }
         }
 
+        /// <summary>
+        /// Sets IsBusy and selectedOrder when onAppearing.
+        /// </summary>
         public void OnAppearing()
         {
             IsBusy = true;
             SelectedOrder = null;
         }
 
-        async Task ExecuteLoadHistoryCommand()
+        /// <summary>
+        /// Load orders (history) from db.
+        /// </summary>
+        /// <returns>Task.</returns>
+        private async Task ExecuteLoadHistoryCommand()
         {
             IsBusy = true;
 
             try
             {
                 History.Clear();
-                var history = await App.OrdersDataService.GetItemsFilteredAsync(a => a.Status != Status.open);
+                var history = await ordersService.GetItemsFilteredAsync(a => a.Status != Status.Open);
 
                 foreach (var order in history)
                 {
                     History.Add(order);
                 }
-
             }
             catch (Exception ex)
             {
@@ -121,7 +183,11 @@ namespace I4_QM_app.ViewModels
             }
         }
 
-        async void OnOrderSelected(Order item)
+        /// <summary>
+        /// Navigate to selected order history detail page.
+        /// </summary>
+        /// <param name="item">Order.</param>
+        private async void OnOrderSelected(Order item)
         {
             if (item == null)
             {
@@ -130,28 +196,46 @@ namespace I4_QM_app.ViewModels
 
             // This will push the ItemDetailPage onto the navigation stack
             await Shell.Current.GoToAsync($"{nameof(HistoryDetailPage)}?{nameof(HistoryDetailViewModel.OrderId)}={item.Id}");
-
         }
 
-        async void DeleteAllHistoryItems()
+        /// <summary>
+        /// Delete history and send mqtt backup.
+        /// </summary>
+        /// <returns>Task.</returns>
+        private async Task DeleteAllHistoryItems()
         {
-            bool answer = await App.NotificationService.ShowSimpleDisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
+            bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Delete whole history?", "Yes", "No");
 
-            var orders = await App.OrdersDataService.GetItemsFilteredAsync(x => x.Status != Status.open);
+            var orders = await ordersService.GetItemsFilteredAsync(x => x.Status != Status.Open);
 
             JsonSerializerOptions options = new JsonSerializerOptions()
             {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
             };
 
-            string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
+            string ordersString = JsonSerializer.Serialize(orders, options);
 
-            await App.ConnectionService.HandlePublishMessage("backup/orders/history", ordersString);
+            await connectionService.HandlePublishMessage("backup/orders/history", ordersString);
 
-            if (answer) await App.OrdersDataService.DeleteManyItemsAsync(x => x.Status != Status.open);
+            if (answer)
+            {
+                await ordersService.DeleteManyItemsAsync(x => x.Status != Status.Open);
+            }
+
             await ExecuteLoadHistoryCommand();
+        }
 
+        /// <summary>
+        /// Sort collection from predicate.
+        /// </summary>
+        /// <param name="predicate">Predicate.</param>
+        /// <returns>Task.</returns>
+        private async Task SortBy(Func<Order, object> predicate)
+        {
+            History.SortingSelector = predicate;
+            History.Descending = Descending;
+            Descending = !Descending;
+            await ExecuteLoadHistoryCommand();
         }
     }
-
 }

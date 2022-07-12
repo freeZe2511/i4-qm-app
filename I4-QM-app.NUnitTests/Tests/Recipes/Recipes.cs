@@ -1,5 +1,6 @@
 ﻿using I4_QM_app.Models;
 using I4_QM_app.NUnitTests.MockServices;
+using I4_QM_app.Services.Connection;
 using I4_QM_app.Services.Data;
 using I4_QM_app.Services.Notifications;
 using I4_QM_app.ViewModels.Recipes;
@@ -13,18 +14,20 @@ namespace I4_QM_app.NUnitTests.Tests.Recipes
     {
         private IDataService<Recipe> recipesService;
         private INotificationService notificationService;
+        private IConnectionService connectionService;
 
         [SetUp]
         public void Setup()
         {
             recipesService = new MockRecipesService();
             notificationService = new MockNotificationsService();
+            connectionService = new MockConnectionService();
         }
 
         [Test]
         public void RecipesInit()
         {
-            var recipes = new RecipesViewModel(recipesService, notificationService);
+            var recipes = new RecipesViewModel(recipesService, notificationService, connectionService);
             Assert.AreEqual(recipes.Title, "Recipes");
             Assert.IsTrue(recipes.Descending);
             Assert.IsNotNull(recipes.Recipes);
@@ -38,7 +41,7 @@ namespace I4_QM_app.NUnitTests.Tests.Recipes
         [Test]
         public async Task RecipesEmpty()
         {
-            var recipes = new RecipesViewModel(recipesService, notificationService);
+            var recipes = new RecipesViewModel(recipesService, notificationService, connectionService);
             Assert.IsEmpty(await recipesService.GetItemsAsync());
             Assert.IsEmpty(recipes.Recipes);
         }
@@ -46,7 +49,7 @@ namespace I4_QM_app.NUnitTests.Tests.Recipes
         [Test]
         public async Task RecipesAddData()
         {
-            var recipes = new RecipesViewModel(recipesService, notificationService);
+            var recipes = new RecipesViewModel(recipesService, notificationService, connectionService);
             Assert.IsEmpty(await recipesService.GetItemsAsync());
             Assert.IsEmpty(recipes.Recipes);
 
@@ -68,7 +71,7 @@ namespace I4_QM_app.NUnitTests.Tests.Recipes
         [Test]
         public async Task RecipesSortDataById()
         {
-            var recipes = new RecipesViewModel(recipesService, notificationService);
+            var recipes = new RecipesViewModel(recipesService, notificationService, connectionService);
 
             var a = new Recipe
             {
@@ -107,7 +110,7 @@ namespace I4_QM_app.NUnitTests.Tests.Recipes
         [Test]
         public async Task RecipesSortDataByName()
         {
-            var recipes = new RecipesViewModel(recipesService, notificationService);
+            var recipes = new RecipesViewModel(recipesService, notificationService, connectionService);
 
             var a = new Recipe
             {
@@ -146,7 +149,7 @@ namespace I4_QM_app.NUnitTests.Tests.Recipes
         [Test]
         public async Task RecipesSortDataByCreatorID()
         {
-            var recipes = new RecipesViewModel(recipesService, notificationService);
+            var recipes = new RecipesViewModel(recipesService, notificationService, connectionService);
 
             var a = new Recipe
             {
@@ -185,7 +188,7 @@ namespace I4_QM_app.NUnitTests.Tests.Recipes
         [Test]
         public async Task RecipesSortDataByUsed()
         {
-            var recipes = new RecipesViewModel(recipesService, notificationService);
+            var recipes = new RecipesViewModel(recipesService, notificationService, connectionService);
 
             var a = new Recipe
             {
@@ -224,7 +227,7 @@ namespace I4_QM_app.NUnitTests.Tests.Recipes
         [Test]
         public async Task RecipesRecipeTapped()
         {
-            var recipes = new RecipesViewModel(recipesService, notificationService);
+            var recipes = new RecipesViewModel(recipesService, notificationService, connectionService);
 
             var a = new Recipe
             {
@@ -248,7 +251,7 @@ namespace I4_QM_app.NUnitTests.Tests.Recipes
         [Test]
         public void RecipesAdd()
         {
-            var recipes = new RecipesViewModel(recipesService, notificationService);
+            var recipes = new RecipesViewModel(recipesService, notificationService, connectionService);
 
             var a = new Recipe
             {
@@ -266,7 +269,7 @@ namespace I4_QM_app.NUnitTests.Tests.Recipes
         [Test]
         public async Task RecipesDelete()
         {
-            var recipes = new RecipesViewModel(recipesService, notificationService);
+            var recipes = new RecipesViewModel(recipesService, notificationService, connectionService);
 
             var a = new Recipe
             {

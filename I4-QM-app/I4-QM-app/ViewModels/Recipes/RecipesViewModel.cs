@@ -1,10 +1,13 @@
 ﻿using I4_QM_app.Helpers;
 using I4_QM_app.Models;
+using I4_QM_app.Services.Connection;
 using I4_QM_app.Services.Data;
 using I4_QM_app.Services.Notifications;
 using I4_QM_app.Views;
 using System;
 using System.Diagnostics;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -17,6 +20,7 @@ namespace I4_QM_app.ViewModels.Recipes
     {
         private readonly IDataService<Recipe> recipesService;
         private readonly INotificationService notificationService;
+        private readonly IConnectionService connectionService;
 
         private Recipe selectedRecipe;
 
@@ -25,10 +29,11 @@ namespace I4_QM_app.ViewModels.Recipes
         /// </summary>
         /// <param name="recipesService">Recipes Service.</param>
         /// <param name="notificationService">Notifications Service.</param>
-        public RecipesViewModel(IDataService<Recipe> recipesService, INotificationService notificationService)
+        public RecipesViewModel(IDataService<Recipe> recipesService, INotificationService notificationService, IConnectionService connectionService)
         {
             this.recipesService = recipesService;
             this.notificationService = notificationService;
+            this.connectionService = connectionService;
 
             Title = "Recipes";
             Descending = true;
@@ -229,6 +234,17 @@ namespace I4_QM_app.ViewModels.Recipes
         private async Task DeleteAllItemAsync()
         {
             bool answer = await notificationService.ShowSimpleDisplayAlert("Confirmation", "Delete all recipes?", "Yes", "No");
+
+            var recipes = await recipesService.GetItemsAsync();
+
+            JsonSerializerOptions options = new JsonSerializerOptions()
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingDefault,
+            };
+
+            string recipesString = JsonSerializer.Serialize(recipes, options);
+
+            await connectionService.HandlePublishMessage("backup/recipes", recipesString);
 
             if (answer)
             {

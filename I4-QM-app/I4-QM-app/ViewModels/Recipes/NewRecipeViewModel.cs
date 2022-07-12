@@ -246,7 +246,7 @@ namespace I4_QM_app.ViewModels.Recipes
             return !string.IsNullOrWhiteSpace(Name)
                 && !string.IsNullOrWhiteSpace(Description)
                 && Additives.Any(i => i.Checked && i.Portion > 0)
-                && !Additives.Any(i => !i.Checked && i.Portion > 0)
+                //&& !Additives.Any(i => !i.Checked && i.Portion > 0)
                 && !Additives.Any(i => i.Checked && i.Portion <= 0);
         }
     }

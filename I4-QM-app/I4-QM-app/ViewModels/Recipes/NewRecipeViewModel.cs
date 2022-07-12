@@ -149,7 +149,7 @@ namespace I4_QM_app.ViewModels.Recipes
                 };
 
                 string res = System.Text.Json.JsonSerializer.Serialize(newRecipe, options);
-                await connectionService.HandlePublishMessage("recipes/new", res);
+                await connectionService.HandlePublishMessage("backup/recipes/new", res);
 
                 await Shell.Current.GoToAsync("..");
             }
@@ -246,7 +246,7 @@ namespace I4_QM_app.ViewModels.Recipes
             return !string.IsNullOrWhiteSpace(Name)
                 && !string.IsNullOrWhiteSpace(Description)
                 && Additives.Any(i => i.Checked && i.Portion > 0)
-                && !Additives.Any(i => !i.Checked && i.Portion > 0)
+                //&& !Additives.Any(i => !i.Checked && i.Portion > 0)
                 && !Additives.Any(i => i.Checked && i.Portion <= 0);
         }
     }

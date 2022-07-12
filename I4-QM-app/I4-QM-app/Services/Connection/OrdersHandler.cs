@@ -136,7 +136,7 @@ namespace I4_QM_app.Services.Connection
                 };
 
                 string ordersString = System.Text.Json.JsonSerializer.Serialize(orders, options);
-                await App.ConnectionService.HandlePublishMessage("backup/orders/" + ((Status)status).ToString(), ordersString);
+                await App.ConnectionService.HandlePublishMessage("backup/orders/" + ((Status)status).ToString().ToLower(), ordersString);
                 await App.OrdersDataService.DeleteManyItemsAsync(x => (int)x.Status == status);
             }
             else

@@ -58,6 +58,16 @@
                             </Label>
 
                             <Label Grid.Row="2" Grid.Column="1"
+                               Text="{Binding Portion, StringFormat='{0} %'}"                               
+                               LineBreakMode="NoWrap"
+                                Style="{DynamicResource ListItemDetailTextStyle}"
+                                FontSize="14"
+                                TextColor="{StaticResource Secondary}"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Start">
+                            </Label>
+
+                            <Label Grid.Row="2" Grid.Column="1"
                                Text=">"
                                FontSize="25"
                                FontAttributes="Bold"

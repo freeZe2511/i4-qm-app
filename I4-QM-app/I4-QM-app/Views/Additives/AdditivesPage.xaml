@@ -20,31 +20,61 @@
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="model:Additive">
                     <StackLayout Padding="10, 10, 10, 0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />                           
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="4*" />
-                        </Grid.ColumnDefinitions>
-                        <Image Grid.RowSpan="2"
+
+                        <Grid Padding="10,0,10,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="1"/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="10*"/>
+                                <ColumnDefinition Width="0.5*"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <Frame Grid.Row="0" Grid.ColumnSpan="3" 
+                                   BorderColor="LightGray" 
+                                   CornerRadius="10" Padding="0" >
+                                <Label Text="{Binding Id, StringFormat='{0}'}" 
+                            LineBreakMode="NoWrap" 
+                            Style="{DynamicResource ListItemTextStyle}" 
+                            FontSize="16"
+                            FontAttributes="Bold"
+                                       HorizontalTextAlignment="Center"/>
+                            </Frame>
+
+                            <Label Grid.Row="1" Grid.Column="1"
+                               Text="{Binding Name}"                               
+                               LineBreakMode="NoWrap"
+                                Style="{DynamicResource ListItemDetailTextStyle}"
+                                FontSize="14"
+                                TextColor="{StaticResource Secondary}"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Start">
+                            </Label>
+
+                            <Label Grid.Row="2" Grid.Column="1"
+                               Text=">"
+                               FontSize="25"
+                               FontAttributes="Bold"
+                               VerticalOptions="Center"
+                               HorizontalOptions="End">
+                            </Label>
+
+                            <Image Grid.Row="1" Grid.RowSpan="3" Grid.Column="0"
                        Source="{Binding Image}"
-                       Aspect="AspectFit"
-                       HeightRequest="50"
-                       WidthRequest="50" />
-                        <Label Grid.Column="1"
-                       Text="{Binding Name}"
-                       FontAttributes="Bold" />
-                        <Label Grid.Row="1"
-                       Grid.Column="1"
-                       Text="{Binding Id}"
-                       FontAttributes="Italic"
-                       VerticalOptions="End" />
-                        
-                    </Grid>
-                    <BoxView Color="LightGray" HeightRequest="1"/>
+                       Aspect="AspectFit" HeightRequest="80" WidthRequest="100"
+                        />
+                            
+                            
+
+                            <BoxView Color="LightGray" Grid.Row="4" Grid.ColumnSpan="3"/>
+
+                        </Grid>                        
                     </StackLayout>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

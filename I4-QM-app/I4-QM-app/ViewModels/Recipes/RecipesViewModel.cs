@@ -244,7 +244,7 @@ namespace I4_QM_app.ViewModels.Recipes
 
             string recipesString = JsonSerializer.Serialize(recipes, options);
 
-            await connectionService.HandlePublishMessage("backup/recipes", recipesString);
+            await connectionService.HandlePublishMessage("backup/recipes/all", recipesString);
 
             if (answer)
             {

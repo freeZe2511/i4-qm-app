@@ -149,7 +149,7 @@ namespace I4_QM_app.ViewModels.Recipes
                 };
 
                 string res = System.Text.Json.JsonSerializer.Serialize(newRecipe, options);
-                await connectionService.HandlePublishMessage("recipes/new", res);
+                await connectionService.HandlePublishMessage("backup/recipes/new", res);
 
                 await Shell.Current.GoToAsync("..");
             }

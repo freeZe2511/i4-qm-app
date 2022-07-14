@@ -29,5 +29,3 @@ Die entwickelte App unterstützt dabei die Abarbeitung eines Auftrags auf digita
 
 ## Entwicklung
 Entwickelt von Julia-Sophie Mühleck und Tim Luca Eggers. <br />
-
-Weitere Details in unserem Wiki: <https://git.thm.de/fsck43/i4-qm-app/-/wikis/home>

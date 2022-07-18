@@ -5,6 +5,7 @@
 [![plattform - android | ios | windows](https://img.shields.io/badge/platform-android%20%7C%20ios%20%7C%20windows%20-informational?style=plastic&logo=xamarin)](https://)
 
 App Entwicklung im Rahmen der Vorlesung Industrie 4.0 an der THM Gießen. Im Auftrag des Dozenten Marcel Bartholet und der Smart Factory Mittelhessen.
+Mehr Informationen gibt es im [Wiki](https://github.com/freeZe2511/i4-qm-app/wiki) zu finden.
 
 ## Projekt Beschreibung
 Dieses Projekt unterstützt die SFM darin, mittelständischen Unternehmen aufzuzeigen, wie man Industrie 4.0 umsetzen kann.
